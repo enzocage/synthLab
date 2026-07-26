@@ -17,6 +17,7 @@ export const RoleSchema = z.enum([
   "chord",
   "synth",
   "texture",
+  "stress",
 ]);
 export type Role = z.infer<typeof RoleSchema>;
 export const ROLES: Role[] = RoleSchema.options;
