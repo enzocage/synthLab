@@ -148,14 +148,14 @@ export class Reverb {
     const now = this.ctx.currentTime;
 
     this.dryGain.gain.value = 1;
-    this.wetGain.gain.setTargetAtTime(settings.mix, now, 0.02);
+    this.wetGain.gain.setTargetAtTime(settings.enabled ? settings.mix : 0, now, 0.02);
 
     this.preDelay.delayTime.setTargetAtTime(settings.preDelayMs / 1000, now, 0.02);
     this.inputHighpass.frequency.setTargetAtTime(settings.inputLowCutHz, now, 0.02);
     this.outputLowpassL.frequency.setTargetAtTime(settings.outputHighCutHz, now, 0.02);
     this.outputLowpassR.frequency.setTargetAtTime(settings.outputHighCutHz, now, 0.02);
 
-    const feedback = settings.freeze ? MAX_FEEDBACK : roomSizeToFeedback(settings.roomSize);
+    const feedback = !settings.enabled ? 0 : settings.freeze ? MAX_FEEDBACK : roomSizeToFeedback(settings.roomSize);
     const damping = settings.freeze ? 0 : settings.damping;
     this.left.setFeedback(feedback);
     this.right.setFeedback(feedback);

@@ -5,6 +5,7 @@ import { create } from "zustand";
 import { generateFullBank } from "../presets/generate";
 import { mutateN } from "../presets/mutate";
 import type { Preset, Role } from "../presets/schema";
+import type { FxChainSettings } from "../audio/fx/types";
 
 export interface FilterState {
   search: string;
@@ -23,6 +24,7 @@ interface SessionState {
   discarded: Record<string, boolean>;
   notes: Record<string, string>;
   editedParams: Record<string, Record<string, number | string | boolean>>;
+  editedFx: Record<string, FxChainSettings>;
   variationGrid: Preset[];
   abSlots: { A: Preset | null; B: Preset | null };
   activeSlot: "A" | "B";
@@ -41,6 +43,7 @@ interface SessionState {
   discard(presetId: string): void;
   setNote(presetId: string, note: string): void;
   setEditedParam(presetId: string, paramId: string, value: number | string | boolean): void;
+  setEditedFx(presetId: string, fx: FxChainSettings): void;
 
   generateVariations(amount: number): void;
   clearVariations(): void;
@@ -58,6 +61,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   discarded: {},
   notes: {},
   editedParams: {},
+  editedFx: {},
   variationGrid: [],
   abSlots: { A: null, B: null },
   activeSlot: "A",
@@ -85,8 +89,9 @@ export const useSessionStore = create<SessionState>((set, get) => ({
 
   effectivePreset(preset: Preset) {
     const edits = get().editedParams[preset.id];
-    if (!edits) return preset;
-    return { ...preset, params: { ...preset.params, ...edits } };
+    const fx = get().editedFx[preset.id];
+    if (!edits && !fx) return preset;
+    return { ...preset, params: edits ? { ...preset.params, ...edits } : preset.params, fx: fx ?? preset.fx };
   },
 
   setFilter(patch) {
@@ -141,6 +146,10 @@ export const useSessionStore = create<SessionState>((set, get) => ({
         [presetId]: { ...(s.editedParams[presetId] ?? {}), [paramId]: value },
       },
     }));
+  },
+
+  setEditedFx(presetId, fx) {
+    set((s) => ({ editedFx: { ...s.editedFx, [presetId]: fx } }));
   },
 
   generateVariations(amount) {

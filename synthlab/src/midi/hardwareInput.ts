@@ -1,22 +1,23 @@
 // Optionale Web-MIDI-Hardware-Eingabe, parallel zur laufenden generativen
 // Phrase (PLAN.md Phase 6, User-Entscheidung: "generativ + Web-MIDI-Hardware").
-import type { VoiceManager } from "../audio/core/VoiceManager";
-
+// Routet ueber den vom Aufrufer uebergebenen Handler statt direkt auf einen
+// VoiceManager, damit Hardware-Noten (wie Tastatur-Klicks) durch Arp/Recorder
+// laufen koennen (AudioController.noteOn/noteOff).
 export interface HardwareInputHandle {
   disconnect(): void;
 }
 
-type GetVoiceManager = () => VoiceManager | null;
+export interface NoteHandler {
+  noteOn(note: number, velocity: number): void;
+  noteOff(note: number): void;
+}
 
 export function isWebMidiSupported(): boolean {
   return typeof navigator !== "undefined" && "requestMIDIAccess" in navigator;
 }
 
-/** Verbindet alle vorhandenen MIDI-Eingaenge mit dem aktiven VoiceManager. Gibt ein Handle zum Trennen zurueck. */
-export async function connectHardwareInput(
-  ctx: BaseAudioContext,
-  getVoiceManager: GetVoiceManager
-): Promise<HardwareInputHandle> {
+/** Verbindet alle vorhandenen MIDI-Eingaenge mit dem uebergebenen Note-Handler. */
+export async function connectHardwareInput(handler: NoteHandler): Promise<HardwareInputHandle> {
   if (!isWebMidiSupported()) {
     return { disconnect() {} };
   }
@@ -29,14 +30,11 @@ export async function connectHardwareInput(
     if (!data || data.length < 2) return;
     const [statusByte, note, velocity = 0] = data;
     const status = statusByte & 0xf0;
-    const vm = getVoiceManager();
-    if (!vm) return;
-    const now = ctx.currentTime;
 
     if (status === 0x90 && velocity > 0) {
-      vm.noteOn(note, velocity / 127, now);
+      handler.noteOn(note, velocity / 127);
     } else if (status === 0x80 || (status === 0x90 && velocity === 0)) {
-      vm.noteOff(note, now);
+      handler.noteOff(note);
     }
   };
 

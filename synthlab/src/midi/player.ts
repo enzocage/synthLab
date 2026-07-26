@@ -3,7 +3,7 @@
 // kontinuierlich, statt bei jeder Schleifenwiederholung neu anzusetzen.
 // Phrasenwechsel ist nahtlos moeglich, ohne den Transport zu stoppen.
 import type { VoiceManager } from "../audio/core/VoiceManager";
-import type { Phrase, NoteEvent } from "./phrases";
+import type { NoteSequence, NoteEvent } from "./phrases";
 
 const LOOKAHEAD_S = 0.15;
 const TICK_MS = 25;
@@ -17,7 +17,7 @@ export class PhrasePlayer {
   private ctx: BaseAudioContext;
   private getVoiceManager: () => VoiceManager | null;
   private bpm = 60;
-  private phrase: Phrase | null = null;
+  private phrase: NoteSequence | null = null;
   private timer: ReturnType<typeof setInterval> | null = null;
   private loopStartTime = 0;
   private nextEventIdx = 0;
@@ -40,7 +40,7 @@ export class PhrasePlayer {
   }
 
   /** Wechselt die Phrase nahtlos: alte Held-Noten (Drone) klingen aus, neue startet sofort. */
-  setPhrase(phrase: Phrase): void {
+  setPhrase(phrase: NoteSequence): void {
     this.releaseHolds();
     this.phrase = phrase;
     this.cycleEvents = phrase.events.filter((e) => !e.hold);
@@ -49,7 +49,7 @@ export class PhrasePlayer {
     this.triggerHolds(phrase);
   }
 
-  private triggerHolds(phrase: Phrase): void {
+  private triggerHolds(phrase: NoteSequence): void {
     const vm = this.getVoiceManager();
     if (!vm) return;
     const now = this.ctx.currentTime;

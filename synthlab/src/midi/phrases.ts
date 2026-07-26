@@ -15,10 +15,15 @@ export interface NoteEvent {
   hold?: boolean;
 }
 
-export interface Phrase {
-  role: Role;
+/** Gemeinsame Form fuer alles, was der Lookahead-Player (midi/player.ts) abspielen
+ *  kann: generative Phrasen UND aufgenommene Track-Clips (store/tracksStore.ts). */
+export interface NoteSequence {
   lengthBeats: number;
   events: NoteEvent[];
+}
+
+export interface Phrase extends NoteSequence {
+  role: Role;
 }
 
 interface PhraseOptions {

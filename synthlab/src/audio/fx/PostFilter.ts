@@ -27,12 +27,11 @@ export class PostFilter {
   }
 
   private apply(settings: PostFilterSettings): void {
-    const off = settings.type === "off";
-    this.filter.type = off ? "allpass" : (settings.type as BiquadFilterType);
+    this.filter.type = settings.type;
     this.filter.frequency.value = settings.cutoffHz;
     this.filter.Q.value = settings.q;
-    this.wetGain.gain.value = off ? 0 : 1;
-    this.bypassGain.gain.value = off ? 1 : 0;
+    this.wetGain.gain.value = settings.enabled ? 1 : 0;
+    this.bypassGain.gain.value = settings.enabled ? 0 : 1;
   }
 
   dispose(): void {

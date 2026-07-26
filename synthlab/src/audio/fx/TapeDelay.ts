@@ -86,15 +86,14 @@ export class TapeDelay {
   }
 
   private apply(settings: DelaySettings): void {
-    const off = settings.mode === "off";
-    this.wetGain.gain.value = off ? 0 : settings.mix;
+    this.wetGain.gain.value = settings.enabled ? settings.mix : 0;
     this.dryGain.gain.value = 1;
 
     const clampedFeedback = Math.min(MAX_FEEDBACK, Math.max(0, settings.feedback));
     this.delayL.delayTime.setTargetAtTime(settings.timeSeconds, this.ctx.currentTime, 0.02);
     this.delayR.delayTime.setTargetAtTime(settings.timeSeconds, this.ctx.currentTime, 0.02);
-    this.feedbackGainL.gain.setTargetAtTime(settings.mode === "off" ? 0 : clampedFeedback, this.ctx.currentTime, 0.02);
-    this.feedbackGainR.gain.setTargetAtTime(settings.mode === "pingpong" ? clampedFeedback : 0, this.ctx.currentTime, 0.02);
+    this.feedbackGainL.gain.setTargetAtTime(settings.enabled ? clampedFeedback : 0, this.ctx.currentTime, 0.02);
+    this.feedbackGainR.gain.setTargetAtTime(settings.enabled && settings.mode === "pingpong" ? clampedFeedback : 0, this.ctx.currentTime, 0.02);
 
     const cutoff = 800 + settings.tone * 7000;
     this.toneFilterL.frequency.setTargetAtTime(cutoff, this.ctx.currentTime, 0.02);

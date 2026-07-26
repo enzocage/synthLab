@@ -57,7 +57,9 @@ export class Width {
   }
 
   private apply(settings: WidthSettings): void {
-    this.sideGain.gain.value = settings.amount;
+    // amount=1 ist mathematisch bereits eine Identitaetsabbildung (Mid/Side
+    // rekonstruiert das Original exakt) - bei enabled=false reicht daher amount=1.
+    this.sideGain.gain.value = settings.enabled ? settings.amount : 1;
   }
 
   dispose(): void {

@@ -63,6 +63,11 @@ export class Ensemble {
   }
 
   private apply(settings: EnsembleSettings): void {
+    if (!settings.enabled) {
+      this.dryGain.gain.value = 1;
+      this.wetGain.gain.value = 0;
+      return;
+    }
     this.dryGain.gain.value = 1 - settings.amount * 0.5;
     this.wetGain.gain.value = settings.amount;
   }

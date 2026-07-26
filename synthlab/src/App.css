@@ -261,3 +261,292 @@ button:hover {
   padding: 6px;
   resize: vertical;
 }
+
+/* Instrument-Header (Engine-Name als "Synthesizer" + Preset-Name) */
+.instrument-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  background: #15181d;
+  border: 1px solid #2c2f36;
+  border-radius: 4px;
+}
+.instrument-header__track {
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.instrument-header__engine {
+  font-size: 15px;
+  font-weight: 700;
+  color: #4a90d9;
+}
+.instrument-header__sep {
+  color: #3a3f47;
+}
+.instrument-header__preset {
+  font-size: 15px;
+  color: #e4e6ea;
+}
+
+/* FX-Rack (Ableton-Device-Band) */
+.fx-rack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.fx-device {
+  border: 1px solid #2c2f36;
+  border-radius: 4px;
+  background: #15181d;
+}
+.fx-device--on {
+  border-color: #4a90d9;
+}
+.fx-device__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+}
+.fx-device__power {
+  border: none;
+  background: none;
+  color: #3a3f47;
+  font-size: 14px;
+  padding: 2px 4px;
+}
+.fx-device--on .fx-device__power {
+  color: #4ad97a;
+}
+.fx-device__title {
+  flex: 1;
+  text-align: left;
+  border: none;
+  background: none;
+  font-weight: 600;
+  color: #e4e6ea;
+  padding: 2px 0;
+}
+.fx-device__caret {
+  color: #6b7280;
+  font-size: 10px;
+}
+.fx-device__body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  padding: 8px;
+  border-top: 1px solid #2c2f36;
+}
+.fx-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  color: #b0b6bf;
+}
+.fx-slider input[type="range"] {
+  width: 100%;
+}
+.fx-slider__value {
+  font-family: monospace;
+  font-size: 10px;
+  color: #6b7280;
+}
+.fx-select {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  color: #b0b6bf;
+}
+.fx-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #b0b6bf;
+}
+
+/* Track-Liste (Ableton-Style Spuren) */
+.track-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 12px;
+  border-bottom: 1px solid #2c2f36;
+  max-height: 160px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.track-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.track-row:hover {
+  background: #15181d;
+}
+.track-row--selected {
+  border-color: #4a90d9;
+  background: #1e2a3a;
+}
+.track-row__name {
+  width: 100px;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  font-weight: 600;
+}
+.track-row__instrument {
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  gap: 6px;
+  font-size: 12px;
+  overflow: hidden;
+}
+.track-row__engine {
+  color: #4a90d9;
+  white-space: nowrap;
+}
+.track-row__preset {
+  color: #8a919c;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.track-row__buttons {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.track-btn {
+  padding: 3px 7px;
+  font-size: 11px;
+}
+.track-btn--active {
+  background: #2c4a6b;
+  border-color: #4a90d9;
+}
+.track-btn--rec {
+  background: #7a2020;
+  border-color: #ff4d4d;
+  color: #ffb3b3;
+}
+.track-row__clips {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  flex: 1;
+  overflow: hidden;
+}
+.track-row__no-clips {
+  font-size: 11px;
+  color: #3a3f47;
+}
+.clip-chip {
+  font-size: 11px;
+  padding: 2px 6px;
+  background: #1a1d22;
+}
+.clip-chip--active {
+  border-color: #4ad97a;
+  color: #4ad97a;
+}
+.track-list__add {
+  align-self: flex-start;
+  font-size: 12px;
+}
+
+/* Arp-Panel */
+.arp-panel {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 12px;
+  border-top: 1px solid #2c2f36;
+  flex-shrink: 0;
+}
+.arp-panel--on {
+  background: #15181d;
+}
+.arp-panel__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.arp-panel__title {
+  font-weight: 700;
+  font-size: 13px;
+}
+.arp-panel__latch {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #b0b6bf;
+}
+.arp-panel__controls {
+  display: flex;
+  gap: 14px;
+}
+.arp-panel__controls label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #b0b6bf;
+}
+
+/* Piano-Tastatur (8 Oktaven) */
+.piano {
+  position: relative;
+  height: 90px;
+  flex-shrink: 0;
+  border-top: 1px solid #2c2f36;
+  background: #0a0b0d;
+  user-select: none;
+}
+.piano__white {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: #e4e6ea;
+  border: 1px solid #0a0b0d;
+  border-radius: 0 0 3px 3px;
+}
+.piano__white--c {
+  background: #d5d9e0;
+}
+.piano__black {
+  position: absolute;
+  top: 0;
+  height: 58%;
+  background: #1a1d22;
+  border: 1px solid #0a0b0d;
+  border-radius: 0 0 2px 2px;
+  z-index: 2;
+}
+.piano__key--active.piano__white {
+  background: #9cc4ec;
+}
+.piano__key--active.piano__black {
+  background: #4a90d9;
+}
+.piano__label {
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  font-size: 8px;
+  color: #6b7280;
+}

@@ -2,14 +2,22 @@ import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { AudioController } from "./audio/AudioController";
 import type { MeterReading } from "./audio/core/Meters";
 import { useSessionStore } from "./store/sessionStore";
+import { useTracksStore } from "./store/tracksStore";
+import { getEngine } from "./audio/engines/registry";
 import { PresetBrowser } from "./ui/PresetBrowser";
 import { MacroPanel } from "./ui/MacroPanel";
 import { TransportBar } from "./ui/TransportBar";
 import { VariationGrid } from "./ui/VariationGrid";
 import { RatingPanel } from "./ui/RatingPanel";
+import { FxRack } from "./ui/FxRack";
+import { TrackList } from "./ui/TrackList";
+import { PianoKeyboard } from "./ui/PianoKeyboard";
+import { ArpPanel } from "./ui/ArpPanel";
 import { useKeyboardShortcuts } from "./ui/useKeyboardShortcuts";
 import { PHRASE_ROLES } from "./midi/phrases";
+import { defaultArpSettings, type ArpSettings } from "./midi/arpeggiator";
 import type { Role } from "./presets/schema";
+import type { FxChainSettings } from "./audio/fx/types";
 import "./App.css";
 
 const MUTATE_AMOUNT = 0.35;
@@ -22,17 +30,23 @@ function App() {
   const [tempo, setTempoState] = useState(66);
   const [meter, setMeter] = useState<MeterReading>({ peakL: 0, peakR: 0, rms: 0, correlation: 1 });
   const [voiceCount, setVoiceCount] = useState(0);
+  const [arpSettings, setArpSettingsState] = useState<ArpSettings>(defaultArpSettings());
   const lastVariantIdx = useRef<number | null>(null);
 
   const bank = useSessionStore((s) => s.bank);
   const currentIndex = useSessionStore((s) => s.currentIndex);
   const preset = bank[currentIndex];
   const editsForPreset = useSessionStore((s) => s.editedParams[preset?.id ?? ""]);
+  const editedFxForPreset = useSessionStore((s) => s.editedFx[preset?.id ?? ""]);
   const effectivePreset = useMemo(() => {
     if (!preset) return preset;
-    if (!editsForPreset) return preset;
-    return { ...preset, params: { ...preset.params, ...editsForPreset } };
-  }, [preset, editsForPreset]);
+    if (!editsForPreset && !editedFxForPreset) return preset;
+    return {
+      ...preset,
+      params: editsForPreset ? { ...preset.params, ...editsForPreset } : preset.params,
+      fx: editedFxForPreset ?? preset.fx,
+    };
+  }, [preset, editsForPreset, editedFxForPreset]);
   const ratings = useSessionStore((s) => s.ratings);
   const favorites = useSessionStore((s) => s.favorites);
   const notes = useSessionStore((s) => s.notes);
@@ -45,12 +59,20 @@ function App() {
   const discard = useSessionStore((s) => s.discard);
   const setNote = useSessionStore((s) => s.setNote);
   const setEditedParam = useSessionStore((s) => s.setEditedParam);
+  const setEditedFx = useSessionStore((s) => s.setEditedFx);
   const generateVariations = useSessionStore((s) => s.generateVariations);
   const clearVariations = useSessionStore((s) => s.clearVariations);
   const setAbSlot = useSessionStore((s) => s.setAbSlot);
   const setActiveSlot = useSessionStore((s) => s.setActiveSlot);
   const abSlots = useSessionStore((s) => s.abSlots);
   const activeSlot = useSessionStore((s) => s.activeSlot);
+
+  const selectedTrackId = useTracksStore((s) => s.selectedTrackId);
+  const setTrackPreset = useTracksStore((s) => s.setTrackPreset);
+  const tracks = useTracksStore((s) => s.tracks);
+  const selectedTrack = tracks.find((t) => t.id === selectedTrackId);
+
+  const getPresetById = useCallback((id: string) => bank.find((p) => p.id === id) ?? null, [bank]);
 
   useEffect(() => {
     const unsub = AudioController.onMeter((m) => {
@@ -61,17 +83,21 @@ function App() {
   }, []);
 
   // Preset laden, sobald Audio bereit ist ODER sich der aktuelle Index/Edits aendern.
+  // Wirkt auf die aktuell ausgewaehlte Spur; die Spur merkt sich das Preset fuer die Track-Liste.
   useEffect(() => {
-    if (!audioReady) return;
+    if (!audioReady || !selectedTrackId) return;
     AudioController.loadPreset(effectivePreset);
+    setTrackPreset(selectedTrackId, effectivePreset.id);
     lastVariantIdx.current = null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [audioReady, effectivePreset.id, JSON.stringify(effectivePreset.params), JSON.stringify(effectivePreset.fx)]);
+  }, [audioReady, selectedTrackId, effectivePreset.id, JSON.stringify(effectivePreset.params), JSON.stringify(effectivePreset.fx)]);
 
   const startAudio = useCallback(async () => {
     await AudioController.resume();
+    AudioController.setSelectedTrack(useTracksStore.getState().selectedTrackId);
     AudioController.setPhraseRole(phraseRole);
     AudioController.setTempo(tempo);
+    AudioController.setArpSettings(arpSettings);
     setAudioReady(true);
     // Web-MIDI-Verbindung blockiert den Start nicht: requestMIDIAccess() kann auf
     // eine Berechtigungsabfrage warten oder in manchen Umgebungen nie aufloesen.
@@ -105,6 +131,25 @@ function App() {
     setTempoState(bpm);
     AudioController.setTempo(bpm);
   }, []);
+
+  const onArpChange = useCallback(
+    (patch: Partial<ArpSettings>) => {
+      const next = { ...arpSettings, ...patch };
+      setArpSettingsState(next);
+      AudioController.setArpSettings(next);
+    },
+    [arpSettings]
+  );
+
+  const onFxChange = useCallback(
+    (patch: Partial<FxChainSettings>) => {
+      if (!preset) return;
+      const next = { ...effectivePreset.fx, ...patch };
+      setEditedFx(preset.id, next);
+      AudioController.updateFx(next);
+    },
+    [preset, effectivePreset.fx, setEditedFx]
+  );
 
   const handlePlayVariant = useCallback(
     (idx: number) => {
@@ -173,11 +218,13 @@ function App() {
     return (
       <div className="start-overlay">
         <h1>SynthLab</h1>
-        <p>1131 Presets über 13 Engines. Schnell durchhören, bewerten, mutieren.</p>
+        <p>1131 Presets über 13 Engines, Mehrspur-Arrangement, Arp und Live-Tastatur.</p>
         <button onClick={startAudio}>Audio starten</button>
       </div>
     );
   }
+
+  const selectedEngineName = getEngine(effectivePreset.engine).name;
 
   return (
     <div className="app-shell">
@@ -192,11 +239,20 @@ function App() {
         meter={meter}
         voiceCount={voiceCount}
       />
+
+      <TrackList getPresetById={getPresetById} />
+
       <div className="app-columns">
         <PresetBrowser />
         <div className="app-column app-column--center">
-          <h2 className="preset-title">{preset.name}</h2>
+          <div className="instrument-header">
+            <span className="instrument-header__track">{selectedTrack?.name ?? "–"}</span>
+            <span className="instrument-header__engine">{selectedEngineName}</span>
+            <span className="instrument-header__sep">·</span>
+            <span className="instrument-header__preset">{preset.name}</span>
+          </div>
           <MacroPanel preset={effectivePreset} onLiveEdit={(paramId, value) => setEditedParam(preset.id, paramId, value)} />
+          <FxRack fx={effectivePreset.fx} onChange={onFxChange} />
           <VariationGrid variants={variationGrid} onPlay={handlePlayVariant} onAccept={handleAcceptVariant} />
           <div className="ab-indicator">
             Slot: <b>{activeSlot}</b> · A: {abSlots.A?.name ?? "–"} · B: {abSlots.B?.name ?? "–"}
@@ -219,6 +275,9 @@ function App() {
           />
         </div>
       </div>
+
+      <ArpPanel settings={arpSettings} onChange={onArpChange} />
+      <PianoKeyboard onNoteOn={(n) => AudioController.noteOn(n)} onNoteOff={(n) => AudioController.noteOff(n)} />
     </div>
   );
 }

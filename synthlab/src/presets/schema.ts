@@ -31,15 +31,17 @@ export const MacroValuesSchema = z.object(
 
 const FxNumberRange = z.number();
 export const FxChainSettingsSchema = z.object({
-  drive: z.object({ amount: FxNumberRange }),
+  drive: z.object({ enabled: z.boolean(), amount: FxNumberRange }),
   postFilter: z.object({
-    type: z.enum(["lowpass", "highpass", "bandpass", "off"]),
+    enabled: z.boolean(),
+    type: z.enum(["lowpass", "highpass", "bandpass"]),
     cutoffHz: FxNumberRange,
     q: FxNumberRange,
   }),
-  ensemble: z.object({ amount: FxNumberRange, rateHz: FxNumberRange, depthMs: FxNumberRange }),
+  ensemble: z.object({ enabled: z.boolean(), amount: FxNumberRange, rateHz: FxNumberRange, depthMs: FxNumberRange }),
   delay: z.object({
-    mode: z.enum(["tape", "pingpong", "off"]),
+    enabled: z.boolean(),
+    mode: z.enum(["tape", "pingpong"]),
     timeSeconds: FxNumberRange,
     feedback: FxNumberRange,
     mix: FxNumberRange,
@@ -47,6 +49,7 @@ export const FxChainSettingsSchema = z.object({
     wowFlutterDepth: FxNumberRange,
   }),
   reverb: z.object({
+    enabled: z.boolean(),
     roomSize: FxNumberRange,
     damping: FxNumberRange,
     preDelayMs: FxNumberRange,
@@ -56,7 +59,7 @@ export const FxChainSettingsSchema = z.object({
     outputHighCutHz: FxNumberRange,
     freeze: z.boolean(),
   }),
-  width: z.object({ amount: FxNumberRange }),
+  width: z.object({ enabled: z.boolean(), amount: FxNumberRange }),
 });
 
 export const ProvenanceSchema = z.object({
