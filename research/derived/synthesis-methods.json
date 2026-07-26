@@ -1,0 +1,110 @@
+{
+  "source": "Destilliert aus 'Ambient KI Musikmaschine Repositories.md' und 'Musikmaschine .md' (Repo-Analysen) sowie research/vendor/{amy,daisysp,stk,fundsp}. Eigene Verfahrens-Landkarte, kein Fremdcode.",
+  "note": "Bildet 1:1 auf die 13 Engines aus PLAN.md Phase 3 ab (methodId -> engineId).",
+  "methods": [
+    {
+      "methodId": "subtractive",
+      "engineId": "va-poly",
+      "description": "Bandlimitierte Oszillatoren (Saw/Pulse/Sine/Tri) durch resonantes Filter geformt.",
+      "keyParams": ["oscMix", "detune", "unisonVoices", "cutoffHz", "resonance", "envToFilter"],
+      "ambientFit": 7,
+      "notes": "Braucht starkes Unison/Detune für Ambient-Breite, sonst zu 'lead-artig'."
+    },
+    {
+      "methodId": "wavetable",
+      "engineId": "wavetable",
+      "description": "Interpolation zwischen Wellenform-Frames (PeriodicWave-Morph), optional Spektral-Warp.",
+      "keyParams": ["tablePosition", "morphRate", "warpAmount", "unisonSpread"],
+      "ambientFit": 9,
+      "notes": "Sehr langsames tablePosition-Drifting = Kernrezept für 'evolving pad' (Musikmaschine.md)."
+    },
+    {
+      "methodId": "fm",
+      "engineId": "fm6",
+      "description": "6-Operator-FM mit 32 Algorithmen (DX7/AMY-Lineage) und Feedback-Loops.",
+      "keyParams": ["algorithm", "ratios[6]", "levels[6]", "feedback", "envelopes[6]"],
+      "ambientFit": 8,
+      "notes": "Extreme ADSR-Zeiten (Attack 2-3s, Release 10-15s) verwandeln FM-Bells in Drones — Rezept aus 'Ambient KI Musikmaschine Repositories.md' §Prompt-Übersetzung."
+    },
+    {
+      "methodId": "additive",
+      "engineId": "additive",
+      "description": "Partialbank einzelner Sinusoszillatoren mit individueller Hüllkurve/Inharmonizität.",
+      "keyParams": ["partialCount", "inharmonicity", "spectralTilt", "partialDrift"],
+      "ambientFit": 9,
+      "notes": "Inharmonizität + langsamer Partial-Drift erzeugt organische, nie ganz statische Drones."
+    },
+    {
+      "methodId": "granular",
+      "engineId": "granular",
+      "description": "Granularwolke aus intern gerendertem Buffer: Position, Größe, Streuung, Pitch-Jitter pro Korn.",
+      "keyParams": ["grainSizeMs", "density", "positionSpread", "pitchJitter", "windowShape"],
+      "ambientFit": 10,
+      "notes": "Größter Hebel gegen 'klickende' Granularität: Fenster-Crossfade >= 50% Grain-Länge."
+    },
+    {
+      "methodId": "modal",
+      "engineId": "modal",
+      "description": "Resonatorbank mit Frequenzverhältnissen + Dämpfungsradius pro Mode (STK ModalBar-Verfahren).",
+      "keyParams": ["material", "modeCount", "damping", "strikePosition", "stickHardness"],
+      "ambientFit": 8,
+      "notes": "Materialien aus research/derived/modal-materials.json (Marimba, Vibraphon, Agogo, Wood, Reso, Beats, Clump)."
+    },
+    {
+      "methodId": "physical_string",
+      "engineId": "string",
+      "description": "Karplus-Strong / digitales Waveguide mit gefilterter Feedback-Delay-Line.",
+      "keyParams": ["decay", "brightness", "pluckPosition", "inharmonicity"],
+      "ambientFit": 6,
+      "notes": "Sehr lange decay + tiefpassgefiltertes Feedback = gedämpfte, nicht-perkussive Saiten-Drones."
+    },
+    {
+      "methodId": "filtered_noise",
+      "engineId": "noisefield",
+      "description": "Rauschquellen (weiß/rosa/braun) durch Bandpass-/Formant-Filterbänke geformt.",
+      "keyParams": ["noiseColor", "bandCount", "bandSpread", "breathModDepth"],
+      "ambientFit": 9,
+      "notes": "Langsame LFO auf Bandmittenfrequenz erzeugt 'atmende' Nebelflächen."
+    },
+    {
+      "methodId": "detuned_stack",
+      "engineId": "drone",
+      "description": "Mehrfach-Oszillator-Stack mit Analog-Drift (Zufallsverstimmung + Glättung) für Schwebungen.",
+      "keyParams": ["voiceCount", "detuneCents", "driftRate", "driftDepth", "beatingTarget"],
+      "ambientFit": 10,
+      "notes": "Just-Intonation-Verhältnisse (3:2, 7:4) statt 12-TET für gezielte, kontrollierte Schwebung."
+    },
+    {
+      "methodId": "wavefolding",
+      "engineId": "wavefold",
+      "description": "West-Coast-Komplexoszillator: Sinus/Dreieck durch Wavefolder-Kette, Timbre-/Fold-Achse.",
+      "keyParams": ["foldAmount", "symmetry", "timbre", "fmAmount"],
+      "ambientFit": 6,
+      "notes": "Bei Ambient meist stark abgemildert (niedriger foldAmount) für Obertonreichtum ohne Härte."
+    },
+    {
+      "methodId": "phase_distortion",
+      "engineId": "phasedist",
+      "description": "Phasenverzerrte Oszillatorlesung + Hard Sync für CZ-artige Timbres.",
+      "keyParams": ["distortionAmount", "syncRatio", "envToDistortion"],
+      "ambientFit": 5,
+      "notes": "Eher für bewegte Arp-/Synth-Rollen als für Flächen."
+    },
+    {
+      "methodId": "percussive_models",
+      "engineId": "perc",
+      "description": "Analog-/Synth-Percussion-Modelle (Kick/Snare/Hat) plus Drip/Modal-Perkussion.",
+      "keyParams": ["tone", "decay", "punch", "noiseMix"],
+      "ambientFit": 4,
+      "notes": "In Ambient meist sehr weich/gefiltert, seltene sparse Ereignisse statt Beat."
+    },
+    {
+      "methodId": "sub_synthesis",
+      "engineId": "subbass",
+      "description": "Sub-Oszillator + Sättigung, Mono-Summe unterhalb ~120Hz.",
+      "keyParams": ["subLevel", "saturation", "monoFreqHz", "subWaveform"],
+      "ambientFit": 6,
+      "notes": "Fundament-Drone-Rolle; Mono-Fold unterhalb 120Hz für Stereo-/Bass-Kompatibilität (Produktionswissen aus Musikmaschine.md)."
+    }
+  ]
+}

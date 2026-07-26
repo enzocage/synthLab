@@ -1,0 +1,2193 @@
+{
+  "source": {
+    "algorithms": "research/vendor/amy/src/algorithms.c (MIT, Brian Whitman & Daniel P. W. Ellis; op-table lineage: MSFA/DX7)",
+    "instrumentProfiles": "research/vendor/stk/src/{TubeBell,Rhodey,Wurley,HevyMetl,BeeThree,FMVoices,PercFlut,FM}.cpp (STK license)"
+  },
+  "note": "ops sind 1-indiziert (DX7-Konvention op1..op6). carriers = Operatoren, die auf den Hauptbus ausgeben. Instrument-envelopes in Sekunden (attack/decay/release) + normalisiertem sustain-level.",
+  "algorithms": [
+    {
+      "index": 0,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 1,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 2,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        },
+        {
+          "op": 3,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 3,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 4,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": true
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": false
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 5,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 6,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": true
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": false
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 7,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 8,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": null,
+          "output": "add",
+          "feedbackIn": true,
+          "feedbackOut": true
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 9,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        },
+        {
+          "op": 3,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 10,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 11,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 12,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        },
+        {
+          "op": 3,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 13,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 14,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 15,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        },
+        {
+          "op": 3,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 16,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": "bus_two",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": null,
+          "output": "bus_two",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 17,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "add",
+          "feedbackIn": true,
+          "feedbackOut": true
+        },
+        {
+          "op": 3,
+          "input": "bus_two",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": null,
+          "output": "bus_two",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 18,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": null,
+          "output": "add",
+          "feedbackIn": true,
+          "feedbackOut": true
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 19,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 20,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 21,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 22,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 23,
+      "ops": [
+        {
+          "op": 1,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 24,
+      "ops": [
+        {
+          "op": 1,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 25,
+      "ops": [
+        {
+          "op": 1,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 26,
+      "ops": [
+        {
+          "op": 1,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 27,
+      "ops": [
+        {
+          "op": 1,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 28,
+      "ops": [
+        {
+          "op": 1,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 29,
+      "ops": [
+        {
+          "op": 1,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 30,
+      "ops": [
+        {
+          "op": 1,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": "bus_one",
+          "output": "bus_one",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 31,
+      "ops": [
+        {
+          "op": 1,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": "bus_one",
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "bus_one",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    },
+    {
+      "index": 32,
+      "ops": [
+        {
+          "op": 1,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 2,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 3,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 4,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 5,
+          "input": null,
+          "output": "add",
+          "feedbackIn": false,
+          "feedbackOut": false
+        },
+        {
+          "op": 6,
+          "input": null,
+          "output": "add",
+          "feedbackIn": true,
+          "feedbackOut": true
+        }
+      ],
+      "carriers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "hasFeedback": true
+    }
+  ],
+  "instrumentProfiles": {
+    "tube_bell": {
+      "operators": [
+        {
+          "op": 1,
+          "ratio": 0.995,
+          "gain": 0.7071,
+          "envelope": {
+            "attack": 0.005,
+            "decay": 4,
+            "sustain": 0,
+            "release": 0.04
+          }
+        },
+        {
+          "op": 2,
+          "ratio": 1.40693,
+          "gain": 0.2031,
+          "envelope": {
+            "attack": 0.005,
+            "decay": 4,
+            "sustain": 0,
+            "release": 0.04
+          }
+        },
+        {
+          "op": 3,
+          "ratio": 1.005,
+          "gain": 1,
+          "envelope": {
+            "attack": 0.001,
+            "decay": 2,
+            "sustain": 0,
+            "release": 0.04
+          }
+        },
+        {
+          "op": 4,
+          "ratio": 1.414,
+          "gain": 0.1436,
+          "envelope": {
+            "attack": 0.004,
+            "decay": 4,
+            "sustain": 0,
+            "release": 0.04
+          }
+        }
+      ]
+    },
+    "rhodey": {
+      "operators": [
+        {
+          "op": 1,
+          "ratio": 1,
+          "gain": 1,
+          "envelope": {
+            "attack": 0.001,
+            "decay": 1.5,
+            "sustain": 0,
+            "release": 0.04
+          }
+        },
+        {
+          "op": 2,
+          "ratio": 0.5,
+          "gain": 0.5359,
+          "envelope": {
+            "attack": 0.001,
+            "decay": 1.5,
+            "sustain": 0,
+            "release": 0.04
+          }
+        },
+        {
+          "op": 3,
+          "ratio": 1,
+          "gain": 1,
+          "envelope": {
+            "attack": 0.001,
+            "decay": 1,
+            "sustain": 0,
+            "release": 0.04
+          }
+        },
+        {
+          "op": 4,
+          "ratio": 15,
+          "gain": 0.1088,
+          "envelope": {
+            "attack": 0.001,
+            "decay": 0.25,
+            "sustain": 0,
+            "release": 0.04
+          }
+        }
+      ]
+    },
+    "wurley": {
+      "operators": [
+        {
+          "op": 1,
+          "ratio": 1,
+          "gain": 1,
+          "envelope": {
+            "attack": 0.001,
+            "decay": 1.5,
+            "sustain": 0,
+            "release": 0.04
+          }
+        },
+        {
+          "op": 2,
+          "ratio": 4,
+          "gain": 0.3078,
+          "envelope": {
+            "attack": 0.001,
+            "decay": 1.5,
+            "sustain": 0,
+            "release": 0.04
+          }
+        },
+        {
+          "op": 3,
+          "ratio": -510,
+          "gain": 0.6156,
+          "envelope": {
+            "attack": 0.001,
+            "decay": 0.25,
+            "sustain": 0,
+            "release": 0.04
+          }
+        },
+        {
+          "op": 4,
+          "ratio": -510,
+          "gain": 0.1166,
+          "envelope": {
+            "attack": 0.001,
+            "decay": 0.15,
+            "sustain": 0,
+            "release": 0.04
+          }
+        }
+      ]
+    },
+    "hard_bell": {
+      "operators": [
+        {
+          "op": 1,
+          "ratio": 1,
+          "gain": 0.6156,
+          "envelope": {
+            "attack": 0.001,
+            "decay": 0.001,
+            "sustain": 1,
+            "release": 0.01
+          }
+        },
+        {
+          "op": 2,
+          "ratio": 3.996,
+          "gain": 0.2031,
+          "envelope": {
+            "attack": 0.001,
+            "decay": 0.01,
+            "sustain": 1,
+            "release": 0.5
+          }
+        },
+        {
+          "op": 3,
+          "ratio": 3.0029999999999997,
+          "gain": 0.5743,
+          "envelope": {
+            "attack": 0.01,
+            "decay": 0.005,
+            "sustain": 1,
+            "release": 0.2
+          }
+        },
+        {
+          "op": 4,
+          "ratio": 0.501,
+          "gain": 0.1166,
+          "envelope": {
+            "attack": 0.03,
+            "decay": 0.01,
+            "sustain": 0.2,
+            "release": 0.2
+          }
+        }
+      ]
+    },
+    "bee_three": {
+      "operators": [
+        {
+          "op": 1,
+          "ratio": 0.999,
+          "gain": 0.7579,
+          "envelope": {
+            "attack": 0.005,
+            "decay": 0.003,
+            "sustain": 1,
+            "release": 0.01
+          }
+        },
+        {
+          "op": 2,
+          "ratio": 1.997,
+          "gain": 0.7579,
+          "envelope": {
+            "attack": 0.005,
+            "decay": 0.003,
+            "sustain": 1,
+            "release": 0.01
+          }
+        },
+        {
+          "op": 3,
+          "ratio": 3.006,
+          "gain": 1,
+          "envelope": {
+            "attack": 0.005,
+            "decay": 0.003,
+            "sustain": 1,
+            "release": 0.01
+          }
+        },
+        {
+          "op": 4,
+          "ratio": 6.009,
+          "gain": 0.7579,
+          "envelope": {
+            "attack": 0.005,
+            "decay": 0.001,
+            "sustain": 0.4,
+            "release": 0.03
+          }
+        }
+      ]
+    },
+    "fm_voices": {
+      "operators": [
+        {
+          "op": 1,
+          "ratio": 2,
+          "gain": 1,
+          "envelope": {
+            "attack": 0.05,
+            "decay": 0.05,
+            "sustain": 1,
+            "release": 0.05
+          }
+        },
+        {
+          "op": 2,
+          "ratio": 4,
+          "gain": 1,
+          "envelope": {
+            "attack": 0.05,
+            "decay": 0.05,
+            "sustain": 1,
+            "release": 0.05
+          }
+        },
+        {
+          "op": 3,
+          "ratio": 12,
+          "gain": 1,
+          "envelope": {
+            "attack": 0.05,
+            "decay": 0.05,
+            "sustain": 1,
+            "release": 0.05
+          }
+        },
+        {
+          "op": 4,
+          "ratio": 1,
+          "gain": 0.2679,
+          "envelope": {
+            "attack": 0.01,
+            "decay": 0.01,
+            "sustain": 1,
+            "release": 0.5
+          }
+        }
+      ]
+    },
+    "perc_flute": {
+      "operators": [
+        {
+          "op": 1,
+          "ratio": 1.5,
+          "gain": 1,
+          "envelope": {
+            "attack": 0.05,
+            "decay": 0.05,
+            "sustain": 0.7071,
+            "release": 0.05
+          }
+        },
+        {
+          "op": 2,
+          "ratio": 2.985,
+          "gain": 0.1436,
+          "envelope": {
+            "attack": 0.02,
+            "decay": 0.5,
+            "sustain": 0.5,
+            "release": 0.5
+          }
+        },
+        {
+          "op": 3,
+          "ratio": 3.00495,
+          "gain": 0.6598,
+          "envelope": {
+            "attack": 0.02,
+            "decay": 0.3,
+            "sustain": 0.25,
+            "release": 0.05
+          }
+        },
+        {
+          "op": 4,
+          "ratio": 5.982,
+          "gain": 0.3789,
+          "envelope": {
+            "attack": 0.02,
+            "decay": 0.05,
+            "sustain": 0.5,
+            "release": 0.01
+          }
+        }
+      ]
+    }
+  }
+}

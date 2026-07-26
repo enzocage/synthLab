@@ -1,0 +1,88 @@
+{
+  "source": "research/vendor/fundsp/src/{biquad.rs,prelude.rs} (Apache-2.0/MIT, Sami Perttu) + research/vendor/daisysp/Source/Filters/{ladder.h,svf.h,soap.h} (MIT, Electrosmith) + research/vendor/stk/src/BiQuad.cpp (STK) — Modellnamen, Ordnung und Parameterbereiche gesichtet; Koeffizientenberechnung in TS neu implementiert (RBJ-Cookbook-Standardformeln, kein Codeübernahme).",
+  "note": "Jedes Modell wird 1:1 als eigener Web-Audio-Filterknoten oder AudioWorklet-Prozessor implementiert. keytrackable = Cutoff kann sinnvoll an MIDI-Note gekoppelt werden.",
+  "models": [
+    {
+      "id": "svf_lowpass",
+      "name": "State-Variable Lowpass",
+      "order": 2,
+      "slopeDbOct": 12,
+      "params": { "cutoffHz": { "min": 20, "max": 18000, "default": 2000 }, "q": { "min": 0.5, "max": 20, "default": 0.7 } },
+      "keytrackable": true,
+      "modulationSafe": true,
+      "ambientUse": "Standard-Tiefpass für Pads; sauber modulierbar ohne Klick"
+    },
+    {
+      "id": "svf_highpass",
+      "name": "State-Variable Highpass",
+      "order": 2,
+      "slopeDbOct": 12,
+      "params": { "cutoffHz": { "min": 20, "max": 18000, "default": 200 }, "q": { "min": 0.5, "max": 20, "default": 0.7 } },
+      "keytrackable": true,
+      "modulationSafe": true,
+      "ambientUse": "Ausdünnen von Bassmasse in Texturschichten"
+    },
+    {
+      "id": "svf_bandpass",
+      "name": "State-Variable Bandpass",
+      "order": 2,
+      "slopeDbOct": 12,
+      "params": { "cutoffHz": { "min": 20, "max": 18000, "default": 800 }, "q": { "min": 0.5, "max": 30, "default": 4 } },
+      "keytrackable": true,
+      "modulationSafe": true,
+      "ambientUse": "Telefonie-/Fernfeld-Effekte, schmale Resonanzfenster"
+    },
+    {
+      "id": "svf_notch",
+      "name": "State-Variable Notch",
+      "order": 2,
+      "slopeDbOct": 12,
+      "params": { "cutoffHz": { "min": 20, "max": 18000, "default": 1000 }, "q": { "min": 0.5, "max": 20, "default": 2 } },
+      "keytrackable": false,
+      "modulationSafe": true,
+      "ambientUse": "gezieltes Ausdünnen einzelner Frequenzen in dichten Drones"
+    },
+    {
+      "id": "moog_ladder",
+      "name": "Moog-Ladder-Tiefpass (Huovilainen-Modell)",
+      "order": 4,
+      "slopeDbOct": 24,
+      "params": { "cutoffHz": { "min": 20, "max": 18000, "default": 1500 }, "resonance": { "min": 0, "max": 1.8, "default": 0.3, "note": ">1.0 = selbstoszillierend" } },
+      "keytrackable": true,
+      "modulationSafe": false,
+      "modulationNote": "Resonanz nahe Selbstoszillation braucht Parameter-Smoothing (Ramp statt Sprung), sonst Zipper-Klicks",
+      "ambientUse": "warme analoge Pads, singende Resonanz für Lead-artige Drones"
+    },
+    {
+      "id": "biquad_lowpass",
+      "name": "Biquad-Tiefpass (RBJ-Cookbook)",
+      "order": 2,
+      "slopeDbOct": 12,
+      "params": { "cutoffHz": { "min": 20, "max": 18000, "default": 3000 }, "q": { "min": 0.3, "max": 10, "default": 0.707 } },
+      "keytrackable": true,
+      "modulationSafe": true,
+      "ambientUse": "günstiger Post-Filter in der FX-Kette (Phase 4)"
+    },
+    {
+      "id": "comb_resonator",
+      "name": "Resonanter Kammfilter",
+      "order": 1,
+      "slopeDbOct": null,
+      "params": { "delayMs": { "min": 0.5, "max": 40, "default": 5 }, "feedback": { "min": 0, "max": 0.99, "default": 0.6 } },
+      "keytrackable": true,
+      "modulationSafe": false,
+      "modulationNote": "Delay-Zeit-Änderungen erzeugen Pitch-Glitches — nur mit Crossfade/Interpolation modulieren",
+      "ambientUse": "Kernbaustein modal-/string-Engine (Resonatorbank)"
+    },
+    {
+      "id": "one_pole_lowpass",
+      "name": "One-Pole Tiefpass",
+      "order": 1,
+      "slopeDbOct": 6,
+      "params": { "cutoffHz": { "min": 20, "max": 18000, "default": 8000 } },
+      "keytrackable": false,
+      "modulationSafe": true,
+      "ambientUse": "DC-Blocker-Partner, sanftes Dämpfungsfilter in Reverb-Feedback-Loops (siehe reverb-topologies.json fdn32.dampingFilterOrder)"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+# Referenzmaterial: grosse Fremd-Repos (gemischte Lizenzen, reines Lesematerial,
+# siehe research/LICENSES.md) gehoeren nicht in dieses Repository.
+research/vendor/
+research/clone.log
+
+# Separates, unangetastetes Cloudflare-vinext-Projekt mit eigenem .git
+ambient-lab/
+
+# Node / Build
+node_modules/
+dist/
+build/
+.wrangler/
+*.log
+
+# Editor/OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local

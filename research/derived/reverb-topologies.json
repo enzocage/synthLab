@@ -1,0 +1,56 @@
+{
+  "source": "research/vendor/fundsp/src/prelude.rs (Apache-2.0/MIT, Sami Perttu) — reverb_stereo()/reverb2_stereo() Konstanten; research/vendor/stk/src/{JCRev,NRev,FreeVerb}.h (STK) als Referenz für klassische Kammerfilter-Topologien.",
+  "note": "delaysSeconds sind die 32 unveränderten FDN-Delayzeiten aus fundsp (fuer 10m Raumgroesse). Fuer die eigene Reverb-Engine werden sie mit roomSize/10 skaliert (roomSize in Metern) und pro Kanal durch ein Daempfungsfilter geschickt.",
+  "fdn32": {
+    "channels": 32,
+    "baseRoomSizeMeters": 10.0,
+    "delaysSeconds": [
+      0.073904, 0.052918, 0.066238, 0.066387, 0.037783, 0.080073, 0.050961, 0.075900, 0.043646,
+      0.072095, 0.056194, 0.045961, 0.058934, 0.068016, 0.047529, 0.058156, 0.072972, 0.036084,
+      0.062715, 0.076377, 0.044339, 0.076725, 0.077884, 0.046126, 0.067741, 0.049800, 0.051709,
+      0.082923, 0.070121, 0.079315, 0.055039, 0.081859
+    ],
+    "dampingFilterOrder": 3,
+    "gainFormula": "a = 10^(-3 * roomSize/10 / time), Zielwert -60dB nach `time` Sekunden",
+    "params": { "roomSize": "5..30 m", "time": "1..60 s", "damping": "0..1 (HF-Absorption)" }
+  },
+  "topologies": [
+    {
+      "id": "fdn32",
+      "name": "32-Kanal Feedback-Delay-Network",
+      "description": "Dichteste, am wenigsten metallisch klingende Topologie; Standard-Hall für Pads und Drones.",
+      "cpuCost": "hoch",
+      "ambientUse": "endlose Räume, Freeze-fähig (Feedback auf 1.0 klemmen)"
+    },
+    {
+      "id": "allpass_chain",
+      "name": "Kaskadierte Allpass-Ketten (Schroeder/JCRev-artig)",
+      "description": "3-4 seriell verschaltete Allpassfilter + Kammfilterbank; günstiger, etwas 'kachelnder' Klang.",
+      "cpuCost": "niedrig",
+      "ambientUse": "leichte Sends, dichte Texturschichten, wo FDN zu teuer wäre"
+    },
+    {
+      "id": "freeverb",
+      "name": "Freeverb-Stil (8 Kammfilter parallel + 4 Allpass seriell)",
+      "description": "Klassische, sehr stabile und rechenarme Topologie (STK FreeVerb.h als Referenz).",
+      "cpuCost": "niedrig",
+      "ambientUse": "Standard-Send, gute Grundlage vor Pitch-Shift-Feedback (Shimmer)"
+    },
+    {
+      "id": "shimmer",
+      "name": "Shimmer (Reverb-Tail durch Pitch-Shifter zurück in die Delay-Line)",
+      "description": "FDN/Freeverb-Tail wird oktaviert (meist +12 oder +7 Halbtöne) und wieder eingespeist — Kernrezept für 'ätherische' Ambient-Räume aus Musikmaschine.md.",
+      "cpuCost": "hoch",
+      "ambientUse": "Glockenklänge, Pads, jeder 'himmlische' Sound"
+    },
+    {
+      "id": "freeze",
+      "name": "Freeze / Infinite Reverb",
+      "description": "Feedback-Gain der Delay-Line auf ~1.0 (numerisch geklemmt, kein Input-Durchlass mehr) — friert den aktuellen Hallzustand ein.",
+      "cpuCost": "wie Basis-Topologie",
+      "ambientUse": "Pads einfrieren, Drone aus einem Moment erzeugen",
+      "stabilityNote": "Feedback-Gain hart auf [0, 0.9999] begrenzen; niemals ungeklemmt auf 1.0 setzen (Musikmaschine.md: 'Wie bleibt Infinite Reverb numerisch stabil')"
+    }
+  ],
+  "seeAlso": "Filtermodelle (SVF/Ladder/Biquad/Comb) stehen in research/derived/filter-models.json"
+}
