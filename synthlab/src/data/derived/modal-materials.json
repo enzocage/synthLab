@@ -1,0 +1,321 @@
+{
+  "source": "research/vendor/stk/src/ModalBar.cpp (STK license, Perry R. Cook & Gary P. Scavone)",
+  "note": "modes[].radius ist der Resonanzpol-Radius pro Sample (0<r<1, naeher an 1 = laenger klingend). ratio ist relativ zur Grundfrequenz; fixedHz (aus negativen STK-Werten) beschreibt eine feste, nicht mit der Tonhoehe skalierende Resonanz (z.B. Anschlagsgeraeusch). Fuer die eigene modal-Engine werden radius-Werte auf eine sample-rate-unabhaengige Nachklingzeit (T60) umgerechnet: T60 = 3 * blockDuration / -log10(radius) je Modell zu reparametrisieren.",
+  "materials": [
+    {
+      "name": "Marimba",
+      "id": "marimba",
+      "modes": [
+        {
+          "ratio": 1,
+          "fixedHz": null,
+          "radius": 0.9996,
+          "gain": 0.04
+        },
+        {
+          "ratio": 3.99,
+          "fixedHz": null,
+          "radius": 0.9994,
+          "gain": 0.01
+        },
+        {
+          "ratio": 10.65,
+          "fixedHz": null,
+          "radius": 0.9994,
+          "gain": 0.01
+        },
+        {
+          "ratio": null,
+          "fixedHz": 2443,
+          "radius": 0.999,
+          "gain": 0.008
+        }
+      ],
+      "excitation": {
+        "stickHardness": 0.429688,
+        "strikePosition": 0.445312,
+        "directGain": 0.09375
+      }
+    },
+    {
+      "name": "Vibraphone",
+      "id": "vibraphone",
+      "modes": [
+        {
+          "ratio": 1,
+          "fixedHz": null,
+          "radius": 0.99995,
+          "gain": 0.025
+        },
+        {
+          "ratio": 2.01,
+          "fixedHz": null,
+          "radius": 0.99991,
+          "gain": 0.015
+        },
+        {
+          "ratio": 3.9,
+          "fixedHz": null,
+          "radius": 0.99992,
+          "gain": 0.015
+        },
+        {
+          "ratio": 14.37,
+          "fixedHz": null,
+          "radius": 0.9999,
+          "gain": 0.015
+        }
+      ],
+      "excitation": {
+        "stickHardness": 0.390625,
+        "strikePosition": 0.570312,
+        "directGain": 0.078125
+      }
+    },
+    {
+      "name": "Agogo",
+      "id": "agogo",
+      "modes": [
+        {
+          "ratio": 1,
+          "fixedHz": null,
+          "radius": 0.999,
+          "gain": 0.06
+        },
+        {
+          "ratio": 4.08,
+          "fixedHz": null,
+          "radius": 0.999,
+          "gain": 0.05
+        },
+        {
+          "ratio": 6.669,
+          "fixedHz": null,
+          "radius": 0.999,
+          "gain": 0.03
+        },
+        {
+          "ratio": null,
+          "fixedHz": 3725,
+          "radius": 0.999,
+          "gain": 0.02
+        }
+      ],
+      "excitation": {
+        "stickHardness": 0.609375,
+        "strikePosition": 0.359375,
+        "directGain": 0.140625
+      }
+    },
+    {
+      "name": "Wood1",
+      "id": "wood1",
+      "modes": [
+        {
+          "ratio": 1,
+          "fixedHz": null,
+          "radius": 0.996,
+          "gain": 0.04
+        },
+        {
+          "ratio": 2.777,
+          "fixedHz": null,
+          "radius": 0.994,
+          "gain": 0.01
+        },
+        {
+          "ratio": 7.378,
+          "fixedHz": null,
+          "radius": 0.994,
+          "gain": 0.01
+        },
+        {
+          "ratio": 15.377,
+          "fixedHz": null,
+          "radius": 0.99,
+          "gain": 0.008
+        }
+      ],
+      "excitation": {
+        "stickHardness": 0.460938,
+        "strikePosition": 0.375,
+        "directGain": 0.046875
+      }
+    },
+    {
+      "name": "Reso",
+      "id": "reso",
+      "modes": [
+        {
+          "ratio": 1,
+          "fixedHz": null,
+          "radius": 0.99996,
+          "gain": 0.02
+        },
+        {
+          "ratio": 2.777,
+          "fixedHz": null,
+          "radius": 0.99994,
+          "gain": 0.005
+        },
+        {
+          "ratio": 7.378,
+          "fixedHz": null,
+          "radius": 0.99994,
+          "gain": 0.005
+        },
+        {
+          "ratio": 15.377,
+          "fixedHz": null,
+          "radius": 0.9999,
+          "gain": 0.004
+        }
+      ],
+      "excitation": {
+        "stickHardness": 0.453125,
+        "strikePosition": 0.25,
+        "directGain": 0.101562
+      }
+    },
+    {
+      "name": "Wood2",
+      "id": "wood2",
+      "modes": [
+        {
+          "ratio": 1,
+          "fixedHz": null,
+          "radius": 0.996,
+          "gain": 0.04
+        },
+        {
+          "ratio": 1.777,
+          "fixedHz": null,
+          "radius": 0.994,
+          "gain": 0.01
+        },
+        {
+          "ratio": 2.378,
+          "fixedHz": null,
+          "radius": 0.994,
+          "gain": 0.01
+        },
+        {
+          "ratio": 3.377,
+          "fixedHz": null,
+          "radius": 0.99,
+          "gain": 0.008
+        }
+      ],
+      "excitation": {
+        "stickHardness": 0.3125,
+        "strikePosition": 0.445312,
+        "directGain": 0.109375
+      }
+    },
+    {
+      "name": "Beats",
+      "id": "beats",
+      "modes": [
+        {
+          "ratio": 1,
+          "fixedHz": null,
+          "radius": 0.9999,
+          "gain": 0.02
+        },
+        {
+          "ratio": 1.004,
+          "fixedHz": null,
+          "radius": 0.9999,
+          "gain": 0.005
+        },
+        {
+          "ratio": 1.013,
+          "fixedHz": null,
+          "radius": 0.9999,
+          "gain": 0.005
+        },
+        {
+          "ratio": 2.377,
+          "fixedHz": null,
+          "radius": 0.999,
+          "gain": 0.004
+        }
+      ],
+      "excitation": {
+        "stickHardness": 0.398438,
+        "strikePosition": 0.296875,
+        "directGain": 0.070312
+      }
+    },
+    {
+      "name": "2Fix",
+      "id": "2fix",
+      "modes": [
+        {
+          "ratio": 1,
+          "fixedHz": null,
+          "radius": 0.9996,
+          "gain": 0.04
+        },
+        {
+          "ratio": 4,
+          "fixedHz": null,
+          "radius": 0.999,
+          "gain": 0.01
+        },
+        {
+          "ratio": null,
+          "fixedHz": 1320,
+          "radius": 0.9994,
+          "gain": 0.01
+        },
+        {
+          "ratio": null,
+          "fixedHz": 3960,
+          "radius": 0.999,
+          "gain": 0.008
+        }
+      ],
+      "excitation": {
+        "stickHardness": 0.453125,
+        "strikePosition": 0.453125,
+        "directGain": 0.070312
+      }
+    },
+    {
+      "name": "Clump",
+      "id": "clump",
+      "modes": [
+        {
+          "ratio": 1,
+          "fixedHz": null,
+          "radius": 0.999,
+          "gain": 0.03
+        },
+        {
+          "ratio": 1.217,
+          "fixedHz": null,
+          "radius": 0.999,
+          "gain": 0.03
+        },
+        {
+          "ratio": 1.475,
+          "fixedHz": null,
+          "radius": 0.999,
+          "gain": 0.03
+        },
+        {
+          "ratio": 1.729,
+          "fixedHz": null,
+          "radius": 0.999,
+          "gain": 0.03
+        }
+      ],
+      "excitation": {
+        "stickHardness": 0.390625,
+        "strikePosition": 0.570312,
+        "directGain": 0.078125
+      }
+    }
+  ]
+}

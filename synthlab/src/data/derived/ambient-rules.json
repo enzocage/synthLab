@@ -1,0 +1,129 @@
+{
+  "source": "Destilliert aus 'Musikmaschine .md' §2 (Ambient-Wissensbasis) und §5 (Bewertungsagent). Als ausführbare Constraints formuliert für PresetLoader/ParamSmoother (Phase 2), Analyse-Kritiker (Phase 8) und Preset-Generatoren (Phase 5).",
+  "note": "Jede Regel hat eine machineCheck-Angabe: 'generator' = beim Erzeugen der Preset-Parameter erzwungen, 'runtime' = im Audio-Core erzwungen, 'analysis' = im Offline-Kritiker gemessen.",
+  "soundDesignRules": [
+    {
+      "id": "modulation_min_period",
+      "rule": "LFOs/Envelopes, die als 'Bewegung' klassifiziert sind, dürfen nicht schneller als 1 Zyklus / 2s laufen (drone/pad-Rollen).",
+      "machineCheck": "generator",
+      "params": { "minPeriodSeconds": 2 }
+    },
+    {
+      "id": "param_smoothing_required",
+      "rule": "Jede hörbare Parameteränderung (Cutoff, Resonanz nahe Selbstoszillation, Delay-Zeit, Pitch) läuft über eine Rampe, nie über einen Sprung.",
+      "machineCheck": "runtime",
+      "params": { "minRampMs": 15, "maxRampMs": 40 }
+    },
+    {
+      "id": "no_static_drone",
+      "rule": "Presets mit Rolle drone/pad müssen mindestens eine langsam laufende Modulationsquelle auf einen hörbaren Parameter (Filter, Pitch, Panorama oder Amplitude) besitzen.",
+      "machineCheck": "generator"
+    },
+    {
+      "id": "granular_click_free",
+      "rule": "Grain-Fenster überlappen mindestens 50% der Grain-Länge (Crossfade statt Hard-Cut).",
+      "machineCheck": "generator",
+      "params": { "minOverlapRatio": 0.5 }
+    },
+    {
+      "id": "harsh_highs_limit",
+      "rule": "Spektralenergie oberhalb 8kHz darf im Analyse-Kritiker nicht mehr als 15% der Gesamtenergie ausmachen, sonst Tag 'harsh'.",
+      "machineCheck": "analysis",
+      "params": { "thresholdHz": 8000, "maxRatio": 0.15 }
+    },
+    {
+      "id": "depth_without_mud",
+      "rule": "Bassenergie unterhalb 100Hz wird für Nicht-Bass/Nicht-Drone-Rollen gedämpft (Highpass ~60-80Hz), um 'Frequenzbrei' zu vermeiden.",
+      "machineCheck": "generator",
+      "params": { "highpassHz": 70 }
+    },
+    {
+      "id": "feedback_delay_stability",
+      "rule": "Delay-/Reverb-Feedback-Gain wird hart auf [0, 0.9999] geklemmt, insbesondere im Freeze-Modus.",
+      "machineCheck": "runtime",
+      "params": { "maxFeedbackGain": 0.9999 }
+    },
+    {
+      "id": "audio_rate_modulation_whitelist",
+      "rule": "Nur FM-Operator-Level, Wavefolder-Amount und Ringmod-Tiefe dürfen audio-rate moduliert werden; alle anderen Parameter laufen control-rate (max. Blockrate).",
+      "machineCheck": "generator"
+    },
+    {
+      "id": "spatial_distribution",
+      "rule": "Bei >=3 gleichzeitig hörbaren Layern erhält jede Rolle eine feste oder langsam wandernde Panorama-Position statt Center-Stapel.",
+      "machineCheck": "generator"
+    }
+  ],
+  "compositionRules": [
+    {
+      "id": "modal_harmony_preferred",
+      "rule": "Modale Skalen (dorisch, äolisch, phrygisch, lydisch) und Pentatonik statt funktionaler Dur/Moll-Kadenzen.",
+      "machineCheck": "generator"
+    },
+    {
+      "id": "open_voicings",
+      "rule": "Quart-/Quintschichtungen und offene Voicings statt dichter Terzstapel für pad/chord-Phrasen.",
+      "machineCheck": "generator"
+    },
+    {
+      "id": "silence_as_event",
+      "rule": "Pausenwahrscheinlichkeit ist ein Formparameter (Poisson-artige Dichte), nicht 0 — jede Phrasenrolle hat einen density-Parameter < 1.0.",
+      "machineCheck": "generator",
+      "params": { "maxDensity": 0.85 }
+    },
+    {
+      "id": "slow_voice_leading",
+      "rule": "Bei chord-Phrasen bewegt sich zwischen zwei Akkordwechseln höchstens 1-2 Stimmen um mehr als eine Sekunde.",
+      "machineCheck": "generator"
+    },
+    {
+      "id": "micro_timescales",
+      "rule": "Mikro- (Note), Meso- (Phrase, 4-16 Takte) und Makro-Zeitskala (Preset-Sitzung) sind unabhängig parametrisiert.",
+      "machineCheck": "generator"
+    }
+  ],
+  "productionRules": [
+    {
+      "id": "headroom",
+      "rule": "Master-Peak bleibt unter -1 dBFS (True-Peak-Näherung), kein Preset clippt bei Standardvelocity.",
+      "machineCheck": "analysis",
+      "params": { "maxPeakDb": -1.0 }
+    },
+    {
+      "id": "dc_offset",
+      "rule": "DC-Offset < 0.001 (linear) nach 2s Rendering.",
+      "machineCheck": "analysis",
+      "params": { "maxDcOffset": 0.001 }
+    },
+    {
+      "id": "click_free_render",
+      "rule": "Keine Sample-zu-Sample-Sprünge > 0.3 (linear) außerhalb intendierter Transienten (perc/pluck-Rollen ausgenommen).",
+      "machineCheck": "analysis",
+      "params": { "maxSampleDelta": 0.3 }
+    },
+    {
+      "id": "no_long_digital_silence",
+      "rule": "Presets mit Rolle != 'fx' dürfen nicht länger als 1.5s durchgehend unter -60dBFS liegen (außer intendiertes Silence-Preset).",
+      "machineCheck": "analysis",
+      "params": { "maxSilenceSeconds": 1.5, "silenceThresholdDb": -60 }
+    },
+    {
+      "id": "stereo_correlation_bounds",
+      "rule": "Stereo-Korrelation zwischen -0.2 und 0.95 — weder mono-phasenidentisch noch phasenkritisch invertiert.",
+      "machineCheck": "analysis",
+      "params": { "min": -0.2, "max": 0.95 }
+    },
+    {
+      "id": "spectral_development_required",
+      "rule": "Presets mit Rolle drone/pad zeigen über 4s Rendering eine messbare Spectral-Centroid-Bewegung (keine reine statische Fläche) — sonst Tag 'static'.",
+      "machineCheck": "analysis",
+      "params": { "minCentroidDriftHz": 30 }
+    }
+  ],
+  "negativeRules": [
+    "ungeprüften LLM-/Zufallscode direkt im Audiothread ausführen",
+    "Zufallsstreuung ohne feste Seeds einsetzen (jedes Preset muss reproduzierbar sein)",
+    "alle Parameter gleich stark mutieren (klangprägende Parameter brauchen engere Mutationsgrenzen als kosmetische)",
+    "Presets ohne Herkunfts-/Lizenzfeld (provenance) generieren"
+  ]
+}

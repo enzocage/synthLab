@@ -2,18 +2,23 @@ import { useRef, useState } from "react";
 import { AudioEngine } from "./audio/core/AudioEngine";
 import { PresetLoader } from "./audio/core/PresetLoader";
 import { Meters } from "./audio/core/Meters";
-import { testToneEngine, testToneDefaults } from "./audio/engines/testTone";
+import { ENGINES } from "./audio/engines/registry";
+import { defaultParamValues } from "./audio/core/types";
 import "./App.css";
 
-// Phase-2-Smoke-Test: verifiziert den Audio-Core (klickfreier Preset-Hot-Swap,
-// Voice-Manager, Meter) manuell im Browser. Die 13 echten Engines und die
-// Testsuite-UI folgen in Phase 3/7.
+// Phase-3-Smoke-Test: laesst jede der 13 Engines mit ihren Default-Parametern
+// anspielen, um Verkabelung/Klick-/NaN-Freiheit manuell zu verifizieren. Die
+// vollwertige Testsuite-UI (Makros, Variationsraster, Tastatur-Workflow) folgt
+// in Phase 7.
 function App() {
   const loaderRef = useRef<PresetLoader | null>(null);
   const metersRef = useRef<Meters | null>(null);
+  const heldNoteRef = useRef<number | null>(null);
+  const [engineIdx, setEngineIdx] = useState(0);
   const [voices, setVoices] = useState(0);
   const [meter, setMeter] = useState({ peakL: 0, peakR: 0, rms: 0, correlation: 1 });
-  const [presetFreq, setPresetFreq] = useState(220);
+
+  const engine = ENGINES[engineIdx];
 
   async function ensureAudio() {
     await AudioEngine.resume();
@@ -28,41 +33,72 @@ function App() {
     }
   }
 
-  async function loadPreset(freq: number) {
+  async function loadEngine(idx: number) {
     await ensureAudio();
-    const params = { ...testToneDefaults(), freq };
-    const vm = loaderRef.current!.load(testToneEngine, params, 8);
-    setPresetFreq(freq);
+    stopHeldNote();
+    setEngineIdx(idx);
+    const params = defaultParamValues(ENGINES[idx].params);
+    const vm = loaderRef.current!.load(ENGINES[idx], params, 8);
     setVoices(vm.voiceCount);
   }
 
-  async function playNote() {
+  function stopHeldNote() {
+    const vm = loaderRef.current?.activeVoiceManager;
+    if (vm && heldNoteRef.current !== null) {
+      vm.noteOff(heldNoteRef.current, AudioEngine.currentTime);
+      heldNoteRef.current = null;
+    }
+  }
+
+  async function noteDown() {
     await ensureAudio();
-    if (!loaderRef.current?.activeVoiceManager) await loadPreset(presetFreq);
+    if (!loaderRef.current?.activeVoiceManager) await loadEngine(engineIdx);
     const vm = loaderRef.current!.activeVoiceManager!;
     const now = AudioEngine.currentTime;
-    const note = 69;
-    vm.noteOn(note, 0.7, now);
+    const note = 57; // A3 - guenstig fuer bass/drone-Rollen
+    vm.noteOn(note, 0.8, now);
+    heldNoteRef.current = note;
     setVoices(vm.voiceCount);
-    setTimeout(() => vm.noteOff(note, AudioEngine.currentTime), 1200);
+  }
+
+  function noteUp() {
+    stopHeldNote();
+  }
+
+  function panic() {
+    loaderRef.current?.activeVoiceManager?.panic(AudioEngine.currentTime);
+    heldNoteRef.current = null;
+    AudioEngine.panic();
+    setVoices(0);
   }
 
   return (
-    <section id="center" style={{ maxWidth: 640, margin: "0 auto", padding: 24 }}>
-      <h1>SynthLab — Audio-Core Smoke-Test (Phase 2)</h1>
+    <section id="center" style={{ maxWidth: 720, margin: "0 auto", padding: 24 }}>
+      <h1>SynthLab — Engine-Smoke-Test (Phase 3)</h1>
       <p>
-        Verifiziert klickfreien Preset-Hot-Swap: <code>Ton spielen</code> halten, dann
-        zwischen den Presets wechseln und hören, ob der Übergang nahtlos ist.
+        Alle 13 Engines mit Default-Parametern. <code>Note halten</code> gedrückt lassen
+        (Maustaste), zwischen Engines wechseln während die Note klingt.
       </p>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+        {ENGINES.map((e, i) => (
+          <button
+            key={e.id}
+            onClick={() => loadEngine(i)}
+            style={{ fontWeight: i === engineIdx ? 700 : 400 }}
+          >
+            {i + 1}. {e.name}
+          </button>
+        ))}
+      </div>
       <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
-        <button onClick={playNote}>Ton spielen (1.2s)</button>
-        <button onClick={() => loadPreset(220)}>Preset A (220Hz)</button>
-        <button onClick={() => loadPreset(330)}>Preset B (330Hz)</button>
-        <button onClick={() => loadPreset(110)}>Preset C (110Hz)</button>
-        <button onClick={() => AudioEngine.panic()}>Panic</button>
+        <button onMouseDown={noteDown} onMouseUp={noteUp} onMouseLeave={noteUp}>
+          Note halten
+        </button>
+        <button onClick={panic}>Panic</button>
       </div>
       <div style={{ fontFamily: "monospace", fontSize: 14, lineHeight: 1.8 }}>
-        <div>aktives Preset: {presetFreq} Hz</div>
+        <div>aktive Engine: {engine.name} ({engine.id})</div>
+        <div>Parameter: {engine.params.length}</div>
         <div>aktive Voices: {voices}</div>
         <div>
           Peak L/R: {meter.peakL.toFixed(3)} / {meter.peakR.toFixed(3)}

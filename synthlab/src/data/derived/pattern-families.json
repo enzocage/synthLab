@@ -1,0 +1,182 @@
+{
+  "source": "research/vendor/isobar/isobar/pattern/*.py (MIT, Daniel John Jones) — Klassennamen und Docstrings gesichtet, hier als eigene, kurze Paraphrase mit Datei:Zeile-Verweis; kein Quellcode übernommen.",
+  "note": "Dient als Bauplan für src/midi/phrase-generators.ts. Jede Familie wird in TypeScript neu implementiert (kein isobar-Code, kein Python-Runtime), das Parametermodell ist aber bewusst kompatibel gehalten.",
+  "families": [
+    {
+      "id": "sequence",
+      "isobarRef": "PSequence (pattern/sequence.py:19)",
+      "kind": "deterministic",
+      "description": "Wiederholt eine feste Liste von Werten zyklisch.",
+      "params": { "values": "array" },
+      "roles": ["melody", "bass", "chord"]
+    },
+    {
+      "id": "series",
+      "isobarRef": "PSeries (pattern/sequence.py:85)",
+      "kind": "deterministic",
+      "description": "Arithmetische Folge ab start mit fester Schrittweite.",
+      "params": { "start": "number", "step": "number" },
+      "roles": ["fx", "melody"]
+    },
+    {
+      "id": "geometric",
+      "isobarRef": "PGeom (pattern/sequence.py:212)",
+      "kind": "deterministic",
+      "description": "Geometrische Folge — gut für exponentielle Sweeps (Filter, Pitch).",
+      "params": { "start": "number", "ratio": "number" },
+      "roles": ["fx"]
+    },
+    {
+      "id": "ping_pong",
+      "isobarRef": "PPingPong (pattern/sequence.py:370)",
+      "kind": "deterministic",
+      "description": "Spiegelt eine Sequenz vorwärts/rückwärts — Basis für Arpeggios ohne harten Neustart.",
+      "params": { "count": "number" },
+      "roles": ["arp", "melody"]
+    },
+    {
+      "id": "creep",
+      "isobarRef": "PCreep (pattern/sequence.py:408)",
+      "kind": "deterministic",
+      "description": "Loopt ein Segment fester Länge und rückt nach n Wiederholungen ein Stück weiter — erzeugt langsam wandernde Wiederholung ohne exakte Kopie.",
+      "params": { "length": "number", "creep": "number", "repeats": "number" },
+      "roles": ["arp", "melody", "rhythm"]
+    },
+    {
+      "id": "euclidean",
+      "isobarRef": "PEuclidean (pattern/sequence.py:889)",
+      "kind": "deterministic",
+      "description": "Euklidischer Rhythmus: verteilt k Ereignisse möglichst gleichmäßig über n Schritte.",
+      "params": { "steps": "number", "hits": "number", "rotation": "number" },
+      "roles": ["rhythm", "arp", "bell"]
+    },
+    {
+      "id": "arpeggiator",
+      "isobarRef": "PArpeggiator (pattern/sequence.py:744)",
+      "kind": "stochastic",
+      "description": "Zyklisches Auf/Ab/Zufalls-Arpeggio über eine Akkord- oder Skalenliste.",
+      "params": { "mode": "up|down|updown|random", "octaves": "number" },
+      "roles": ["arp"]
+    },
+    {
+      "id": "white_noise",
+      "isobarRef": "PWhite (pattern/chance.py:51)",
+      "kind": "stochastic",
+      "description": "Gleichverteilter Zufallswert zwischen min und max, jeder Zug unabhängig.",
+      "params": { "min": "number", "max": "number" },
+      "roles": ["fx", "rhythm"]
+    },
+    {
+      "id": "brownian",
+      "isobarRef": "PBrown (pattern/chance.py:96)",
+      "kind": "stochastic",
+      "description": "Random Walk mit kontrollierter Schrittweite — Kernbaustein für organische, langsame Modulation (Panorama, Filter, Tonhöhe, Dichte).",
+      "params": { "step": "number", "min": "number", "max": "number", "initial": "number" },
+      "roles": ["drone", "pad", "fx"]
+    },
+    {
+      "id": "random_walk_list",
+      "isobarRef": "PRandomWalk (pattern/chance.py:188)",
+      "kind": "stochastic",
+      "description": "Random Walk über eine Werteliste (z. B. Skalenstufen) statt über einen Zahlenraum.",
+      "params": { "values": "array", "minStep": "number", "maxStep": "number" },
+      "roles": ["melody", "chord"]
+    },
+    {
+      "id": "weighted_choice",
+      "isobarRef": "PChoice (pattern/chance.py:236)",
+      "kind": "stochastic",
+      "description": "Zufällige Auswahl aus einer Liste mit optionalen Gewichten — Basis für Dichte-/Rollenverteilung.",
+      "params": { "values": "array", "weights": "array?" },
+      "roles": ["melody", "fx", "pluck"]
+    },
+    {
+      "id": "coin_toss",
+      "isobarRef": "PCoin (pattern/chance.py:145)",
+      "kind": "stochastic",
+      "description": "Boolescher Münzwurf mit einstellbarer Wahrscheinlichkeit — steuert z. B. ob ein Schritt überhaupt klingt (Poisson-artige Dichte).",
+      "params": { "probability": "number" },
+      "roles": ["pluck", "bell", "fx"]
+    },
+    {
+      "id": "skip",
+      "isobarRef": "PSkip (pattern/chance.py:396)",
+      "kind": "stochastic",
+      "description": "Lässt Ereignisse mit Wahrscheinlichkeit (1-play) aus — direkte Umsetzung von 'Stille als musikalisches Ereignis'.",
+      "params": { "play": "number", "regular": "boolean" },
+      "roles": ["drone", "pad", "melody"]
+    },
+    {
+      "id": "flip_flop",
+      "isobarRef": "PFlipFlop (pattern/chance.py:426)",
+      "kind": "stochastic",
+      "description": "Kippt ein Bit mit gegebener Wahrscheinlichkeit — für sporadische binäre Zustände (z. B. Layer an/aus).",
+      "params": { "probabilityToTrue": "number", "probabilityToFalse": "number" },
+      "roles": ["fx", "rhythm"]
+    },
+    {
+      "id": "random_exponential",
+      "isobarRef": "PRandomExponential (pattern/chance.py:502)",
+      "kind": "stochastic",
+      "description": "Gleichverteilt auf exponentieller Kurve — gut für Zeit-/Frequenzparameter, die sich natürlicher auf einer Log-Skala verteilen.",
+      "params": { "min": "number", "max": "number" },
+      "roles": ["fx", "drone"]
+    },
+    {
+      "id": "random_impulse_sequence",
+      "isobarRef": "PRandomImpulseSequence (pattern/chance.py:537)",
+      "kind": "stochastic",
+      "description": "Zufällige Impulsfolge mit gegebener Trefferwahrscheinlichkeit pro Schritt — seltene Perkussions-/Glockenereignisse.",
+      "params": { "probability": "number" },
+      "roles": ["bell", "rhythm", "fx"]
+    },
+    {
+      "id": "perlin",
+      "isobarRef": "PPerlin (pattern/chance.py:627)",
+      "kind": "stochastic",
+      "description": "1D-Perlin-/Gradientenrauschen mit Oktaven — glattere Alternative zu Brownian Motion für Makro-Modulation.",
+      "params": { "octaves": "number", "persistence": "number" },
+      "roles": ["drone", "pad"]
+    },
+    {
+      "id": "markov",
+      "isobarRef": "PMarkov (pattern/markov.py:8)",
+      "kind": "stochastic",
+      "description": "Markov-Kette erster Ordnung — trainiert auf einer Beispielsequenz, erzeugt stilistisch ähnliche neue Folgen für harmonische Felder.",
+      "params": { "transitionTable": "object" },
+      "roles": ["chord", "melody"]
+    },
+    {
+      "id": "lsystem",
+      "isobarRef": "PLSystem (pattern/lsystem.py:54)",
+      "kind": "grammar",
+      "description": "Lindenmayer-System (Pflanzenwachstums-Grammatik) — für langfristige, sich selbstähnlich entfaltende Formstrukturen über ein ganzes Stück.",
+      "params": { "axiom": "string", "rules": "object", "generations": "number" },
+      "roles": ["stress", "chord"]
+    },
+    {
+      "id": "fade_notewise",
+      "isobarRef": "PFadeNotewise (pattern/fade.py:31)",
+      "kind": "envelope",
+      "description": "Blendet ein Pattern ereignisweise ein/aus statt über Lautstärke — Noten werden nach und nach hinzugefügt/entfernt.",
+      "params": { "direction": "in|out", "length": "number" },
+      "roles": ["drone", "pad", "chord"]
+    },
+    {
+      "id": "wsine",
+      "isobarRef": "PWSine (pattern/warp.py:51)",
+      "kind": "warp",
+      "description": "Sinusförmige Zeit-Verzerrung (Tempo-Warp) mit Periode und Amplitude — für atmendes, nie ganz stabiles Timing.",
+      "params": { "length": "number", "amp": "number" },
+      "roles": ["drone", "pad", "rhythm"]
+    },
+    {
+      "id": "no_repeats",
+      "isobarRef": "PNoRepeats (pattern/sequence.py:669)",
+      "kind": "filter",
+      "description": "Überspringt unmittelbar wiederholte Werte — verhindert zufällig doppelt getriggerte Identik-Noten.",
+      "params": {},
+      "roles": ["melody", "arp"]
+    }
+  ]
+}
