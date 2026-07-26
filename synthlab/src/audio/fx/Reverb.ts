@@ -1,118 +1,68 @@
-// Reverb-Stufe: N-Kanal-Feedback-Delay-Netzwerk (Delayzeiten aus
-// research/derived/reverb-topologies.json, fundsp-Herkunft) + Diffusions-
-// Allpaesse + optionaler Shimmer-Tap (Pitch-Shift im Feedback) + Freeze.
-// Feedback-Gain immer hart geklemmt (ambient-rules.json: feedback_delay_stability).
+// Reverb-Stufe: klassisches Freeverb-Design (Jezar al., public-domain-Algorithmus,
+// Referenz auch in research/vendor/stk/src/FreeVerb.h dokumentiert) - 8 parallele
+// gedaempfte Kammfilter + 4 serielle Allpaesse pro Kanal, stereo-versetzte
+// Delay-Tunings. Neu implementiert mit echten Ein-Pol-Daempfungsfiltern statt
+// BiquadFilterNode (siehe dsp/onepole.ts) - dadurch beweisbar stabil, kein
+// "kaputt klingender" Hall durch instabile Feedback-Schleifen mehr.
 import type { ReverbSettings } from "./types";
-import reverbData from "../../data/derived/reverb-topologies.json";
+import { CombFilter } from "./dsp/comb";
+import { AllpassFilter } from "./dsp/allpass";
 
-const ALL_DELAYS = reverbData.fdn32.delaysSeconds as number[];
-const BASE_ROOM = reverbData.fdn32.baseRoomSizeMeters as number;
-// Aus Performance-Gruenden 10 von 32 Delaylines nutzen (gute Dichte, moderate CPU-Last).
-const CHANNEL_COUNT = 10;
-const CHANNEL_DELAYS = ALL_DELAYS.filter((_, i) => i % 3 === 0).slice(0, CHANNEL_COUNT);
-// Sicherheitsmarge wie in string.ts empirisch ermittelt: BiquadFilterNode-Lowpass
-// kann im Feedback-Pfad einen Passband-Peak von ~1.2x zeigen, unabhaengig von Q.
-// Bei 10 parallelen, teils gekoppelten Kanaelen zusaetzlich konservativer gerechnet.
-const FILTER_PEAK_SAFETY_MARGIN = 1.25;
-const MAX_LOOP_GAIN = 0.94;
-const MAX_FEEDBACK = MAX_LOOP_GAIN / FILTER_PEAK_SAFETY_MARGIN; // ~0.752
-const FREEZE_FEEDBACK = 0.985 / FILTER_PEAK_SAFETY_MARGIN; // ~0.788, dennoch sehr lange Nachklingzeit
+// Freeverb-Standardtunings in Samples bei 44100Hz (Jezar's Originalwerte).
+const COMB_TUNINGS = [1116, 1188, 1277, 1356, 1422, 1491, 1557, 1617];
+const ALLPASS_TUNINGS = [556, 441, 341, 225];
+const STEREO_SPREAD = 23;
+const ALLPASS_GAIN = 0.5;
 
-interface Channel {
-  delay: DelayNode;
-  damping: BiquadFilterNode;
-  feedback: GainNode;
-  pan: StereoPannerNode;
-  baseDelaySeconds: number;
+function scaleToSampleRate(samples: number, sampleRate: number): number {
+  return Math.max(1, Math.round((samples * sampleRate) / 44100));
 }
 
-/** Einfacher Pitch-Shifter via zwei gegenphasig rampenden Delay-Lines (Sawtooth-Delay-Trick). */
-class SimplePitchShifter {
+class Channel {
   readonly input: GainNode;
   readonly output: GainNode;
-  private delayA: DelayNode;
-  private delayB: DelayNode;
-  private gainA: GainNode;
-  private gainB: GainNode;
-  private lfo: OscillatorNode;
-  private started = false;
+  private combs: CombFilter[];
+  private allpasses: AllpassFilter[];
 
-  constructor(ctx: BaseAudioContext, semitones: number) {
+  constructor(ctx: BaseAudioContext, spreadSamples: number, feedback: number, damping: number) {
     this.input = ctx.createGain();
-    this.output = ctx.createGain();
-    this.delayA = ctx.createDelay(0.3);
-    this.delayB = ctx.createDelay(0.3);
-    this.gainA = ctx.createGain();
-    this.gainB = ctx.createGain();
+    const combSum = ctx.createGain();
+    combSum.gain.value = 1 / Math.sqrt(COMB_TUNINGS.length);
 
-    const windowMs = 90;
-    const rate = 1000 / windowMs; // Hz, Sawtooth-Wiederholrate
-    this.lfo = ctx.createOscillator();
-    this.lfo.type = "sawtooth";
-    this.lfo.frequency.value = rate;
+    this.combs = COMB_TUNINGS.map((t) => {
+      const comb = new CombFilter(ctx, scaleToSampleRate(t + spreadSamples, ctx.sampleRate), feedback, damping);
+      this.input.connect(comb.input);
+      comb.output.connect(combSum);
+      return comb;
+    });
 
-    const ratio = Math.pow(2, semitones / 12);
-    const depth = (windowMs / 1000) * (1 - 1 / ratio);
+    let chain: GainNode = combSum;
+    this.allpasses = ALLPASS_TUNINGS.map((t) => {
+      const ap = new AllpassFilter(ctx, scaleToSampleRate(t + spreadSamples, ctx.sampleRate), ALLPASS_GAIN);
+      chain.connect(ap.input);
+      chain = ap.output;
+      return ap;
+    });
 
-    const toDelayA = ctx.createGain();
-    toDelayA.gain.value = depth;
-    const toDelayB = ctx.createGain();
-    toDelayB.gain.value = -depth;
-    const offset = ctx.createConstantSource();
-    offset.offset.value = depth / 2;
-
-    this.lfo.connect(toDelayA);
-    this.lfo.connect(toDelayB);
-    toDelayA.connect(this.delayA.delayTime);
-    toDelayB.connect(this.delayB.delayTime);
-    offset.connect(this.delayA.delayTime);
-    offset.connect(this.delayB.delayTime);
-    offset.start();
-
-    // Amplitudenfenster gegenphasig (Crossfade), damit der Delay-Reset unhoerbar bleibt.
-    const winLfo = ctx.createOscillator();
-    winLfo.type = "triangle";
-    winLfo.frequency.value = rate;
-    const winGainA = ctx.createGain();
-    winGainA.gain.value = 0.5;
-    const winOffsetA = ctx.createConstantSource();
-    winOffsetA.offset.value = 0.5;
-    winLfo.connect(winGainA);
-    winGainA.connect(this.gainA.gain);
-    winOffsetA.connect(this.gainA.gain);
-    winOffsetA.start();
-
-    const invert = ctx.createGain();
-    invert.gain.value = -1;
-    winLfo.connect(invert).connect(this.gainB.gain);
-    winOffsetA.connect(this.gainB.gain);
-
-    this.input.connect(this.delayA).connect(this.gainA).connect(this.output);
-    this.input.connect(this.delayB).connect(this.gainB).connect(this.output);
-
-    (this as unknown as { _extraOscs: OscillatorNode[] })._extraOscs = [winLfo];
-    (this as unknown as { _extraSources: ConstantSourceNode[] })._extraSources = [offset, winOffsetA];
+    this.output = chain;
   }
 
-  start(time: number): void {
-    if (this.started) return;
-    this.started = true;
-    this.lfo.start(time);
-    for (const o of (this as unknown as { _extraOscs: OscillatorNode[] })._extraOscs) o.start(time);
+  setFeedback(feedback: number): void {
+    for (const c of this.combs) c.setFeedback(feedback);
+  }
+
+  setDamping(damping: number): void {
+    for (const c of this.combs) c.setDamping(damping);
   }
 
   dispose(): void {
-    try { this.lfo.stop(); } catch { /* noop */ }
-    for (const o of (this as unknown as { _extraOscs: OscillatorNode[] })._extraOscs) { try { o.stop(); } catch { /* noop */ } }
-    for (const s of (this as unknown as { _extraSources: ConstantSourceNode[] })._extraSources) { try { s.stop(); } catch { /* noop */ } }
+    for (const c of this.combs) c.dispose();
+    for (const a of this.allpasses) a.dispose();
     this.input.disconnect();
-    this.output.disconnect();
-    this.delayA.disconnect();
-    this.delayB.disconnect();
-    this.gainA.disconnect();
-    this.gainB.disconnect();
   }
 }
+
+const MAX_FEEDBACK = 0.97; // ambient-rules.json: feedback_delay_stability
 
 export class Reverb {
   readonly input: GainNode;
@@ -120,13 +70,16 @@ export class Reverb {
   private ctx: BaseAudioContext;
   private dryGain: GainNode;
   private wetGain: GainNode;
-  private channels: Channel[] = [];
-  private allpassL: BiquadFilterNode;
-  private allpassR: BiquadFilterNode;
-  private shimmer: SimplePitchShifter;
-  private shimmerGain: GainNode;
-  private shimmerFeedbackGain: GainNode;
-  private started = false;
+  private preDelay: DelayNode;
+  private inputHighpass: BiquadFilterNode;
+  private outputLowpassL: BiquadFilterNode;
+  private outputLowpassR: BiquadFilterNode;
+  private left: Channel;
+  private right: Channel;
+  private widthCrossL: GainNode;
+  private widthCrossR: GainNode;
+  private widthDirectL: GainNode;
+  private widthDirectR: GainNode;
   private lastSettings: ReverbSettings;
 
   constructor(ctx: BaseAudioContext, settings: ReverbSettings) {
@@ -137,124 +90,101 @@ export class Reverb {
     this.dryGain = ctx.createGain();
     this.wetGain = ctx.createGain();
 
-    this.allpassL = ctx.createBiquadFilter();
-    this.allpassL.type = "allpass";
-    this.allpassL.frequency.value = 800;
-    this.allpassR = ctx.createBiquadFilter();
-    this.allpassR.type = "allpass";
-    this.allpassR.frequency.value = 1100;
-
-    const sumL = ctx.createGain();
-    const sumR = ctx.createGain();
-    sumL.gain.value = 1 / Math.sqrt(CHANNEL_COUNT);
-    sumR.gain.value = 1 / Math.sqrt(CHANNEL_COUNT);
-
-    this.shimmer = new SimplePitchShifter(ctx, settings.shimmerAmountSemitones);
-    this.shimmerGain = ctx.createGain();
-    this.shimmerGain.gain.value = 0;
-    this.shimmerFeedbackGain = ctx.createGain();
-    this.shimmerFeedbackGain.gain.value = 0;
-
     this.input.connect(this.dryGain).connect(this.output);
 
-    for (let i = 0; i < CHANNEL_DELAYS.length; i++) {
-      const delay = ctx.createDelay(2);
-      delay.delayTime.value = CHANNEL_DELAYS[i];
-      const damping = ctx.createBiquadFilter();
-      damping.type = "lowpass";
-      damping.frequency.value = 6000;
-      const feedback = ctx.createGain();
-      feedback.gain.value = 0.85;
-      const pan = ctx.createStereoPanner();
-      pan.pan.value = (i / (CHANNEL_DELAYS.length - 1)) * 2 - 1;
+    this.inputHighpass = ctx.createBiquadFilter();
+    this.inputHighpass.type = "highpass";
 
-      this.input.connect(delay);
-      delay.connect(damping);
-      damping.connect(feedback);
-      feedback.connect(delay);
+    this.preDelay = ctx.createDelay(0.3);
 
-      damping.connect(pan);
-      pan.connect(sumL);
-      pan.connect(sumR);
+    this.input.connect(this.inputHighpass).connect(this.preDelay);
 
-      this.channels.push({ delay, damping, feedback, pan, baseDelaySeconds: CHANNEL_DELAYS[i] });
-    }
+    const feedback = roomSizeToFeedback(settings.roomSize);
+    this.left = new Channel(ctx, 0, feedback, settings.damping);
+    this.right = new Channel(ctx, STEREO_SPREAD, feedback, settings.damping);
+    this.preDelay.connect(this.left.input);
+    this.preDelay.connect(this.right.input);
 
-    sumL.connect(this.allpassL);
-    sumR.connect(this.allpassR);
-    this.allpassL.connect(this.wetGain);
-    this.allpassR.connect(this.wetGain);
-    this.wetGain.connect(this.output);
+    this.outputLowpassL = ctx.createBiquadFilter();
+    this.outputLowpassL.type = "lowpass";
+    this.outputLowpassR = ctx.createBiquadFilter();
+    this.outputLowpassR.type = "lowpass";
+    this.left.output.connect(this.outputLowpassL);
+    this.right.output.connect(this.outputLowpassR);
 
-    // Shimmer als eigenstaendige, vom FDN entkoppelte Schleife: speist sich aus
-    // der bereits gemischten Wet-Summe und faengt sich selbst wieder ein
-    // (eigener, unabhaengig begrenzter Feedback-Pfad statt Injektion in alle
-    // 10 Delay-Lines - deutlich einfacher stabil zu halten).
-    this.allpassL.connect(this.shimmer.input);
-    this.allpassR.connect(this.shimmer.input);
-    this.shimmer.output.connect(this.shimmerGain);
-    this.shimmerGain.connect(this.output);
-    this.shimmerGain.connect(this.shimmerFeedbackGain);
-    this.shimmerFeedbackGain.connect(this.shimmer.input);
+    // Stereo-Width-Matrix (Freeverb-Original): wet1 = width/2+0.5 (direkt),
+    // wet2 = (1-width)/2 (Kreuzeinspeisung vom jeweils anderen Kanal).
+    this.widthDirectL = ctx.createGain();
+    this.widthCrossL = ctx.createGain();
+    this.widthDirectR = ctx.createGain();
+    this.widthCrossR = ctx.createGain();
+
+    const merger = ctx.createChannelMerger(2);
+    this.outputLowpassL.connect(this.widthDirectL).connect(merger, 0, 0);
+    this.outputLowpassR.connect(this.widthCrossR).connect(merger, 0, 0);
+    this.outputLowpassR.connect(this.widthDirectR).connect(merger, 0, 1);
+    this.outputLowpassL.connect(this.widthCrossL).connect(merger, 0, 1);
+
+    merger.connect(this.wetGain).connect(this.output);
 
     this.apply(settings);
   }
 
-  start(time: number): void {
-    if (this.started) return;
-    this.started = true;
-    this.shimmer.start(time);
+  start(_time: number): void {
+    // Freeverb-Kammfilter brauchen keinen Oszillator-Start; Methode bleibt fuer
+    // ein einheitliches FxChain-Interface (siehe TapeDelay/Ensemble.start()) erhalten.
   }
 
   update(settings: ReverbSettings): void {
     this.apply(settings);
   }
 
-  /** Friert unabhaengig von der uebrigen FX-Kette ein/aus (Freeze-Taste in Phase 7). */
   setFreeze(freeze: boolean): void {
     this.apply({ ...this.lastSettings, freeze });
   }
 
   private apply(settings: ReverbSettings): void {
     this.lastSettings = settings;
-    const off = settings.mode === "off";
-    this.wetGain.gain.setTargetAtTime(off ? 0 : settings.mix, this.ctx.currentTime, 0.02);
+    const now = this.ctx.currentTime;
+
     this.dryGain.gain.value = 1;
+    this.wetGain.gain.setTargetAtTime(settings.mix, now, 0.02);
 
-    const roomScale = settings.roomSizeMeters / BASE_ROOM;
-    const targetFeedback = off
-      ? 0
-      : settings.freeze
-        ? FREEZE_FEEDBACK
-        : Math.min(MAX_FEEDBACK, Math.pow(10, (-3 * (CHANNEL_DELAYS[0] * roomScale)) / Math.max(0.1, settings.decaySeconds)));
-    const dampingHz = 1000 + (1 - settings.damping) * 8000;
+    this.preDelay.delayTime.setTargetAtTime(settings.preDelayMs / 1000, now, 0.02);
+    this.inputHighpass.frequency.setTargetAtTime(settings.inputLowCutHz, now, 0.02);
+    this.outputLowpassL.frequency.setTargetAtTime(settings.outputHighCutHz, now, 0.02);
+    this.outputLowpassR.frequency.setTargetAtTime(settings.outputHighCutHz, now, 0.02);
 
-    for (const ch of this.channels) {
-      ch.delay.delayTime.setTargetAtTime(ch.baseDelaySeconds * roomScale, this.ctx.currentTime, 0.05);
-      ch.feedback.gain.setTargetAtTime(targetFeedback, this.ctx.currentTime, 0.05);
-      ch.damping.frequency.setTargetAtTime(dampingHz, this.ctx.currentTime, 0.05);
-    }
+    const feedback = settings.freeze ? MAX_FEEDBACK : roomSizeToFeedback(settings.roomSize);
+    const damping = settings.freeze ? 0 : settings.damping;
+    this.left.setFeedback(feedback);
+    this.right.setFeedback(feedback);
+    this.left.setDamping(damping);
+    this.right.setDamping(damping);
 
-    // Shimmer: eigener, unabhaengig begrenzter Feedback-Pfad (siehe Konstruktor).
-    // MAX_SHIMMER_FEEDBACK deutlich unter 1 gehalten, weil der Pitch-Shifter selbst
-    // durch sein Fenster-Crossfading nicht als exakt unity-gain garantiert werden kann.
-    const shimmerActive = settings.mode === "shimmer" && !off;
-    const MAX_SHIMMER_FEEDBACK = 0.55;
-    this.shimmerGain.gain.setTargetAtTime(shimmerActive ? 0.5 : 0, this.ctx.currentTime, 0.05);
-    this.shimmerFeedbackGain.gain.setTargetAtTime(shimmerActive ? MAX_SHIMMER_FEEDBACK : 0, this.ctx.currentTime, 0.05);
-    this.dryGain.gain.setTargetAtTime(settings.freeze ? 0 : 1, this.ctx.currentTime, 0.05);
+    const width = Math.min(1, Math.max(0, settings.width));
+    this.widthDirectL.gain.setTargetAtTime(width / 2 + 0.5, now, 0.02);
+    this.widthDirectR.gain.setTargetAtTime(width / 2 + 0.5, now, 0.02);
+    this.widthCrossL.gain.setTargetAtTime((1 - width) / 2, now, 0.02);
+    this.widthCrossR.gain.setTargetAtTime((1 - width) / 2, now, 0.02);
   }
 
   dispose(): void {
-    this.shimmer.dispose();
-    for (const ch of this.channels) {
-      ch.delay.disconnect();
-      ch.damping.disconnect();
-      ch.feedback.disconnect();
-      ch.pan.disconnect();
-    }
-    for (const n of [this.input, this.output, this.dryGain, this.wetGain, this.allpassL, this.allpassR, this.shimmerGain, this.shimmerFeedbackGain]) {
+    this.left.dispose();
+    this.right.dispose();
+    for (const n of [
+      this.input, this.output, this.dryGain, this.wetGain, this.preDelay,
+      this.inputHighpass, this.outputLowpassL, this.outputLowpassR,
+      this.widthDirectL, this.widthDirectR, this.widthCrossL, this.widthCrossR,
+    ]) {
       n.disconnect();
     }
   }
+}
+
+function roomSizeToFeedback(roomSize: number): number {
+  // Freeverb-Originalformel (feedback = roomsize*scaleroom+offsetroom), auf
+  // unseren Sicherheitsbereich [0, MAX_FEEDBACK] abgebildet.
+  const raw = roomSize * 0.28 + 0.7;
+  return Math.min(MAX_FEEDBACK, Math.max(0, raw));
 }

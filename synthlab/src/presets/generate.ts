@@ -21,18 +21,12 @@ function jitterMacros(base: MacroValues, spread: number, rng: () => number): Mac
   return out;
 }
 
-function buildFxForArchetype(macros: MacroValues, rng: () => number): ReturnType<typeof defaultFxChainSettings> {
-  const fx = defaultFxChainSettings();
-  fx.reverb.mix = Math.min(0.9, 0.15 + macros.space * 0.6 + randRange(rng, -0.05, 0.05));
-  fx.reverb.decaySeconds = 2 + macros.space * 18;
-  fx.reverb.mode = macros.air > 0.7 && macros.space > 0.6 ? "shimmer" : "fdn";
-  fx.delay.mode = macros.motion > 0.4 ? "pingpong" : "off";
-  fx.delay.mix = macros.motion * 0.3;
-  fx.delay.feedback = 0.2 + macros.motion * 0.3;
-  fx.ensemble.amount = macros.detune * 0.6 + randRange(rng, 0, 0.15);
-  fx.drive.amount = macros.drive * 0.5;
-  fx.width.amount = 0.9 + macros.space * 0.5;
-  return fx;
+// FX-Kette startet fuer JEDES generierte Preset komplett neutral/aus (Nutzer-
+// Feedback: automatisch zugeschaltete FX haben fast alle Presets verfaerbt und
+// der alte Hall klang kaputt). Presets klingen also erst aus der reinen Engine;
+// FX werden in der UI gezielt zugeschaltet statt vom Generator aufoktroyiert.
+function buildFxForArchetype(): ReturnType<typeof defaultFxChainSettings> {
+  return defaultFxChainSettings();
 }
 
 function presetName(engineName: string, archetypeName: string, variant: number): string {
@@ -49,7 +43,7 @@ export function generateFullBank(): Preset[] {
         const rng = createRng(engine.id, archetype.id, seed, variant);
         const macros = variant === 0 ? archetype.macros : jitterMacros(archetype.macros, archetype.spread, rng);
         const params = applyMacros(engine, macros);
-        const fx = buildFxForArchetype(macros, rng);
+        const fx = buildFxForArchetype();
 
         const id = `${engine.id}__${archetype.id}__${seed}`;
         presets.push({

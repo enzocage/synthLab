@@ -5,6 +5,7 @@ import { AudioEngine } from "./core/AudioEngine";
 import { PresetLoader } from "./core/PresetLoader";
 import { Meters, type MeterReading } from "./core/Meters";
 import { FxChain } from "./fx/FxChain";
+import { defaultFxChainSettings } from "./fx/types";
 import { getEngine } from "./engines/registry";
 import { generatePhrase, type Phrase } from "../midi/phrases";
 import { PhrasePlayer } from "../midi/player";
@@ -33,7 +34,7 @@ class AudioControllerImpl {
   private ensureGraph(): void {
     if (this.loader) return;
     const ctx = AudioEngine.ctx;
-    const chain = new FxChain(ctx, this.currentPreset?.fx ?? defaultFx());
+    const chain = new FxChain(ctx, this.currentPreset?.fx ?? defaultFxChainSettings());
     chain.output.connect(AudioEngine.masterInput);
     chain.start(ctx.currentTime);
     this.fxChain = chain;
@@ -166,18 +167,6 @@ class AudioControllerImpl {
     this.fxChain?.dispose();
     this.meters?.dispose();
   }
-}
-
-function defaultFx() {
-  // Lazy Import vermeiden: minimaler Platzhalter, wird sofort durch das erste Preset ersetzt.
-  return {
-    drive: { amount: 0 },
-    postFilter: { type: "off" as const, cutoffHz: 12000, q: 0.7 },
-    ensemble: { amount: 0, rateHz: 0.3, depthMs: 4 },
-    delay: { mode: "off" as const, timeSeconds: 0.4, feedback: 0, mix: 0, tone: 0.5, wowFlutterDepth: 0 },
-    reverb: { mode: "off" as const, roomSizeMeters: 14, decaySeconds: 4, damping: 0.4, mix: 0, shimmerAmountSemitones: 12, freeze: false },
-    width: { amount: 1 },
-  };
 }
 
 export const AudioController = new AudioControllerImpl();
