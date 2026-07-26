@@ -5,10 +5,11 @@ import { ENGINES } from "../audio/engines/registry";
 import { ARCHETYPES } from "./archetypes";
 
 describe("generateFullBank", () => {
-  it("erzeugt mehr als 1000 Presets", () => {
+  it("erzeugt mehr als 1000 Presets (exakt 1681 Presets)", () => {
     const bank = generateFullBank();
     expect(bank.length).toBeGreaterThan(1000);
-    expect(bank.length).toBe(ENGINES.length * ARCHETYPES.length * 3);
+    expect(bank.length).toBe((ENGINES.length - 6) * ARCHETYPES.length * 3 + 300 + 250);
+    expect(bank.length).toBe(1681);
   });
 
   it("jedes Preset validiert gegen das Zod-Schema", () => {

@@ -10,21 +10,20 @@ import { createRng, randRange } from "./rng";
 import { defaultFxChainSettings } from "../audio/fx/types";
 import type { Preset } from "./schema";
 
+import { SID_PRESETS } from "./sidPresets";
+import { FM_PRESETS } from "./fmPresets";
+
 const VARIANTS_PER_COMBO = 3; // variant 0 = Kernpreset (kein Jitter), 1..N = Seed-Variation
 
 function jitterMacros(base: MacroValues, spread: number, rng: () => number): MacroValues {
   const out = { ...base };
   for (const key of Object.keys(out) as (keyof MacroValues)[]) {
-    const delta = randRange(rng, -spread, spread) * 0.5;
+    const delta = randRange(rng, -spread, spread) * 0.85;
     out[key] = Math.min(1, Math.max(0, out[key] + delta));
   }
   return out;
 }
 
-// FX-Kette startet fuer JEDES generierte Preset komplett neutral/aus (Nutzer-
-// Feedback: automatisch zugeschaltete FX haben fast alle Presets verfaerbt und
-// der alte Hall klang kaputt). Presets klingen also erst aus der reinen Engine;
-// FX werden in der UI gezielt zugeschaltet statt vom Generator aufoktroyiert.
 function buildFxForArchetype(): ReturnType<typeof defaultFxChainSettings> {
   return defaultFxChainSettings();
 }
@@ -37,6 +36,7 @@ export function generateFullBank(): Preset[] {
   const presets: Preset[] = [];
 
   for (const engine of ENGINES) {
+    if (engine.id === "sid-chip" || engine.id.startsWith("fm-") && engine.id !== "fm6") continue; // Exclude SID & custom FM engines from auto-archetype generation
     for (const archetype of ARCHETYPES) {
       for (let variant = 0; variant < VARIANTS_PER_COMBO; variant++) {
         const seed = variant; // Kernseed = 0..N-1, deterministisch pro Variante
@@ -72,6 +72,8 @@ export function generateFullBank(): Preset[] {
     }
   }
 
+  presets.push(...SID_PRESETS);
+  presets.push(...FM_PRESETS);
   return presets;
 }
 

@@ -13,6 +13,7 @@ import { FxRack } from "./ui/FxRack";
 import { TrackList } from "./ui/TrackList";
 import { PianoKeyboard } from "./ui/PianoKeyboard";
 import { ArpPanel } from "./ui/ArpPanel";
+import { SidControlPanel } from "./ui/SidControlPanel";
 import { useKeyboardShortcuts } from "./ui/useKeyboardShortcuts";
 import { PHRASE_ROLES } from "./midi/phrases";
 import { defaultArpSettings, type ArpSettings } from "./midi/arpeggiator";
@@ -252,6 +253,12 @@ function App() {
             <span className="instrument-header__preset">{preset.name}</span>
           </div>
           <MacroPanel preset={effectivePreset} onLiveEdit={(paramId, value) => setEditedParam(preset.id, paramId, value)} />
+          {effectivePreset.engine === "sid-chip" && (
+            <SidControlPanel
+              params={effectivePreset.params}
+              onChange={(paramId, value) => setEditedParam(preset.id, paramId, value)}
+            />
+          )}
           <FxRack fx={effectivePreset.fx} onChange={onFxChange} />
           <VariationGrid variants={variationGrid} onPlay={handlePlayVariant} onAccept={handleAcceptVariant} />
           <div className="ab-indicator">

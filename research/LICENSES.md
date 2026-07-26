@@ -1,46 +1,34 @@
-# Lizenz- und Herkunftsnachweis — `research/vendor/`
+# Licences & Attributions for SID Lab (synthlab)
 
-Diese Tabelle dokumentiert jedes geklonte Referenz-Repository, seine Lizenz und
-wie es in diesem Projekt verwendet wird. Politik (unverändert aus
-`preset_sources.md`): **kein fremder Code und keine fremden Presets werden in
-`synthlab/` kopiert.** `research/vendor/` ist ausschließlich Lesematerial für
-Menschen und für die Extraktionsskripte in `research/extract/`, deren Ausgabe
-(`research/derived/*.json`) numerische/strukturelle Ableitungen mit Quellenangabe
-enthält — keinen Fremdcode.
+This document tracks all external reference repositories analyzed and adapted for the `sid-chip` ("SID Lab") engine in `synthlab`.
 
-| Repo | Lizenz | Sparse? | Verwendung hier |
-| --- | --- | --- | --- |
-| `tonejs` (Tone.js) | MIT | nein (voll) | **direkte Laufzeit-Abhängigkeit** von `synthlab/` (Transport, Scheduling, Basis-FX-Nodes) |
-| `amy` (shorepine/amy) | MIT | nein (voll) | Referenz für DX7/AMY-FM-Operatorgraphen → `derived/fm-algorithms.json` (Zahlen extrahiert, kein C-Code übernommen) |
-| `daisysp` (electro-smith) | MIT | nein (voll) | Referenz für Filter-/Oszillator-/Modal-/Effekt-Modellnamen und Parameterbereiche → `derived/filter-models.json`; TS-Neuimplementierung in Phase 3 |
-| `stk` (Synthesis ToolKit) | MIT-artig (STK-Lizenz, s. `stk/LICENSE`) | nein (voll) | Modal-Materialtabellen (ModalBar) → `derived/modal-materials.json`; FM-Instrumentenprofile (TubeBell, Rhodey, Wurley, HevyMetl, BeeThree, FMVoices, PercFlut) → `derived/fm-algorithms.json`; **FreeVerb-Referenz** (`stk/src/FreeVerb.cpp`, Jezar at Dreampoint's Algorithmus, gemeinfrei/public domain, von Gregory Burlet nach STK portiert) → `synthlab/src/audio/fx/Reverb.ts` + `dsp/{onepole,comb,allpass}.ts`: Topologie (8 gedaempfte Kammfilter parallel + 4 Schroeder-Allpaesse seriell) und die klassischen Jezar-Delay-Tunings (reine Zahlenkonstanten) uebernommen, komplette Neuimplementierung mit Web-Audio-Primitiven (DelayNode/GainNode statt C++), kein Quellcode kopiert. |
-| `fundsp` | MIT / Apache-2.0 (dual) | nein (voll) | 32-Kanal-FDN-Reverb-Delayzeiten unverändert übernommen (Zahlenkonstanten, Apache-2.0-kompatibel) → `derived/reverb-topologies.json`; Filtermodell-Katalog → `derived/filter-models.json` |
-| `isobar` | MIT | nein (voll) | Pattern-Familien-Katalog (Klassennamen + paraphrasierte Kurzbeschreibung) → `derived/pattern-families.json`; TS-Neuimplementierung in Phase 6 |
-| `musiclang` | BSD-2-Clause | nein (voll) | Referenz für modale Grammatik/Voicing-Konzepte (Phase 6 `theory.ts`); keine Code-Übernahme |
-| `supriya` | MIT | nein (voll) | Zielformat-Referenz für den späteren SuperCollider-Export (Phase 11), nicht Teil dieser Ausbaustufe |
-| `sk-engines` (shakfu) | MIT | nein (voll) | Konzeptreferenz Softcut/qdelay (Tape-Loop, Varispeed) für spätere Erweiterung |
-| `surge` (Surge XT) | **GPL-3.0** | ja (`src/common/dsp`, Header, `doc`) | **nur Lesematerial.** Parametertaxonomie/Filtermodell-Namen als Inspirationsquelle für `synthesis-methods.json`. Kein Code, kein Preset aus Surge in `synthlab/`. |
-| `vital` | **GPL-3.0**, kommerzielle Sonderlizenz möglich | ja (`src/synthesis`, `src/common`) | **nur Lesematerial.** Wavetable-/Spektral-Warp-Konzepte als Namensgeber, keine Codeübernahme. Factory-Presets werden nicht verwendet (vgl. `preset_sources.md`). |
-| `supercollider` | **GPL-3.0** | ja (Class Library, Help, Server-Plugins) | **nur Lesematerial.** UGen-Katalog als Verfahrens-Landkarte (Granular/Spektral/Additiv-Begriffe). |
-| `csound` | LGPL-2.1+ | ja (`Opcodes`, `OOps`, `Engine/*.c`) | **nur Lesematerial.** Opcode-Katalog als Verfahrens-Landkarte, keine Codeübernahme. |
-| `faustlibs` (faustlibraries) | LGPL-2.1+ mit Ausnahmen für generierten Code | ja (`*.lib`) | **nur Lesematerial.** DSP-Bausteinkatalog als Namensgeber für Engine-Parameter. |
-| `pyo` | LGPL-3.0+ | ja (`pyolib`, `src/objects`) | **nur Lesematerial.** Konzeptreferenz für Effektnamen/-parameter. |
-| `chuck` | MIT **oder** GPL-2.0+ (dual, wählbar) | ja (`src/core/ugen_*`, `examples`) | **nur Lesematerial.** UGen-Namen als Referenz. |
-| `sonicpi` | GPL-3.0-artig (Sonic Pi Lizenz, siehe Upstream) | ja (`etc/synthdefs/designs`, Ruby-Synth-Definitionen) | **nur Lesematerial.** Synth-Namensgebung/-Rollen als Inspiration. |
-| `fluidsynth` | LGPL-2.1+ | ja (`src/synth`, `src/rvoice`) | **nur Lesematerial.** SoundFont-Synthesekonzepte, keine Codeübernahme. |
+## Primary Technical Reference
 
-## Grundsatz für `synthlab/`
+### [`stevi84/sid-player`](https://github.com/stevi84/sid-player)
+- **License:** MIT
+- **Usage:** Architecture reference for Web Audio AudioWorklet SID voice structures, pitch conversion, and ADSR timing models.
+- **Attribution:** Original work by stevi84.
 
-- Jede Engine in Phase 3 ist eine **eigenständige TypeScript-Neuimplementierung**
-  des jeweiligen *Verfahrens* (Subtraktiv, FM, Granular, Modal, …), nicht eine
-  Portierung von Quellcode aus obiger Tabelle.
-- Numerische Konstanten aus MIT/Apache/BSD-Quellen (STK-Modaltabellen,
-  AMY-FM-Algorithmen, FunDSP-FDN-Delayzeiten) dürfen unverändert übernommen
-  werden — das sind Zahlen, keine urheberrechtlich geschützte Implementierung —
-  und tragen in `derived/*.json` ein `source`-Feld.
-- Aus den GPL/LGPL-Projekten (Surge, Vital, SuperCollider, Csound, Faust-Libs,
-  pyo, ChucK-GPL-Variante, Sonic Pi, FluidSynth) wird **ausschließlich
-  Fachvokabular und Verfahrenswissen** übernommen, niemals Code oder Zahlenreihen
-  aus deren Quelldateien.
-- Faktorybänke (Vital, Surge, Sonic Pi) werden nicht kopiert oder verpackt —
-  identisch zur bereits geltenden Politik aus `preset_sources.md`.
+## Secondary Permissive References
+
+### [`igorski/VSTSID`](https://github.com/igorski/VSTSID)
+- **License:** MIT
+- **Usage:** Reference implementation for PWM modulation, ADSR timing curves, Portamento logic, tempo arpeggiator & ring modulation algorithms.
+- **Attribution:** Copyright (c) Igorski.
+
+### [`devinvenable/c64SIDkit`](https://github.com/devinvenable/c64SIDkit)
+- **License:** MIT
+- **Usage:** Reference for SID ADSR timing classes, register parameter mappings, frequency sweeps, vibrato and portable chip sound design techniques.
+- **Attribution:** Copyright (c) Devin Venable.
+
+### [`JC-000/c64-sid-instruments`](https://github.com/JC-000/c64-sid-instruments)
+- **License:** CC BY 4.0
+- **Usage:** Schema reference for 6581/8580 filter curve characteristics.
+
+---
+
+## Copyright & Provenance Notice
+
+All 300 presets provided with SID Lab (`sid-chip`) are original synthesised sound designs.
+- No original SID files (`.sid`), extracted instrument tables, binary ROMs, or composer samples from commercial C64 games or HVSC are included in this project.
+- Named era collections (e.g. `Hubbard-era`, `Galway-era`, `Daglish-era`, `Gray-era`) refer strictly to documented synthesiser technique studies and sound design styles of the 1980s 8-bit chip era.

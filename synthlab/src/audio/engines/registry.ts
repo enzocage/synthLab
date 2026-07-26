@@ -14,6 +14,12 @@ import { wavefoldEngine } from "./wavefold";
 import { phasedistEngine } from "./phasedist";
 import { percEngine } from "./perc";
 import { subbassEngine } from "./subbass";
+import { sidChipEngine } from "./sidChip";
+import { fmDx7Engine } from "./fmDx7";
+import { fm4OpEngine } from "./fm4Op";
+import { fmMorphEngine } from "./fmMorph";
+import { fmFeedbackEngine } from "./fmFeedback";
+import { fmLinearEngine } from "./fmLinear";
 
 export const ENGINES: Engine[] = [
   vaPolyEngine,
@@ -29,6 +35,12 @@ export const ENGINES: Engine[] = [
   phasedistEngine,
   percEngine,
   subbassEngine,
+  sidChipEngine,
+  fmDx7Engine,
+  fm4OpEngine,
+  fmMorphEngine,
+  fmFeedbackEngine,
+  fmLinearEngine,
 ];
 
 export const ENGINE_MAP: Record<string, Engine> = Object.fromEntries(ENGINES.map((e) => [e.id, e]));

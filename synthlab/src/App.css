@@ -48,8 +48,10 @@ button:hover {
 
 .app-shell {
   height: 100vh;
+  max-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .transport-bar {
@@ -75,12 +77,15 @@ button:hover {
   flex: 1;
   display: grid;
   grid-template-columns: 280px 1fr 260px;
+  min-height: 0; /* allows child scrolling inside flex item */
   overflow: hidden;
 }
 
 .app-column {
   padding: 12px;
   overflow-y: auto;
+  min-height: 0;
+  max-height: 100%;
 }
 .app-column--center {
   border-left: 1px solid #2c2f36;
@@ -97,13 +102,16 @@ button:hover {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 12px;
+  max-height: 100%;
+  min-height: 0;
+  padding: 0;
 }
 .preset-browser__filters {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin-bottom: 8px;
+  flex-shrink: 0;
 }
 .preset-browser__filters label {
   display: flex;
@@ -116,12 +124,30 @@ button:hover {
   font-size: 11px;
   color: #6b7280;
   margin-bottom: 4px;
+  flex-shrink: 0;
 }
 .preset-browser__list {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   border: 1px solid #2c2f36;
   border-radius: 4px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #111317;
+}
+::-webkit-scrollbar-thumb {
+  background: #2c303a;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4a90d9;
 }
 .preset-row {
   display: flex;

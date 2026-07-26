@@ -162,7 +162,7 @@ class VaPolyVoice implements Voice {
 
 export const vaPolyEngine: Engine = {
   id: "va-poly",
-  name: "VA Poly (Subtraktiv)",
+  name: "VA Poly (Moog / Roland Subtractive)",
   params,
   defaultMacroMap: {
     brightness: [{ paramId: "cutoffHz", atZero: 200, atOne: 9000 }],
