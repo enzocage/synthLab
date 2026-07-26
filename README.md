@@ -1,6 +1,6 @@
 # SynthLab – Next-Gen Web Audio Synthesizer Suite
 
-![SynthLab Screenshot](../gfx/Screenshot.jpg)
+![SynthLab Screenshot](./gfx/Screenshot.jpg)
 
 **SynthLab** ist eine hochmoderne, browserbasierte Synthesizer- und Performance-Plattform, entwickelt mit **React, TypeScript, Vite und Web Audio API**. Sie bietet 19 spezialisierte Synthesizer-Engines und eine kuratierte Bibliothek von **1.681 Presets** mit Mehrspur-Arrangement, interaktivem Audition-System und einem Echtzeit-FX-Rack.
 
