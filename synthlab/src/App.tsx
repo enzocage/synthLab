@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { AudioController } from "./audio/AudioController";
-import type { MeterReading } from "./audio/core/Meters";
 import { useSessionStore } from "./store/sessionStore";
 import { useTracksStore } from "./store/tracksStore";
 import { getEngine } from "./audio/engines/registry";
@@ -29,8 +28,6 @@ function App() {
   const [playing, setPlaying] = useState(false);
   const [phraseRole, setPhraseRoleState] = useState<Role>("pad");
   const [tempo, setTempoState] = useState(66);
-  const [meter, setMeter] = useState<MeterReading>({ peakL: 0, peakR: 0, rms: 0, correlation: 1 });
-  const [voiceCount, setVoiceCount] = useState(0);
   const [arpSettings, setArpSettingsState] = useState<ArpSettings>(defaultArpSettings());
   const lastVariantIdx = useRef<number | null>(null);
 
@@ -48,6 +45,7 @@ function App() {
       fx: editedFxForPreset ?? preset.fx,
     };
   }, [preset, editsForPreset, editedFxForPreset]);
+
   const ratings = useSessionStore((s) => s.ratings);
   const favorites = useSessionStore((s) => s.favorites);
   const notes = useSessionStore((s) => s.notes);
@@ -76,22 +74,12 @@ function App() {
   const getPresetById = useCallback((id: string) => bank.find((p) => p.id === id) ?? null, [bank]);
 
   useEffect(() => {
-    const unsub = AudioController.onMeter((m) => {
-      setMeter(m);
-      setVoiceCount(AudioController.activeVoiceCount);
-    });
-    return unsub;
-  }, []);
-
-  // Preset laden, sobald Audio bereit ist ODER sich der aktuelle Index/Edits aendern.
-  // Wirkt auf die aktuell ausgewaehlte Spur; die Spur merkt sich das Preset fuer die Track-Liste.
-  useEffect(() => {
-    if (!audioReady || !selectedTrackId) return;
+    if (!audioReady || !selectedTrackId || !effectivePreset) return;
     AudioController.loadPreset(effectivePreset);
     setTrackPreset(selectedTrackId, effectivePreset.id);
     lastVariantIdx.current = null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [audioReady, selectedTrackId, effectivePreset.id, JSON.stringify(effectivePreset.params), JSON.stringify(effectivePreset.fx)]);
+  }, [audioReady, selectedTrackId, effectivePreset?.id, JSON.stringify(effectivePreset?.params), JSON.stringify(effectivePreset?.fx)]);
 
   const startAudio = useCallback(async () => {
     await AudioController.resume();
@@ -100,8 +88,6 @@ function App() {
     AudioController.setTempo(tempo);
     AudioController.setArpSettings(arpSettings);
     setAudioReady(true);
-    // Web-MIDI-Verbindung blockiert den Start nicht: requestMIDIAccess() kann auf
-    // eine Berechtigungsabfrage warten oder in manchen Umgebungen nie aufloesen.
     AudioController.connectHardwareMidi().catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -149,7 +135,7 @@ function App() {
       setEditedFx(preset.id, next);
       AudioController.updateFx(next);
     },
-    [preset, effectivePreset.fx, setEditedFx]
+    [preset, effectivePreset?.fx, setEditedFx]
   );
 
   const handlePlayVariant = useCallback(
@@ -206,12 +192,18 @@ function App() {
       }
     },
     toggleReferenceDrone: () => AudioController.toggleReferenceDrone(),
-    saveToCollection: () => toggleFavorite(preset.id), // Sammlungen folgen in Phase 9; vorlaeufig als Favorit markiert
+    saveToCollection: () => toggleFavorite(preset.id),
     undo: () => {},
     holdNoteDown: () => AudioController.noteOn(MANUAL_NOTE),
     holdNoteUp: () => AudioController.noteOff(MANUAL_NOTE),
     panic: () => AudioController.panic(),
   });
+
+  const initPersistence = useSessionStore((s) => s.initPersistence);
+
+  useEffect(() => {
+    initPersistence();
+  }, [initPersistence]);
 
   if (!preset) return null;
 
@@ -219,7 +211,7 @@ function App() {
     return (
       <div className="start-overlay">
         <h1>SynthLab</h1>
-        <p>1131 Presets über 13 Engines, Mehrspur-Arrangement, Arp und Live-Tastatur.</p>
+        <p>1.681 Presets über 19 Synthesizer-Engines, Mehrspur-Arrangement, Arp und Live-Tastatur.</p>
         <button onClick={startAudio}>Audio starten</button>
       </div>
     );
@@ -237,8 +229,6 @@ function App() {
         tempo={tempo}
         onTempoChange={onTempoChange}
         onPanic={() => AudioController.panic()}
-        meter={meter}
-        voiceCount={voiceCount}
       />
 
       <TrackList getPresetById={getPresetById} />

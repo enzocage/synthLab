@@ -3,6 +3,7 @@
 // Graphen leben in audio/TrackAudio.ts (ein eigener PresetLoader+FxChain je Track).
 import { create } from "zustand";
 import type { NoteEvent } from "../midi/phrases";
+import { AudioController } from "../audio/AudioController";
 
 export interface Clip {
   id: string;
@@ -62,6 +63,7 @@ export const useTracksStore = create<TracksState>((set, get) => ({
   },
 
   removeTrack(id) {
+    AudioController.removeTrackAudio(id);
     set((s) => {
       const tracks = s.tracks.filter((t) => t.id !== id);
       const selectedTrackId = s.selectedTrackId === id ? (tracks[0]?.id ?? "") : s.selectedTrackId;
@@ -82,7 +84,17 @@ export const useTracksStore = create<TracksState>((set, get) => ({
   },
 
   toggleMute(id) {
-    set((s) => ({ tracks: s.tracks.map((t) => (t.id === id ? { ...t, muted: !t.muted } : t)) }));
+    set((s) => {
+      const nextTracks = s.tracks.map((t) => {
+        if (t.id === id) {
+          const nextMuted = !t.muted;
+          AudioController.setTrackMuted(id, nextMuted);
+          return { ...t, muted: nextMuted };
+        }
+        return t;
+      });
+      return { tracks: nextTracks };
+    });
   },
 
   toggleArm(id) {

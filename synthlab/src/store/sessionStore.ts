@@ -7,6 +7,8 @@ import { mutateN } from "../presets/mutate";
 import type { Preset, Role } from "../presets/schema";
 import type { FxChainSettings } from "../audio/fx/types";
 
+import { loadUserDataFromDb, saveRatingToDb, saveFavoriteToDb, saveNoteToDb, saveEditToDb } from "../db/database";
+
 export interface FilterState {
   search: string;
   role: Role | null;
@@ -33,6 +35,7 @@ interface SessionState {
   currentPreset(): Preset | null;
   effectivePreset(preset: Preset): Preset;
 
+  initPersistence(): Promise<void>;
   setFilter(patch: Partial<FilterState>): void;
   setIndexInFiltered(pos: number): void;
   stepFiltered(delta: number): void;
@@ -65,6 +68,21 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   variationGrid: [],
   abSlots: { A: null, B: null },
   activeSlot: "A",
+
+  async initPersistence() {
+    try {
+      const data = await loadUserDataFromDb();
+      set({
+        ratings: data.ratings,
+        favorites: data.favorites,
+        notes: data.notes,
+        editedParams: data.editedParams,
+        editedFx: data.editedFx,
+      });
+    } catch {
+      /* noop */
+    }
+  },
 
   filteredIndices() {
     const { bank, filter, ratings, favorites, discarded } = get();
@@ -109,7 +127,8 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     const indices = get().filteredIndices();
     if (indices.length === 0) return;
     const currentPos = indices.indexOf(get().currentIndex);
-    const nextPos = ((currentPos < 0 ? 0 : currentPos) + delta + indices.length) % indices.length;
+    const validPos = currentPos < 0 ? 0 : currentPos;
+    const nextPos = (validPos + delta + indices.length) % indices.length;
     set({ currentIndex: indices[nextPos], variationGrid: [] });
   },
 
@@ -125,10 +144,13 @@ export const useSessionStore = create<SessionState>((set, get) => ({
 
   rate(presetId, rating) {
     set((s) => ({ ratings: { ...s.ratings, [presetId]: rating } }));
+    saveRatingToDb(presetId, rating).catch(() => {});
   },
 
   toggleFavorite(presetId) {
-    set((s) => ({ favorites: { ...s.favorites, [presetId]: !s.favorites[presetId] } }));
+    const nextFav = !get().favorites[presetId];
+    set((s) => ({ favorites: { ...s.favorites, [presetId]: nextFav } }));
+    saveFavoriteToDb(presetId, nextFav).catch(() => {});
   },
 
   discard(presetId) {
@@ -137,19 +159,23 @@ export const useSessionStore = create<SessionState>((set, get) => ({
 
   setNote(presetId, note) {
     set((s) => ({ notes: { ...s.notes, [presetId]: note } }));
+    saveNoteToDb(presetId, note).catch(() => {});
   },
 
   setEditedParam(presetId, paramId, value) {
+    const newParams = { ...(get().editedParams[presetId] ?? {}), [paramId]: value };
     set((s) => ({
       editedParams: {
         ...s.editedParams,
-        [presetId]: { ...(s.editedParams[presetId] ?? {}), [paramId]: value },
+        [presetId]: newParams,
       },
     }));
+    saveEditToDb(presetId, newParams, get().editedFx[presetId]).catch(() => {});
   },
 
   setEditedFx(presetId, fx) {
     set((s) => ({ editedFx: { ...s.editedFx, [presetId]: fx } }));
+    saveEditToDb(presetId, get().editedParams[presetId] ?? {}, fx).catch(() => {});
   },
 
   generateVariations(amount) {

@@ -115,6 +115,14 @@ class AudioControllerImpl {
     this.ensureTrackAudio(trackId).setMuted(muted);
   }
 
+  removeTrackAudio(trackId: string): void {
+    const t = this.tracks.get(trackId);
+    if (t) {
+      t.dispose();
+      this.tracks.delete(trackId);
+    }
+  }
+
   private buildPhrase(): Phrase {
     return generatePhrase(this.phraseRole, { key: this.key, seed: this.phraseSeed });
   }

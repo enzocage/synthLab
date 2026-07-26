@@ -1,6 +1,6 @@
 import { PHRASE_ROLES } from "../midi/phrases";
 import type { Role } from "../presets/schema";
-import type { MeterReading } from "../audio/core/Meters";
+import { MeterDisplay } from "./MeterDisplay";
 
 interface Props {
   playing: boolean;
@@ -10,11 +10,9 @@ interface Props {
   tempo: number;
   onTempoChange(bpm: number): void;
   onPanic(): void;
-  meter: MeterReading;
-  voiceCount: number;
 }
 
-export function TransportBar({ playing, onPlayToggle, phraseRole, onPhraseRoleChange, tempo, onTempoChange, onPanic, meter, voiceCount }: Props) {
+export function TransportBar({ playing, onPlayToggle, phraseRole, onPhraseRoleChange, tempo, onTempoChange, onPanic }: Props) {
   return (
     <div className="transport-bar">
       <button onClick={onPlayToggle}>{playing ? "■ Stop" : "▶ Play"}</button>
@@ -34,10 +32,7 @@ export function TransportBar({ playing, onPlayToggle, phraseRole, onPhraseRoleCh
           style={{ width: 56 }}
         />
       </label>
-      <span className="transport-bar__voices">Voices: {voiceCount}</span>
-      <span className="transport-bar__meter">
-        Peak {meter.peakL.toFixed(2)}/{meter.peakR.toFixed(2)} · RMS {meter.rms.toFixed(2)}
-      </span>
+      <MeterDisplay />
       <button className="transport-bar__panic" onClick={onPanic}>Panic</button>
     </div>
   );

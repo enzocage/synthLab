@@ -46,10 +46,13 @@ export class PhrasePlayer {
     this.cycleEvents = phrase.events.filter((e) => !e.hold);
     this.nextEventIdx = 0;
     this.loopStartTime = this.ctx.currentTime;
-    this.triggerHolds(phrase);
+    if (this.running) {
+      this.triggerHolds(phrase);
+    }
   }
 
   private triggerHolds(phrase: NoteSequence): void {
+    if (this.holds.length > 0) return; // Prevent double trigger
     const vm = this.getVoiceManager();
     if (!vm) return;
     const now = this.ctx.currentTime;
