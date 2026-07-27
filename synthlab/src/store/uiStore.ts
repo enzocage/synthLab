@@ -18,7 +18,10 @@ export type MainView = "session" | "arrangement";
 export type FocusZone = "control-bar" | "browser-sidebar" | "browser-filter" | "browser-results" | "main-view" | "detail-view" | "info-view";
 
 const savedDetailHeight = typeof window !== "undefined" ? Number(window.localStorage.getItem("synthlab.detailHeight")) : NaN;
-const initialDetailHeight = Number.isFinite(savedDetailHeight) ? Math.max(240, Math.min(720, savedDetailHeight)) : 380;
+const initialDetailHeight = Number.isFinite(savedDetailHeight) ? Math.max(180, Math.min(850, savedDetailHeight)) : 380;
+const savedBrowserWidth = typeof window !== "undefined" ? Number(window.localStorage.getItem("synthlab.browserWidth")) : NaN;
+const initialBrowserWidth = Number.isFinite(savedBrowserWidth) ? Math.max(200, Math.min(650, savedBrowserWidth)) : 300;
+
 const savedMainView = typeof window !== "undefined" ? window.localStorage.getItem("synthlab.mainView") : null;
 const initialMainView: MainView = savedMainView === "arrangement" ? "arrangement" : "session";
 const readStoredBoolean = (key: string, fallback: boolean) => {
@@ -33,6 +36,7 @@ interface UiState {
   focusZone: FocusZone;
   activeDetailTab: DetailTab;
   browserOpen: boolean;
+  browserWidth: number;
   detailOpen: boolean;
   detailHeight: number;
   statusMessage: string;
@@ -47,6 +51,7 @@ interface UiState {
   setFocusZone(zone: FocusZone): void;
   setActiveDetailTab(tab: DetailTab): void;
   toggleBrowser(): void;
+  setBrowserWidth(width: number): void;
   toggleDetail(): void;
   setDetailHeight(height: number): void;
   setStatusMessage(msg: string): void;
@@ -64,6 +69,7 @@ export const useUiStore = create<UiState>((set) => ({
   focusZone: "main-view",
   activeDetailTab: "device",
   browserOpen: readStoredBoolean("synthlab.browserOpen", true),
+  browserWidth: initialBrowserWidth,
   detailOpen: readStoredBoolean("synthlab.detailOpen", true),
   detailHeight: initialDetailHeight,
   statusMessage: "Bereit · SynthLab Ableton-Style Workstation",
@@ -99,6 +105,12 @@ export const useUiStore = create<UiState>((set) => ({
       if (typeof window !== "undefined") window.localStorage.setItem("synthlab.browserOpen", String(browserOpen));
       return { browserOpen };
     });
+  },
+
+  setBrowserWidth(width) {
+    const nextWidth = Math.max(200, Math.min(650, Math.round(width)));
+    if (typeof window !== "undefined") window.localStorage.setItem("synthlab.browserWidth", String(nextWidth));
+    set({ browserWidth: nextWidth });
   },
 
   toggleDetail() {

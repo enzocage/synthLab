@@ -37,6 +37,63 @@ function App() {
   const previousEngineId = useRef<string | null>(null);
 
   const browserOpen = useUiStore((s) => s.browserOpen);
+  const browserWidth = useUiStore((s) => s.browserWidth);
+  const setBrowserWidth = useUiStore((s) => s.setBrowserWidth);
+  const detailOpen = useUiStore((s) => s.detailOpen);
+  const detailHeight = useUiStore((s) => s.detailHeight);
+  const setDetailHeight = useUiStore((s) => s.setDetailHeight);
+
+  const handleBrowserResizeStart = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      const startX = e.clientX;
+      const startWidth = browserWidth;
+
+      const onMouseMove = (moveEvent: MouseEvent) => {
+        const deltaX = moveEvent.clientX - startX;
+        setBrowserWidth(startWidth + deltaX);
+      };
+
+      const onMouseUp = () => {
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("mouseup", onMouseUp);
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+      };
+
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
+      window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("mouseup", onMouseUp);
+    },
+    [browserWidth, setBrowserWidth]
+  );
+
+  const handleDetailResizeStart = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      const startY = e.clientY;
+      const startHeight = detailHeight;
+
+      const onMouseMove = (moveEvent: MouseEvent) => {
+        const deltaY = startY - moveEvent.clientY;
+        setDetailHeight(startHeight + deltaY);
+      };
+
+      const onMouseUp = () => {
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("mouseup", onMouseUp);
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+      };
+
+      document.body.style.cursor = "row-resize";
+      document.body.style.userSelect = "none";
+      window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("mouseup", onMouseUp);
+    },
+    [detailHeight, setDetailHeight]
+  );
   const setStatusMessage = useUiStore((s) => s.setStatusMessage);
   const activeMainView = useUiStore((s) => s.activeMainView);
   const transportStatus = useRuntimeStore((s) => s.transportStatus);
@@ -348,11 +405,18 @@ function App() {
       />
 
       {/* Main Workspace (Session View & Browser Split) */}
-      <div className="app-columns" style={{ flex: 1, overflow: "hidden" }}>
+      <div className="app-columns" style={{ flex: 1, display: "flex", flexDirection: "row", overflow: "hidden" }}>
         {browserOpen && (
-          <aside className="browser-panel" aria-label="Preset-Browser">
-            <PresetBrowser />
-          </aside>
+          <>
+            <aside className="browser-panel" style={{ width: browserWidth, flexShrink: 0 }} aria-label="Preset-Browser">
+              <PresetBrowser />
+            </aside>
+            <div
+              className="splitter-v"
+              onMouseDown={handleBrowserResizeStart}
+              title="Ziehen um Browser-Breite anzupassen (Spalten-Resizer)"
+            />
+          </>
         )}
 
         <div style={{ flex: 1, display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
@@ -370,6 +434,15 @@ function App() {
             : <ArrangementView />}
         </div>
       </div>
+
+      {/* Horizontal Resizable Splitter Bar */}
+      {detailOpen && (
+        <div
+          className="splitter-h"
+          onMouseDown={handleDetailResizeStart}
+          title="Ziehen um Detailbereich-Höhe anzupassen (Zeilen-Resizer)"
+        />
+      )}
 
       {/* Contextual Detail View (Device Chain / Clip / Compare) */}
       <DetailView

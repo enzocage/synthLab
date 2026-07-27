@@ -271,6 +271,47 @@ button:hover {
   border-right: 1px solid var(--color-border-subtle, #2c2b29);
 }
 
+/* Resizable Splitter Bars */
+.splitter-v {
+  width: 6px;
+  height: 100%;
+  background: #1d1c1a;
+  border-left: 1px solid #2e2c29;
+  border-right: 1px solid #141312;
+  cursor: col-resize;
+  flex-shrink: 0;
+  user-select: none;
+  touch-action: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  z-index: 10;
+}
+
+.splitter-v:hover,
+.splitter-v:active {
+  background: var(--color-accent, #fbad60);
+  border-color: var(--color-accent, #fbad60);
+}
+
+.splitter-h {
+  height: 6px;
+  width: 100%;
+  background: #1d1c1a;
+  border-top: 1px solid #2e2c29;
+  border-bottom: 1px solid #141312;
+  cursor: row-resize;
+  flex-shrink: 0;
+  user-select: none;
+  touch-action: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  z-index: 10;
+}
+
+.splitter-h:hover,
+.splitter-h:active {
+  background: var(--color-accent, #fbad60);
+  border-color: var(--color-accent, #fbad60);
+}
+
 .preset-title {
   margin: 0 0 12px;
   font-size: 16px;
