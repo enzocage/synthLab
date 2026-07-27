@@ -93,7 +93,7 @@ export function PresetBrowser() {
         <select value={filter.engine ?? ""} onChange={(e) => setFilter({ engine: e.target.value || null })}>
           {engineOptions.map((id) => (
             <option key={id || "all"} value={id}>
-              {id ? ENGINES.find((e) => e.id === id)?.name : "Alle Engines"}
+              {id ? ENGINES.find((e) => e.id === id)?.name : "all synthesizers"}
             </option>
           ))}
         </select>
