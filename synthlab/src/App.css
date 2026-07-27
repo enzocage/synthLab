@@ -264,6 +264,12 @@ button:hover {
   border-left: 1px solid #2c2f36;
   border-right: 1px solid #2c2f36;
 }
+.browser-panel {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-right: 1px solid var(--color-border-subtle, #232832);
+}
 
 .preset-title {
   margin: 0 0 12px;
@@ -313,9 +319,29 @@ button:hover {
 .preset-browser__list {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  scrollbar-color: #596577 #11151b;
+  scrollbar-width: auto;
   border: 1px solid #2c2f36;
   border-radius: 4px;
+}
+.preset-browser__list::-webkit-scrollbar { width: 12px; }
+.preset-browser__list::-webkit-scrollbar-track {
+  border-left: 1px solid #252b34;
+  background: #11151b;
+}
+.preset-browser__list::-webkit-scrollbar-thumb {
+  min-height: 36px;
+  border: 3px solid #11151b;
+  border-radius: 8px;
+  background: #596577;
+}
+.preset-browser__list::-webkit-scrollbar-thumb:hover { background: #78a8d8; }
+.preset-browser__list:focus-visible {
+  outline: 1px solid var(--color-selection, #4a90d9);
+  outline-offset: -1px;
 }
 
 /* Scrollbar styling */

@@ -332,9 +332,9 @@ function App() {
       {/* Main Workspace (Session View & Browser Split) */}
       <div className="app-columns" style={{ flex: 1, overflow: "hidden" }}>
         {browserOpen && (
-          <div style={{ width: "var(--width-browser, 280px)", height: "100%", borderRight: "1px solid var(--color-border-subtle)" }}>
+          <aside className="browser-panel" aria-label="Preset-Browser">
             <PresetBrowser />
-          </div>
+          </aside>
         )}
 
         <div style={{ flex: 1, display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>

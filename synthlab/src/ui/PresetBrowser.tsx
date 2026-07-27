@@ -49,11 +49,17 @@ export function PresetBrowser() {
   useEffect(() => {
     const el = listRef.current;
     if (!el) return;
-    setContainerHeight(el.clientHeight || 400);
+    const updateContainerHeight = () => setContainerHeight(el.clientHeight || 400);
+    updateContainerHeight();
 
     const onScroll = () => setScrollTop(el.scrollTop);
+    const resizeObserver = new ResizeObserver(updateContainerHeight);
     el.addEventListener("scroll", onScroll);
-    return () => el.removeEventListener("scroll", onScroll);
+    resizeObserver.observe(el);
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      resizeObserver.disconnect();
+    };
   }, []);
 
   const totalCount = filteredIndices.length;
@@ -121,7 +127,14 @@ export function PresetBrowser() {
         />
         <span className="preset-browser__position">{totalCount > 0 ? `${sliderPosition + 1} / ${totalCount}` : "0 / 0"}</span>
       </div>
-      <div className="preset-browser__list" ref={listRef} style={{ position: "relative" }}>
+      <div
+        className="preset-browser__list"
+        ref={listRef}
+        style={{ position: "relative" }}
+        tabIndex={0}
+        role="listbox"
+        aria-label="Gefilterte Presets"
+      >
         <div style={{ height: totalHeight, width: "100%", position: "relative" }}>
           {visibleIndices.map(({ pos, bankIdx }) => {
             const p = bank[bankIdx];
