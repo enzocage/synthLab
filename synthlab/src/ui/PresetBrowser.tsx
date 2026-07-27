@@ -2,7 +2,7 @@ import { useMemo, useRef, useEffect, useState } from "react";
 import { useSessionStore } from "../store/sessionStore";
 import { ENGINES } from "../audio/engines/registry";
 import { ROLES } from "../presets/schema";
-import { saveSongProjectJson, loadSongProjectJson } from "../store/projectSerializer";
+import { saveSongToHardDrive, loadSongProjectJson } from "../store/projectSerializer";
 
 const ROW_HEIGHT = 30;
 const OVERSCAN = 10;
@@ -102,53 +102,55 @@ export function PresetBrowser() {
           </strong>
         </div>
 
-        <div style={{ display: "flex", gap: 6 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
           <button
             type="button"
             onClick={() => {
               const name = prompt("Name für das Song-Projekt eingeben:", "Mein_SynthLab_Song");
-              if (name) saveSongProjectJson(name);
+              if (name) void saveSongToHardDrive(name);
             }}
             style={{
               flex: 1,
+              minWidth: 110,
               background: "var(--color-accent, #fbad60)",
               color: "#000",
               border: "none",
               borderRadius: 4,
-              padding: "5px 8px",
+              padding: "5px 6px",
               fontWeight: 700,
-              fontSize: 10.5,
+              fontSize: 10,
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              gap: 4,
+              gap: 3,
             }}
-            title="Gesamten Song (Spuren, Instrumente, Presets, Parameter, Clips & MIDI-Noten) als .json speichern"
+            title="Speichert das gesamte Song-Projekt (.json) direkt an einem Speicherort deiner Wahl auf deiner Festplatte"
           >
-            💾 Song speichern
+            💾 Auf Festplatte speichern
           </button>
 
           <label
             style={{
               flex: 1,
+              minWidth: 90,
               background: "#2a2826",
               color: "#fff",
               border: "1px solid #444",
               borderRadius: 4,
-              padding: "5px 8px",
+              padding: "5px 6px",
               fontWeight: 700,
-              fontSize: 10.5,
+              fontSize: 10,
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              gap: 4,
+              gap: 3,
               textAlign: "center",
             }}
-            title="Song-Projekt aus einer .json Datei laden"
+            title="Song-Projekt (.json) von deiner Festplatte laden"
           >
-            📂 Song laden
+            📂 Von Festplatte laden
             <input
               type="file"
               accept=".json,.synthlab.json"
@@ -172,9 +174,17 @@ export function PresetBrowser() {
           value={filter.search}
           onChange={(e) => setFilter({ search: e.target.value })}
         />
-        <select value={filter.engine ?? ""} onChange={(e) => setFilter({ engine: e.target.value || null })}>
+        <select
+          value={filter.engine ?? ""}
+          onChange={(e) => setFilter({ engine: e.target.value || null })}
+          style={!filter.engine ? { color: "#ff4d4d", fontWeight: 700 } : {}}
+        >
           {engineOptions.map((id) => (
-            <option key={id || "all"} value={id}>
+            <option
+              key={id || "all"}
+              value={id}
+              style={!id ? { color: "#ff4d4d", fontWeight: 700, background: "#1e1c1b" } : { color: "#e0e0e0" }}
+            >
               {id ? ENGINES.find((e) => e.id === id)?.name : "all synthesizers"}
             </option>
           ))}
