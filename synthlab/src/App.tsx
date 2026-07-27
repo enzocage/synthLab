@@ -10,6 +10,7 @@ import { SessionView } from "./ui/SessionView";
 import { DetailView } from "./ui/DetailView";
 import { StatusBar } from "./ui/StatusBar";
 import { HelpOverlay } from "./ui/HelpOverlay";
+import { SynthGallery } from "./ui/SynthGallery";
 import { useKeyboardShortcuts } from "./ui/useKeyboardShortcuts";
 import { PHRASE_ROLES } from "./midi/phrases";
 import { defaultArpSettings, type ArpSettings } from "./midi/arpeggiator";
@@ -319,6 +320,7 @@ function App() {
       {/* Status Bar Footer (24px) */}
       <StatusBar text={statusMessage} />
       <HelpOverlay />
+      <SynthGallery />
     </div>
   );
 }

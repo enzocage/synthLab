@@ -489,6 +489,106 @@ button:hover {
   .fx-device:nth-child(5), .fx-device:nth-child(6) { width: 320px; }
 }
 
+/* Synth reference gallery */
+.synth-gallery-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(4, 6, 9, .82);
+  backdrop-filter: blur(5px);
+}
+.synth-gallery {
+  width: min(1180px, 100%);
+  height: min(900px, 92vh);
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--color-border, #303744);
+  border-radius: 8px;
+  background: var(--color-canvas, #0b0d10);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .65);
+}
+.synth-gallery__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--color-border, #303744);
+  background: var(--color-surface-2, #1a1e26);
+}
+.synth-gallery__header h2 { margin: 0 0 3px; font-size: 16px; }
+.synth-gallery__header p { margin: 0; color: var(--color-text-secondary, #a0a8b6); font-size: 11px; }
+.synth-gallery__header > button { font-size: 18px; line-height: 1; }
+.synth-gallery__notice {
+  padding: 7px 18px;
+  border-bottom: 1px solid var(--color-border-subtle, #232832);
+  color: var(--color-text-muted, #677080);
+  font-size: 10px;
+}
+.synth-gallery__grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+  grid-auto-rows: max-content;
+  align-content: start;
+  gap: 10px;
+  overflow-y: auto;
+  padding: 12px;
+}
+.synth-picture-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border-subtle, #232832);
+  border-radius: 5px;
+  background: var(--color-surface-1, #13161c);
+}
+.synth-picture-card img {
+  display: block;
+  width: 100%;
+  height: 118px;
+  object-fit: contain;
+  padding: 8px;
+  background: radial-gradient(circle at 50% 35%, #303744 0, #171b22 58%, #0c0f13 100%);
+}
+.synth-picture-card__body { padding: 8px 10px 10px; }
+.synth-picture-card__body h3 {
+  margin: 5px 0 3px;
+  overflow: hidden;
+  color: var(--color-text-primary, #e6e9ee);
+  font-size: 12px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.synth-picture-card__body p {
+  min-height: 28px;
+  margin: 0 0 6px;
+  color: var(--color-text-secondary, #a0a8b6);
+  font-size: 10px;
+  line-height: 1.35;
+}
+.synth-picture-card__body a { color: var(--color-text-muted, #677080); font-size: 9px; }
+.synth-picture-card__relation {
+  display: inline-block;
+  padding: 2px 5px;
+  border: 1px solid #4d5664;
+  border-radius: 3px;
+  color: #8e98a8;
+  font-size: 8px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.synth-picture-card__relation--exact {
+  border-color: #357653;
+  color: var(--color-playing, #4ad97a);
+}
+
 /* Track-Liste (Ableton-Style Spuren) */
 .track-list {
   display: flex;

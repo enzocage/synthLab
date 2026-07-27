@@ -22,6 +22,7 @@ interface UiState {
   detailHeight: number;
   statusMessage: string;
   helpOpen: boolean;
+  synthGalleryOpen: boolean;
   computerKeyboardEnabled: boolean;
   octaveBaseNote: number;
 
@@ -33,6 +34,8 @@ interface UiState {
   setStatusMessage(msg: string): void;
   toggleHelp(): void;
   setHelpOpen(open: boolean): void;
+  toggleSynthGallery(): void;
+  setSynthGalleryOpen(open: boolean): void;
   toggleComputerKeyboard(): void;
   shiftOctave(delta: number): void;
 }
@@ -45,6 +48,7 @@ export const useUiStore = create<UiState>((set) => ({
   detailHeight: initialDetailHeight,
   statusMessage: "Bereit · SynthLab Ableton-Style Workstation",
   helpOpen: false,
+  synthGalleryOpen: false,
   computerKeyboardEnabled: false,
   octaveBaseNote: DEFAULT_OCTAVE_BASE_NOTE,
 
@@ -80,6 +84,14 @@ export const useUiStore = create<UiState>((set) => ({
 
   setHelpOpen(open) {
     set({ helpOpen: open });
+  },
+
+  toggleSynthGallery() {
+    set((s) => ({ synthGalleryOpen: !s.synthGalleryOpen }));
+  },
+
+  setSynthGalleryOpen(open) {
+    set({ synthGalleryOpen: open });
   },
 
   toggleComputerKeyboard() {

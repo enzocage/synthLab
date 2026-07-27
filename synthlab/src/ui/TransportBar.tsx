@@ -22,6 +22,7 @@ export function TransportBar({ playing, onPlayToggle, phraseRole, onPhraseRoleCh
   const toggleComputerKeyboard = useUiStore((s) => s.toggleComputerKeyboard);
   const octaveBaseNote = useUiStore((s) => s.octaveBaseNote);
   const toggleHelp = useUiStore((s) => s.toggleHelp);
+  const toggleSynthGallery = useUiStore((s) => s.toggleSynthGallery);
   const octaveNumber = Math.floor(octaveBaseNote / 12) - 1;
 
   return (
@@ -59,6 +60,9 @@ export function TransportBar({ playing, onPlayToggle, phraseRole, onPhraseRoleCh
       </button>
       <button onClick={toggleHelp} title="Hilfe: Tastaturbelegung & App-Beschreibung (Taste ?)">
         ❓ Hilfe
+      </button>
+      <button onClick={toggleSynthGallery} title="Bilder und Vorbilder aller Synth-Engines anzeigen">
+        Synth Pics
       </button>
       <button className="transport-bar__panic" onClick={onPanic}>Panic</button>
     </div>
