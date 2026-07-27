@@ -11,11 +11,15 @@ export type Selection =
   | { kind: "preset"; presetId: string; preview: boolean }
   | { kind: "compare"; presetId: string };
 
+const savedDetailHeight = typeof window !== "undefined" ? Number(window.localStorage.getItem("synthlab.detailHeight")) : NaN;
+const initialDetailHeight = Number.isFinite(savedDetailHeight) ? Math.max(240, Math.min(720, savedDetailHeight)) : 380;
+
 interface UiState {
   selection: Selection;
   activeDetailTab: DetailTab;
   browserOpen: boolean;
   detailOpen: boolean;
+  detailHeight: number;
   statusMessage: string;
   helpOpen: boolean;
   computerKeyboardEnabled: boolean;
@@ -25,6 +29,7 @@ interface UiState {
   setActiveDetailTab(tab: DetailTab): void;
   toggleBrowser(): void;
   toggleDetail(): void;
+  setDetailHeight(height: number): void;
   setStatusMessage(msg: string): void;
   toggleHelp(): void;
   setHelpOpen(open: boolean): void;
@@ -37,6 +42,7 @@ export const useUiStore = create<UiState>((set) => ({
   activeDetailTab: "device",
   browserOpen: true,
   detailOpen: true,
+  detailHeight: initialDetailHeight,
   statusMessage: "Bereit · SynthLab Ableton-Style Workstation",
   helpOpen: false,
   computerKeyboardEnabled: false,
@@ -56,6 +62,12 @@ export const useUiStore = create<UiState>((set) => ({
 
   toggleDetail() {
     set((s) => ({ detailOpen: !s.detailOpen }));
+  },
+
+  setDetailHeight(height) {
+    const nextHeight = Math.max(240, Math.min(720, Math.round(height)));
+    if (typeof window !== "undefined") window.localStorage.setItem("synthlab.detailHeight", String(nextHeight));
+    set({ detailHeight: nextHeight });
   },
 
   setStatusMessage(statusMessage) {

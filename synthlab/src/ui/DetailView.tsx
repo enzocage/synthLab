@@ -27,13 +27,15 @@ export const DetailView: React.FC<Props> = (props) => {
   const activeTab = useUiStore((s) => s.activeDetailTab);
   const setActiveTab = useUiStore((s) => s.setActiveDetailTab);
   const detailOpen = useUiStore((s) => s.detailOpen);
+  const detailHeight = useUiStore((s) => s.detailHeight);
+  const setDetailHeight = useUiStore((s) => s.setDetailHeight);
 
   if (!detailOpen) return null;
 
   return (
     <div
       style={{
-        height: "var(--height-detail, 260px)",
+        height: detailHeight,
         background: "var(--color-surface-1, #13161c)",
         borderTop: "1px solid var(--color-border, #303744)",
         display: "flex",
@@ -73,6 +75,19 @@ export const DetailView: React.FC<Props> = (props) => {
             </button>
           );
         })}
+        <label style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 6, color: "var(--color-text-muted, #677080)", fontSize: 10 }}>
+          Detail
+          <input
+            type="range"
+            min={240}
+            max={720}
+            step={10}
+            value={detailHeight}
+            onChange={(event) => setDetailHeight(Number(event.target.value))}
+            aria-label="HÃ¶he des Detailbereichs"
+          />
+          {detailHeight}px
+        </label>
       </div>
 
       {/* Tab Contents */}
