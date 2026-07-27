@@ -5,6 +5,7 @@ import { MeterDisplay } from "./MeterDisplay";
 import { useUiStore } from "../store/uiStore";
 import { useRuntimeStore, type LaunchQuantization } from "../store/runtimeStore";
 import { useCommandStore } from "../store/commandStore";
+import { useTracksStore } from "../store/tracksStore";
 import { Icon } from "./Icon";
 
 interface Props {
@@ -40,6 +41,37 @@ export function TransportBar({ onPlayToggle, phraseRole, onPhraseRoleChange, onT
   const isTransportActive = transportStatus === "playing" || transportStatus === "recording" || transportStatus === "starting";
   const octaveNumber = Math.floor(octaveBaseNote / 12) - 1;
 
+  const recordingSlot = useTracksStore((s) => s.recordingSlot);
+  const startRecording = useTracksStore((s) => s.startRecording);
+  const stopRecording = useTracksStore((s) => s.stopRecording);
+  const toggleArm = useTracksStore((s) => s.toggleArm);
+
+  const isRecording = Boolean(recordingSlot);
+
+  const handleRecordToggle = () => {
+    const track = useTracksStore.getState().selectedTrack();
+    if (!track) return;
+
+    if (recordingSlot) {
+      stopRecording(recordingSlot.trackId);
+      useUiStore.getState().setStatusMessage(`Aufnahme beendet.`);
+    } else {
+      if (!track.armed) {
+        toggleArm(track.id);
+      }
+      const existingSlotIndices = track.clips.map((c) => c.slotIdx).filter(Boolean) as number[];
+      let targetSlotIdx = 1;
+      for (let i = 1; i <= 4; i++) {
+        if (!existingSlotIndices.includes(i)) {
+          targetSlotIdx = i;
+          break;
+        }
+      }
+      startRecording(track.id, targetSlotIdx);
+      useUiStore.getState().setStatusMessage(`● Aufnahme auf Spur "${track.name}" (Slot ${targetSlotIdx}) gestartet`);
+    }
+  };
+
   useEffect(() => {
     const syncFullscreenState = () => setIsFullscreen(Boolean(document.fullscreenElement));
     document.addEventListener("fullscreenchange", syncFullscreenState);
@@ -74,15 +106,32 @@ export function TransportBar({ onPlayToggle, phraseRole, onPhraseRoleChange, onT
         </div>
       </div>
       <div className="transport-bar__group transport-bar__musical">
-      <button
-        onClick={onPlayToggle}
-        className={isTransportActive ? "transport-bar__play transport-bar__play--active" : "transport-bar__play"}
-        aria-pressed={isTransportActive}
-        title={transportStatus === "error" ? "Transportfehler – erneut versuchen" : "Play/Stop (Leertaste)"}
-      >
-        <Icon name={isTransportActive ? "stop" : "play"} />
-        <span className="transport-label">{transportStatus === "starting" ? "Start" : isTransportActive ? "Stop" : "Play"}</span>
-      </button>
+        <button
+          onClick={onPlayToggle}
+          className={isTransportActive ? "transport-bar__play transport-bar__play--active" : "transport-bar__play"}
+          aria-pressed={isTransportActive}
+          title={transportStatus === "error" ? "Transportfehler – erneut versuchen" : "Play/Stop (Leertaste)"}
+        >
+          <Icon name={isTransportActive ? "stop" : "play"} />
+          <span className="transport-label">{transportStatus === "starting" ? "Start" : isTransportActive ? "Stop" : "Play"}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={handleRecordToggle}
+          className={isRecording ? "transport-bar__rec transport-bar__rec--active" : "transport-bar__rec"}
+          aria-pressed={isRecording}
+          style={{
+            background: isRecording ? "rgba(231, 76, 60, 0.3)" : "#1f1e1d",
+            borderColor: isRecording ? "#e74c3c" : "#33312f",
+            color: isRecording ? "#e74c3c" : "#e74c3c",
+            fontWeight: 700,
+          }}
+          title="MIDI-Aufnahme auf der zuletzt ausgewählten Spur starten/stoppen"
+        >
+          <Icon name="record" />
+          <span className="transport-label">{isRecording ? "Rec..." : "Rec"}</span>
+        </button>
       <output className="transport-bar__position" aria-label="Transportposition">
         {bar}.{Math.floor(beatInBar)}.{Math.floor((beatInBar % 1) * 4) + 1}
       </output>

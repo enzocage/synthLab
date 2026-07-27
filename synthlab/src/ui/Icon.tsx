@@ -1,11 +1,12 @@
 interface IconProps {
-  name: "browser" | "play" | "stop" | "keyboard" | "detail" | "help" | "undo" | "redo" | "session" | "arrangement" | "image" | "fullscreen" | "fullscreen-exit";
+  name: "browser" | "play" | "stop" | "record" | "keyboard" | "detail" | "help" | "undo" | "redo" | "session" | "arrangement" | "image" | "fullscreen" | "fullscreen-exit";
 }
 
 const paths: Record<IconProps["name"], string> = {
   browser: "M3 5h7l2 2h9v12H3z",
   play: "M8 5v14l11-7z",
   stop: "M6 6h12v12H6z",
+  record: "M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10z",
   keyboard: "M3 6h18v12H3zM7 6v7m4-7v7m6-7v7M5 15v3m4-3v3m4-3v3m4-3v3",
   detail: "M4 5h16v14H4zM4 10h16M10 10v9",
   help: "M9.5 9a2.5 2.5 0 1 1 3 2.45c-.9.3-1.5.9-1.5 1.8M11 17h.01",
