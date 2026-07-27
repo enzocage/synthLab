@@ -78,6 +78,12 @@ const SYNTH_PICS: Record<string, string> = {
   dx7: synthPic22,
 };
 
+/** Returns the artwork used for an engine in the gallery and transition preview. */
+// oxlint-disable-next-line react/only-export-components
+export function getSynthPicture(engineId: string): string {
+  return SYNTH_PICS[engineId] ?? synthPic22;
+}
+
 const REFERENCES: Record<string, ImageReference> = {
   "va-poly": { ...JUNO, subject: "Roland Juno-106 als subtraktive Hardware-Referenz" },
   wavetable: { ...DX7, subject: "Digitaler Yamaha-Synth als nahe Digital-Synth-Referenz" },

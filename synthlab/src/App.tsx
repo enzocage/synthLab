@@ -13,7 +13,7 @@ import { DetailView } from "./ui/DetailView";
 import { InfoView } from "./ui/InfoView";
 import { ArrangementView } from "./ui/ArrangementView";
 import { HelpOverlay } from "./ui/HelpOverlay";
-import { SynthGallery } from "./ui/SynthGallery";
+import { getSynthPicture, SynthGallery } from "./ui/SynthGallery";
 import { useKeyboardShortcuts } from "./ui/useKeyboardShortcuts";
 import { PHRASE_ROLES } from "./midi/phrases";
 import { defaultArpSettings, type ArpSettings } from "./midi/arpeggiator";
@@ -30,7 +30,9 @@ function App() {
   const [audioReady, setAudioReady] = useState(false);
   const [phraseRole, setPhraseRoleState] = useState<Role>("pad");
   const [arpSettings, setArpSettingsState] = useState<ArpSettings>(defaultArpSettings());
+  const [previewEngineId, setPreviewEngineId] = useState<string | null>(null);
   const lastVariantIdx = useRef<number | null>(null);
+  const previousEngineId = useRef<string | null>(null);
 
   const browserOpen = useUiStore((s) => s.browserOpen);
   const setStatusMessage = useUiStore((s) => s.setStatusMessage);
@@ -61,6 +63,20 @@ function App() {
       fx: editedFxForPreset ? { ...preset.fx, ...editedFxForPreset } : preset.fx,
     };
   }, [preset, editsForPreset, editedFxForPreset]);
+
+  useEffect(() => {
+    const engineId = effectivePreset?.engine;
+    if (!engineId) return;
+    if (previousEngineId.current === null) {
+      previousEngineId.current = engineId;
+      return;
+    }
+    if (previousEngineId.current === engineId) return;
+    previousEngineId.current = engineId;
+    setPreviewEngineId(engineId);
+    const timer = window.setTimeout(() => setPreviewEngineId(null), 1000);
+    return () => window.clearTimeout(timer);
+  }, [effectivePreset?.engine]);
 
   const ratings = useSessionStore((s) => s.ratings);
   const favorites = useSessionStore((s) => s.favorites);
@@ -379,6 +395,14 @@ function App() {
       <InfoView />
       <HelpOverlay />
       <SynthGallery />
+      {previewEngineId && (
+        <div className="synth-engine-preview" role="status" aria-live="polite">
+          <div className="synth-engine-preview__card">
+            <img src={getSynthPicture(previewEngineId)} alt={`${getEngine(previewEngineId).name} Synth-Vorschau`} />
+            <span>{getEngine(previewEngineId).name}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
