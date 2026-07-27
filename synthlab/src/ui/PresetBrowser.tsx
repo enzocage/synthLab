@@ -2,6 +2,7 @@ import { useMemo, useRef, useEffect, useState } from "react";
 import { useSessionStore } from "../store/sessionStore";
 import { ENGINES } from "../audio/engines/registry";
 import { ROLES } from "../presets/schema";
+import { saveSongProjectJson, loadSongProjectJson } from "../store/projectSerializer";
 
 const ROW_HEIGHT = 30;
 const OVERSCAN = 10;
@@ -83,6 +84,87 @@ export function PresetBrowser() {
 
   return (
     <div className="preset-browser">
+      {/* Song Project Section (Save & Load .json) */}
+      <div
+        style={{
+          padding: "8px 10px",
+          background: "#1e1d1b",
+          borderBottom: "1px solid #33312f",
+          display: "flex",
+          flexDirection: "column",
+          gap: 6,
+          flexShrink: 0,
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <strong style={{ fontSize: 11, color: "var(--color-accent, #fbad60)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            📁 Song-Projekte (.json)
+          </strong>
+        </div>
+
+        <div style={{ display: "flex", gap: 6 }}>
+          <button
+            type="button"
+            onClick={() => {
+              const name = prompt("Name für das Song-Projekt eingeben:", "Mein_SynthLab_Song");
+              if (name) saveSongProjectJson(name);
+            }}
+            style={{
+              flex: 1,
+              background: "var(--color-accent, #fbad60)",
+              color: "#000",
+              border: "none",
+              borderRadius: 4,
+              padding: "5px 8px",
+              fontWeight: 700,
+              fontSize: 10.5,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 4,
+            }}
+            title="Gesamten Song (Spuren, Instrumente, Presets, Parameter, Clips & MIDI-Noten) als .json speichern"
+          >
+            💾 Song speichern
+          </button>
+
+          <label
+            style={{
+              flex: 1,
+              background: "#2a2826",
+              color: "#fff",
+              border: "1px solid #444",
+              borderRadius: 4,
+              padding: "5px 8px",
+              fontWeight: 700,
+              fontSize: 10.5,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 4,
+              textAlign: "center",
+            }}
+            title="Song-Projekt aus einer .json Datei laden"
+          >
+            📂 Song laden
+            <input
+              type="file"
+              accept=".json,.synthlab.json"
+              style={{ display: "none" }}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  void loadSongProjectJson(file);
+                  e.target.value = "";
+                }
+              }}
+            />
+          </label>
+        </div>
+      </div>
+
       <div className="preset-browser__filters">
         <input
           type="text"
