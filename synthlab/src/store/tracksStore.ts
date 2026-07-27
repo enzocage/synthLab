@@ -53,6 +53,7 @@ interface TracksState {
   addClip(trackId: string, clip: Clip): void;
   removeClip(trackId: string, clipId: string): void;
   setActiveClip(trackId: string, clipId: string | null): void;
+  updateClipNotes(trackId: string, clipId: string, events: NoteEvent[]): void;
 }
 
 export const useTracksStore = create<TracksState>((set, get) => ({
@@ -159,6 +160,24 @@ export const useTracksStore = create<TracksState>((set, get) => ({
 
   setActiveClip(trackId, clipId) {
     set((s) => ({ tracks: s.tracks.map((t) => (t.id === trackId ? { ...t, activeClipId: clipId } : t)) }));
+  },
+
+  updateClipNotes(trackId, clipId, events) {
+    set((s) => {
+      const nextTracks = s.tracks.map((t) => {
+        if (t.id !== trackId) return t;
+        const nextClips = t.clips.map((c) => {
+          if (c.id !== clipId) return c;
+          const updated = { ...c, events };
+          if (t.activeClipId === clipId) {
+            AudioController.playClipOnTrack(trackId, updated);
+          }
+          return updated;
+        });
+        return { ...t, clips: nextClips };
+      });
+      return { tracks: nextTracks };
+    });
   },
 }));
 
