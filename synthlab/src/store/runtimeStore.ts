@@ -37,7 +37,7 @@ export const useRuntimeStore = create<RuntimeState>((set) => ({
   absoluteBeat: 0,
   bar: 1,
   beatInBar: 1,
-  tempo: 66,
+  tempo: 120,
   timeSignature: [4, 4],
   loop: null,
   launchQuantization: "1-bar",

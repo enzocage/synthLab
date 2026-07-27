@@ -75,7 +75,7 @@ export const useUiStore = create<UiState>((set) => ({
   statusMessage: "Bereit · SynthLab Ableton-Style Workstation",
   helpOpen: false,
   synthGalleryOpen: false,
-  computerKeyboardEnabled: false,
+  computerKeyboardEnabled: readStoredBoolean("synthlab.computerKeyboardEnabled", true),
   octaveBaseNote: DEFAULT_OCTAVE_BASE_NOTE,
 
   setSelection(selection) {
@@ -148,7 +148,11 @@ export const useUiStore = create<UiState>((set) => ({
   },
 
   toggleComputerKeyboard() {
-    set((s) => ({ computerKeyboardEnabled: !s.computerKeyboardEnabled }));
+    set((s) => {
+      const next = !s.computerKeyboardEnabled;
+      if (typeof window !== "undefined") window.localStorage.setItem("synthlab.computerKeyboardEnabled", String(next));
+      return { computerKeyboardEnabled: next };
+    });
   },
 
   shiftOctave(delta) {

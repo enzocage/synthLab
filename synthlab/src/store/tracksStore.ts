@@ -9,6 +9,7 @@ import { useUiStore } from "./uiStore";
 export interface Clip {
   id: string;
   name: string;
+  slotIdx?: number;
   events: NoteEvent[];
   lengthBeats: number;
 }
@@ -34,6 +35,7 @@ function makeTrack(name: string): Track {
 interface TracksState {
   tracks: Track[];
   selectedTrackId: string;
+  recordingSlot: { trackId: string; slotIdx: number } | null;
 
   selectedTrack(): Track | undefined;
 
@@ -45,6 +47,9 @@ interface TracksState {
   toggleMute(id: string): void;
   toggleArm(id: string): void;
 
+  startRecording(trackId: string, slotIdx: number): void;
+  stopRecording(trackId: string): void;
+
   addClip(trackId: string, clip: Clip): void;
   removeClip(trackId: string, clipId: string): void;
   setActiveClip(trackId: string, clipId: string | null): void;
@@ -53,6 +58,7 @@ interface TracksState {
 export const useTracksStore = create<TracksState>((set, get) => ({
   tracks: [makeTrack("Track 1"), makeTrack("Track 2"), makeTrack("Track 3"), makeTrack("Track 4")],
   selectedTrackId: "",
+  recordingSlot: null,
 
   selectedTrack() {
     const { tracks, selectedTrackId } = get();
@@ -106,6 +112,33 @@ export const useTracksStore = create<TracksState>((set, get) => ({
 
   toggleArm(id) {
     set((s) => ({ tracks: s.tracks.map((t) => (t.id === id ? { ...t, armed: !t.armed } : { ...t, armed: false })) }));
+  },
+
+  startRecording(trackId, slotIdx) {
+    AudioController.startRecording(trackId);
+    set({ recordingSlot: { trackId, slotIdx } });
+  },
+
+  stopRecording(trackId) {
+    const { recordingSlot } = get();
+    const clip = AudioController.stopRecording();
+    set({ recordingSlot: null });
+
+    if (recordingSlot && recordingSlot.trackId === trackId) {
+      const slotIdx = recordingSlot.slotIdx;
+      const finalClip: Clip = clip ?? {
+        id: makeId("clip"),
+        name: `Clip ${slotIdx}`,
+        slotIdx,
+        events: [],
+        lengthBeats: 4,
+      };
+      finalClip.slotIdx = slotIdx;
+      if (!finalClip.name) finalClip.name = `Clip ${slotIdx}`;
+
+      get().addClip(trackId, finalClip);
+      AudioController.playClipOnTrack(trackId, finalClip);
+    }
   },
 
   addClip(trackId, clip) {
