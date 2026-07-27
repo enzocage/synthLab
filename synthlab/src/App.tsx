@@ -2,22 +2,19 @@ import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { AudioController } from "./audio/AudioController";
 import { useSessionStore } from "./store/sessionStore";
 import { useTracksStore } from "./store/tracksStore";
+import { useUiStore } from "./store/uiStore";
 import { getEngine } from "./audio/engines/registry";
 import { PresetBrowser } from "./ui/PresetBrowser";
-import { MacroPanel } from "./ui/MacroPanel";
 import { TransportBar } from "./ui/TransportBar";
-import { VariationGrid } from "./ui/VariationGrid";
-import { RatingPanel } from "./ui/RatingPanel";
-import { FxRack } from "./ui/FxRack";
-import { TrackList } from "./ui/TrackList";
-import { PianoKeyboard } from "./ui/PianoKeyboard";
-import { ArpPanel } from "./ui/ArpPanel";
-import { SidControlPanel } from "./ui/SidControlPanel";
+import { SessionView } from "./ui/SessionView";
+import { DetailView } from "./ui/DetailView";
+import { StatusBar } from "./ui/StatusBar";
 import { useKeyboardShortcuts } from "./ui/useKeyboardShortcuts";
 import { PHRASE_ROLES } from "./midi/phrases";
 import { defaultArpSettings, type ArpSettings } from "./midi/arpeggiator";
 import type { Role } from "./presets/schema";
 import type { FxChainSettings } from "./audio/fx/types";
+import "./design-system/tokens.css";
 import "./App.css";
 
 const MUTATE_AMOUNT = 0.35;
@@ -30,6 +27,10 @@ function App() {
   const [tempo, setTempoState] = useState(66);
   const [arpSettings, setArpSettingsState] = useState<ArpSettings>(defaultArpSettings());
   const lastVariantIdx = useRef<number | null>(null);
+
+  const browserOpen = useUiStore((s) => s.browserOpen);
+  const statusMessage = useUiStore((s) => s.statusMessage);
+  const setStatusMessage = useUiStore((s) => s.setStatusMessage);
 
   const bank = useSessionStore((s) => s.bank);
   const currentIndex = useSessionStore((s) => s.currentIndex);
@@ -78,6 +79,7 @@ function App() {
     AudioController.loadPreset(effectivePreset);
     setTrackPreset(selectedTrackId, effectivePreset.id);
     lastVariantIdx.current = null;
+    setStatusMessage(`Preset "${effectivePreset.name}" geladen auf ${selectedTrack?.name ?? "Track"}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [audioReady, selectedTrackId, effectivePreset?.id, JSON.stringify(effectivePreset?.params), JSON.stringify(effectivePreset?.fx)]);
 
@@ -88,6 +90,7 @@ function App() {
     AudioController.setTempo(tempo);
     AudioController.setArpSettings(arpSettings);
     setAudioReady(true);
+    setStatusMessage("Audio bereit · 1.681 Presets geladen");
     AudioController.connectHardwareMidi().catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -96,28 +99,39 @@ function App() {
     if (playing) {
       AudioController.stopTransport();
       setPlaying(false);
+      setStatusMessage("Wiedergabe gestoppt");
     } else {
       AudioController.play();
       setPlaying(true);
+      setStatusMessage("Wiedergabe läuft");
     }
-  }, [playing]);
+  }, [playing, setStatusMessage]);
 
   const cyclePhrase = useCallback(() => {
     const idx = PHRASE_ROLES.indexOf(phraseRole);
     const next = PHRASE_ROLES[(idx + 1) % PHRASE_ROLES.length];
     setPhraseRoleState(next);
     AudioController.setPhraseRole(next);
-  }, [phraseRole]);
+    setStatusMessage(`Phrase-Rolle gewechselt: ${next}`);
+  }, [phraseRole, setStatusMessage]);
 
-  const onPhraseRoleChange = useCallback((role: Role) => {
-    setPhraseRoleState(role);
-    AudioController.setPhraseRole(role);
-  }, []);
+  const onPhraseRoleChange = useCallback(
+    (role: Role) => {
+      setPhraseRoleState(role);
+      AudioController.setPhraseRole(role);
+      setStatusMessage(`Phrase-Rolle: ${role}`);
+    },
+    [setStatusMessage]
+  );
 
-  const onTempoChange = useCallback((bpm: number) => {
-    setTempoState(bpm);
-    AudioController.setTempo(bpm);
-  }, []);
+  const onTempoChange = useCallback(
+    (bpm: number) => {
+      setTempoState(bpm);
+      AudioController.setTempo(bpm);
+      setStatusMessage(`Tempo: ${bpm} BPM`);
+    },
+    [setStatusMessage]
+  );
 
   const onArpChange = useCallback(
     (patch: Partial<ArpSettings>) => {
@@ -156,8 +170,9 @@ function App() {
         setEditedParam(preset.id, paramId, value);
       }
       clearVariations();
+      setStatusMessage(`Variation #${idx + 1} übernommen`);
     },
-    [variationGrid, preset, setEditedParam, clearVariations]
+    [variationGrid, preset, setEditedParam, clearVariations, setStatusMessage]
   );
 
   useKeyboardShortcuts({
@@ -168,10 +183,12 @@ function App() {
     rate: (n) => {
       rate(preset.id, n);
       stepFiltered(1);
+      setStatusMessage(`Preset bewertet mit ${n} Sternen`);
     },
     discard: () => {
       discard(preset.id);
       stepFiltered(1);
+      setStatusMessage("Preset verworfen");
     },
     favorite: () => toggleFavorite(preset.id),
     cyclePhrase,
@@ -196,7 +213,10 @@ function App() {
     undo: () => {},
     holdNoteDown: () => AudioController.noteOn(MANUAL_NOTE),
     holdNoteUp: () => AudioController.noteOff(MANUAL_NOTE),
-    panic: () => AudioController.panic(),
+    panic: () => {
+      AudioController.panic();
+      setStatusMessage("Panic: Alle Stimmen gestoppt");
+    },
   });
 
   const initPersistence = useSessionStore((s) => s.initPersistence);
@@ -221,6 +241,7 @@ function App() {
 
   return (
     <div className="app-shell">
+      {/* Top Bar (42px) */}
       <TransportBar
         playing={playing}
         onPlayToggle={playToggle}
@@ -231,50 +252,52 @@ function App() {
         onPanic={() => AudioController.panic()}
       />
 
-      <TrackList getPresetById={getPresetById} />
+      {/* Main Workspace (Session View & Browser Split) */}
+      <div className="app-columns" style={{ flex: 1, overflow: "hidden" }}>
+        {browserOpen && (
+          <div style={{ width: "var(--width-browser, 280px)", height: "100%", borderRight: "1px solid var(--color-border-subtle)" }}>
+            <PresetBrowser />
+          </div>
+        )}
 
-      <div className="app-columns">
-        <PresetBrowser />
-        <div className="app-column app-column--center">
-          <div className="instrument-header">
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
+          {/* Header Bar */}
+          <div className="instrument-header" style={{ margin: 8, flexShrink: 0 }}>
             <span className="instrument-header__track">{selectedTrack?.name ?? "–"}</span>
             <span className="instrument-header__engine">{selectedEngineName}</span>
             <span className="instrument-header__sep">·</span>
             <span className="instrument-header__preset">{preset.name}</span>
           </div>
-          <MacroPanel preset={effectivePreset} onLiveEdit={(paramId, value) => setEditedParam(preset.id, paramId, value)} />
-          {effectivePreset.engine === "sid-chip" && (
-            <SidControlPanel
-              params={effectivePreset.params}
-              onChange={(paramId, value) => setEditedParam(preset.id, paramId, value)}
-            />
-          )}
-          <FxRack fx={effectivePreset.fx} onChange={onFxChange} />
-          <VariationGrid variants={variationGrid} onPlay={handlePlayVariant} onAccept={handleAcceptVariant} />
-          <div className="ab-indicator">
-            Slot: <b>{activeSlot}</b> · A: {abSlots.A?.name ?? "–"} · B: {abSlots.B?.name ?? "–"}
-          </div>
-        </div>
-        <div className="app-column app-column--right">
-          <RatingPanel
-            rating={ratings[preset.id] ?? 0}
-            favorite={!!favorites[preset.id]}
-            notes={notes[preset.id] ?? ""}
-            tags={preset.tags}
-            roles={preset.roles}
-            onRate={(n) => rate(preset.id, n)}
-            onToggleFavorite={() => toggleFavorite(preset.id)}
-            onNotesChange={(n) => setNote(preset.id, n)}
-            onDiscard={() => {
-              discard(preset.id);
-              stepFiltered(1);
-            }}
-          />
+
+          {/* Ableton-Style Session View Matrix */}
+          <SessionView getPresetById={getPresetById} />
         </div>
       </div>
 
-      <ArpPanel settings={arpSettings} onChange={onArpChange} />
-      <PianoKeyboard onNoteOn={(n) => AudioController.noteOn(n)} onNoteOff={(n) => AudioController.noteOff(n)} />
+      {/* Contextual Detail View (Device Chain / Clip / Compare) */}
+      <DetailView
+        preset={effectivePreset}
+        onLiveEdit={(paramId, value) => setEditedParam(preset.id, paramId, value)}
+        onFxChange={onFxChange}
+        ratings={ratings}
+        favorites={favorites}
+        notes={notes}
+        onRate={(n) => rate(preset.id, n)}
+        onToggleFavorite={() => toggleFavorite(preset.id)}
+        onNotesChange={(n) => setNote(preset.id, n)}
+        onDiscard={() => {
+          discard(preset.id);
+          stepFiltered(1);
+        }}
+        variationGrid={variationGrid}
+        handlePlayVariant={handlePlayVariant}
+        handleAcceptVariant={handleAcceptVariant}
+        arpSettings={arpSettings}
+        onArpChange={onArpChange}
+      />
+
+      {/* Status Bar Footer (24px) */}
+      <StatusBar text={statusMessage} />
     </div>
   );
 }

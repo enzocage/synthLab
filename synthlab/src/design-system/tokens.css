@@ -1,0 +1,47 @@
+/* Design System Tokens for SynthLab (Plan 3 §12) */
+
+:root {
+  /* Surfaces & Canvas */
+  --color-canvas: #0b0d10;
+  --color-surface-1: #13161c;
+  --color-surface-2: #1a1e26;
+  --color-surface-3: #242a36;
+  --color-surface-hover: #2b3340;
+  --color-surface-active: #323b4a;
+
+  /* Borders & Dividers */
+  --color-border-subtle: #232832;
+  --color-border: #303744;
+  --color-border-focus: #4a90d9;
+
+  /* Typography */
+  --color-text-primary: #e6e9ee;
+  --color-text-secondary: #a0a8b6;
+  --color-text-muted: #677080;
+
+  /* Accent & Semantic Colors */
+  --color-accent: #4a90d9;
+  --color-accent-hover: #60a2ea;
+  --color-playing: #4ad97a;
+  --color-recording: #e74c3c;
+  --color-warning: #e67e22;
+  --color-solo: #f1c40f;
+  --color-favorite: #f39c12;
+
+  /* Layout Heights & Boundaries */
+  --height-topbar: 42px;
+  --height-statusbar: 24px;
+  --height-detail: 260px;
+  --width-browser: 280px;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+
+  /* Border Radii */
+  --radius-sm: 3px;
+  --radius-md: 5px;
+  --radius-lg: 8px;
+}
