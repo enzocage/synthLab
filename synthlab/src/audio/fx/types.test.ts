@@ -25,12 +25,26 @@ describe("versioned FX rack compatibility", () => {
     expect(legacyFxFromRack(rack, defaultFxChainSettings())).toEqual(legacy);
   });
 
-  it("preserves unknown modules through the fallback projection", () => {
+  it("preserves unknown modules in `extras` instead of silently dropping them (plan10 §5.2)", () => {
     const fallback = defaultFxChainSettings();
     const rack = fxRackFromLegacy(fallback);
     rack.slots.push({ id: "future-1", type: "spectralFreeze", enabled: true, params: { amount: 0.8 } });
 
-    expect(legacyFxFromRack(rack, fallback)).toEqual(fallback);
+    const projected = legacyFxFromRack(rack, fallback);
+    // Alle 7 benannten Legacy-Module bleiben unveraendert...
+    expect(projected.drive).toEqual(fallback.drive);
+    expect(projected.width).toEqual(fallback.width);
+    // ...aber das unbekannte Modul landet in extras statt zu verschwinden.
+    expect(projected.extras.spectralFreeze).toEqual({ enabled: true, amount: 0.8 });
+  });
+
+  it("round-trips a previously unknown module back into an ordered V2 slot", () => {
+    const withExtra = defaultFxChainSettings();
+    withExtra.extras.spectralFreeze = { enabled: true, amount: 0.8 };
+
+    const rack = fxRackFromLegacy(withExtra);
+    const extraSlot = rack.slots.find((slot) => slot.type === "spectralFreeze");
+    expect(extraSlot).toEqual({ id: "spectralFreeze-1", type: "spectralFreeze", enabled: true, params: { amount: 0.8 } });
   });
 
   it("applies known slot edits while retaining untouched parameters", () => {

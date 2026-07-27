@@ -1,3 +1,10 @@
+/**
+ * Adapted from shorepine/amy (https://github.com/shorepine/amy)
+ * Copyright (c) 2022 Brian Whitman and Daniel P. W. Ellis
+ * License: MIT License
+ * 
+ * Routing structure originally attributed to MSFA (Music Synthesizer for Android).
+ */
 // Echte 6-Operator-FM nach Yamaha DX7-Architektur, als AudioWorkletProcessor
 // (6 Sinus-Operatoren pro Stimme sind mit reinen OscillatorNode-Graphen nicht
 // sauber realisierbar - siehe plan5.md P1/P5).

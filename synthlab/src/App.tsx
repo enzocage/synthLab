@@ -14,6 +14,7 @@ import { InfoView } from "./ui/InfoView";
 import { ArrangementView } from "./ui/ArrangementView";
 import { HelpOverlay } from "./ui/HelpOverlay";
 import { getSynthPicture, SynthGallery } from "./ui/SynthGallery";
+import { LegalModals, type LegalModalType } from "./ui/legal/LegalModals";
 import { useKeyboardShortcuts } from "./ui/useKeyboardShortcuts";
 import { PHRASE_ROLES } from "./midi/phrases";
 import { defaultArpSettings, type ArpSettings } from "./midi/arpeggiator";
@@ -31,6 +32,7 @@ function App() {
   const [phraseRole, setPhraseRoleState] = useState<Role>("pad");
   const [arpSettings, setArpSettingsState] = useState<ArpSettings>(defaultArpSettings());
   const [previewEngineId, setPreviewEngineId] = useState<string | null>(null);
+  const [legalModal, setLegalModal] = useState<LegalModalType>("none");
   const lastVariantIdx = useRef<number | null>(null);
   const previousEngineId = useRef<string | null>(null);
 
@@ -392,9 +394,10 @@ function App() {
       />
 
       {/* Status Bar Footer (24px) */}
-      <InfoView />
+      <InfoView onOpenLegalModal={(type) => setLegalModal(type)} />
       <HelpOverlay />
       <SynthGallery />
+      <LegalModals activeModal={legalModal} onClose={() => setLegalModal("none")} />
       {previewEngineId && (
         <div className="synth-engine-preview" role="status" aria-live="polite">
           <div className="synth-engine-preview__card">

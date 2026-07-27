@@ -104,6 +104,14 @@ export interface CloudSeedSettings {
   mainOut: number; // 0..1
 }
 
+/**
+ * plan10: alle FX-Module, die (noch) kein eigenes benanntes Feld in
+ * `FxChainSettings` haben (galactic, plate, clouds, ...), landen hier -
+ * keyed nach Slot-Typ. Ersetzt das frühere stillschweigende Verwerfen
+ * unbekannter Slots in `legacyFxFromRack()` (siehe plan10.md §2.2b/§5.2).
+ */
+export type FxExtraSettings = { enabled: boolean } & Record<string, FxParamValue>;
+
 export interface FxChainSettings {
   drive: DriveSettings;
   postFilter: PostFilterSettings;
@@ -112,9 +120,10 @@ export interface FxChainSettings {
   reverb: ReverbSettings;
   cloudSeed: CloudSeedSettings;
   width: WidthSettings;
+  extras: Record<string, FxExtraSettings>;
 }
 
-export type FxModuleId = keyof FxChainSettings;
+export type FxModuleId = keyof Omit<FxChainSettings, "extras">;
 export type FxParamValue = number | string | boolean;
 
 /** Versioniertes, frei sortierbares Rackformat für die plan5-V2-Migration. */
@@ -132,25 +141,36 @@ export interface FxRackState {
 
 const LEGACY_FX_ORDER: FxModuleId[] = ["drive", "postFilter", "ensemble", "delay", "reverb", "cloudSeed", "width"];
 
-/** Erzeugt aus dem bisherigen benannten V1-Objekt ein stabiles Slot-Rack. */
+/** Erzeugt aus dem bisherigen benannten V1-Objekt ein stabiles Slot-Rack,
+ * einschließlich aller `extras`-Module (plan10, an das Ende der Kette gehängt,
+ * vor Width bliebe die alte Reihenfolge sonst für neue Reverbs unpassend -
+ * siehe FxChain.ts für die tatsächliche Einfügeposition je Kategorie). */
 export function fxRackFromLegacy(settings: FxChainSettings): FxRackState {
-  return {
-    version: 2,
-    slots: LEGACY_FX_ORDER.map((type, index) => {
-      const module = settings[type];
-      const { enabled, ...params } = module;
-      return { id: `${type}-${index + 1}`, type, enabled, params };
-    }),
-  };
+  const legacySlots = LEGACY_FX_ORDER.map((type, index) => {
+    const module = settings[type];
+    const { enabled, ...params } = module;
+    return { id: `${type}-${index + 1}`, type, enabled, params };
+  });
+  const extraSlots = Object.entries(settings.extras ?? {}).map(([type, module]) => {
+    const { enabled, ...params } = module;
+    return { id: `${type}-1`, type, enabled, params };
+  });
+  return { version: 2, slots: [...legacySlots, ...extraSlots] };
 }
 
-/** Projiziert bekannte V2-Slots zurück auf das laufende V1-Audioformat. */
+/** Projiziert V2-Slots zurück auf das V1-Audioformat. Bekannte Legacy-Module
+ * landen in ihrem benannten Feld, alle anderen (plan10-Module) in `extras` -
+ * nichts wird mehr stillschweigend verworfen. */
 export function legacyFxFromRack(rack: FxRackState, fallback: FxChainSettings): FxChainSettings {
   const next = structuredClone(fallback);
+  next.extras = { ...next.extras };
   for (const slot of rack.slots) {
-    if (!LEGACY_FX_ORDER.includes(slot.type as FxModuleId)) continue;
-    const type = slot.type as FxModuleId;
-    next[type] = { ...next[type], ...slot.params, enabled: slot.enabled } as never;
+    if (LEGACY_FX_ORDER.includes(slot.type as FxModuleId)) {
+      const type = slot.type as FxModuleId;
+      next[type] = { ...next[type], ...slot.params, enabled: slot.enabled } as never;
+    } else {
+      next.extras[slot.type] = { ...slot.params, enabled: slot.enabled };
+    }
   }
   return next;
 }
@@ -200,5 +220,6 @@ export function defaultFxChainSettings(): FxChainSettings {
       mainOut: 0.7,
     },
     width: { enabled: false, amount: 1.2 },
+    extras: {},
   };
 }

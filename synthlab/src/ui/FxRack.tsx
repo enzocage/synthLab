@@ -1,10 +1,17 @@
 // FX-Kette als Geraeteband im Ableton-Live-Stil: jedes Modul ist ein Karte mit
 // Power-Schalter (enabled) und einem aufklappbaren Parameter-Panel. Reihenfolge
 // entspricht dem festen Signalpfad (audio/fx/FxChain.ts).
-import type { CloudSeedSettings, FxChainSettings } from "../audio/fx/types";
+import type { CloudSeedSettings, FxChainSettings, FxParamValue } from "../audio/fx/types";
 import cloudSeedBank from "../data/derived/cloudseed-programs.json";
+import { FX_MODULES } from "../audio/fx/registry";
 
 const CLOUDSEED_PROGRAMS = cloudSeedBank.programs as { id: string; name: string; settings: Omit<CloudSeedSettings, "enabled"> }[];
+
+// plan10: Module ohne eigenes benanntes FxChainSettings-Feld leben in
+// `fx.extras[id]` und werden generisch aus ihrer Registry-Parameterliste
+// gerendert statt (wie die 7 Altmodule) fest verdrahtet - jedes neue
+// Worklet-Modul braucht dadurch keine Änderung an dieser Datei mehr.
+const EXTRA_MODULE_IDS = ["plate", "galactic", "phaser", "lofi", "ladder"];
 
 interface Props {
   fx: FxChainSettings;
@@ -147,6 +154,33 @@ export function FxRack({ fx, onChange }: Props) {
         <Slider label="Early Out" value={fx.cloudSeed.earlyOut} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, earlyOut: v } })} />
         <Slider label="Main Out" value={fx.cloudSeed.mainOut} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, mainOut: v } })} />
       </Device>
+
+      {EXTRA_MODULE_IDS.map((id) => {
+        const def = FX_MODULES.find((m) => m.id === id);
+        if (!def) return null;
+        const current = fx.extras[id] ?? Object.fromEntries(def.params.map((p) => [p.id, p.defaultValue]));
+        const setParam = (paramId: string, value: FxParamValue) => {
+          onChange({ extras: { ...fx.extras, [id]: { ...current, [paramId]: value } } });
+        };
+        return (
+          <Device key={id} title={def.title} enabled={Boolean(current.enabled)} onToggle={() => setParam("enabled", !current.enabled)}>
+            {def.params
+              .filter((p) => p.id !== "enabled")
+              .map((p) => (
+                <Slider
+                  key={p.id}
+                  label={p.label}
+                  value={Number(current[p.id] ?? p.defaultValue)}
+                  min={p.min ?? 0}
+                  max={p.max ?? 1}
+                  step={p.step ?? 0.01}
+                  unit={p.unit}
+                  onChange={(v) => setParam(p.id, v)}
+                />
+              ))}
+          </Device>
+        );
+      })}
 
       <Device title="Width" enabled={fx.width.enabled} onToggle={() => onChange({ width: { ...fx.width, enabled: !fx.width.enabled } })}>
         <Slider label="Amount" value={fx.width.amount} min={0} max={2} step={0.05} onChange={(v) => onChange({ width: { ...fx.width, amount: v } })} />

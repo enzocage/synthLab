@@ -8,6 +8,7 @@
 // auf die aktuell ausgewaehlte Spur (setSelectedTrack).
 import { AudioEngine } from "./core/AudioEngine";
 import { ensureDx7WorkletLoaded } from "./engines/dx7";
+import { ensureAllFxWorkletsLoaded } from "./worklets/fxWorkletRegistry";
 import { Meters, type MeterReading } from "./core/Meters";
 import { TrackAudio } from "./TrackAudio";
 import { generatePhrase, type Phrase } from "../midi/phrases";
@@ -68,6 +69,7 @@ class AudioControllerImpl {
 
   async resume(): Promise<void> {
     await AudioEngine.resume();
+    await ensureAllFxWorkletsLoaded(AudioEngine.ctx);
     this.ensureGraph();
   }
 

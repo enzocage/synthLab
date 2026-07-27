@@ -85,7 +85,13 @@ sparse-branch() {
 }
 sparse-branch cloudseed https://github.com/ValdemarOrn/CloudSeed.git legacy-v1 \
                    'CloudSeed.Native' 'Factory Programs' 'license.txt' 'readme.md'
-full airwindows    https://github.com/airwindows/airwindows.git
+# airwindows als Vollklon enthaelt 518 Plugins (mehrere hundert MB) - nur die
+# fuer galactic/tape tatsaechlich benoetigten Plugin-Ordner sparse klonen.
+sparse airwindows  https://github.com/airwindows/airwindows.git \
+                   'plugins/LinuxVST/src/Galactic' 'plugins/LinuxVST/src/Galactic2' \
+                   'plugins/LinuxVST/src/Galactic3' 'plugins/LinuxVST/src/ToTape5' \
+                   'plugins/LinuxVST/src/ToTape6' 'plugins/LinuxVST/src/IronOxide5' \
+                   'plugins/LinuxVST/src/IronOxideClassic' 'LICENSE'
 # AKWF-FREE als Vollklon ist >1.7GB (WAV/PNG-Vorschauen in jeder Sammlung) und
 # bricht per Timeout ab - nur AKWF-js (die fuer die eigene DFT-Extraktion
 # benoetigten JSON-Wellenformdaten) sparse klonen, ~45MB.
@@ -94,6 +100,17 @@ sparse akwf        https://github.com/KristofferKarlAxelEkstrand/AKWF-FREE.git \
 full dmxopl        https://github.com/sneakernets/DMXOPL.git
 full signalsmith-stretch https://github.com/Signalsmith-Audio/signalsmith-stretch.git
 full dattorro-verb https://github.com/el-visio/dattorro-verb.git
+
+# --- plan10: 10 weitere FX-Module (permissive Lizenzen) -----------------------
+sparse eurorack    https://github.com/pichenettes/eurorack.git \
+                   'clouds/dsp' 'rings/dsp' 'stmlib/dsp' 'stmlib/utils'
+full moogladders   https://github.com/ddiakopoulos/MoogLadders.git
+full paulstretch_python https://github.com/paulnasca/paulstretch_python.git
+# Soundpipe: nur bitcrush.c (+ fold.c-Abhaengigkeit) ist unbedenklich MIT ohne
+# Csound/FAUST-Fremdherkunft - siehe research/LICENSES.md "plan10" fuer die
+# ausgeschlossenen GPL/LGPL-Module (zitarev/revsc/talkbox).
+sparse soundpipe   https://github.com/PaulBatchelor/Soundpipe.git \
+                   'modules/bitcrush.c' 'modules/fold.c' 'h/soundpipe.h' 'LICENSE'
 
 log "=== Vendor-Clone Ende ==="
 du -sh "$VENDOR"/* 2>/dev/null | tee -a "$LOG"

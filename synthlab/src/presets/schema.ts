@@ -61,6 +61,15 @@ export const FxChainSettingsSchema = z.object({
     freeze: z.boolean(),
   }),
   width: z.object({ enabled: z.boolean(), amount: FxNumberRange }),
+  // plan10: neue FX-Module ohne eigenes benanntes Feld landen hier, keyed nach
+  // Slot-Typ (siehe audio/fx/types.ts FxExtraSettings). Optional + Default {},
+  // damit ältere gespeicherte Presets/FX-Edits ohne dieses Feld gültig bleiben.
+  extras: z
+    .record(
+      z.string(),
+      z.object({ enabled: z.boolean() }).catchall(z.union([z.number(), z.string(), z.boolean()]))
+    )
+    .default({}),
   cloudSeed: z.object({
     enabled: z.boolean(),
     preDelay: FxNumberRange,

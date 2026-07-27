@@ -1,81 +1,84 @@
-// Feste FX-Kette pro Preset (PLAN.md Phase 4, erweitert um plan5 CloudSeed):
-// Drive -> Post-Filter -> Ensemble -> Delay (Tape/PingPong) -> Reverb (FDN/Shimmer)
-// -> CloudSeed (Diffusions-Reverb) -> Width.
-import { Drive } from "./Drive";
-import { PostFilter } from "./PostFilter";
-import { Ensemble } from "./Ensemble";
-import { TapeDelay } from "./TapeDelay";
-import { Reverb } from "./Reverb";
-import { CloudSeed } from "./CloudSeed";
-import { Width } from "./Width";
+// Slot-getriebene FX-Kette (plan10 §5.1): baut den Audiographen aus der
+// geordneten Slot-Liste des V2-Racks (fxRackFromLegacy), statt sieben fest
+// verdrahtete Member zu halten. Neue Module (plan10) brauchen dadurch keine
+// Änderung an dieser Datei mehr - nur einen Registry-Eintrag mit `create`.
+//
+// Hot-Path-Optimierung: Reglerbewegungen/Enabled-Umschalten ändern die
+// Slot-REIHENFOLGE nicht - in diesem (häufigsten) Fall wird nur `update()`
+// auf den bestehenden Node-Instanzen aufgerufen (kein Reconnect, kein Klick).
+// Nur wenn sich das Set/die Reihenfolge der Slot-Typen tatsächlich ändert
+// (Rack umsortiert, Modul hinzugefügt/entfernt), wird der Graph neu verkabelt.
+import { fxRackFromLegacy } from "./types";
 import type { FxChainSettings } from "./types";
+import { getFxFactory, type FxNode } from "./registry";
 
 export class FxChain {
   readonly input: GainNode;
   readonly output: GainNode;
-  private drive: Drive;
-  private postFilter: PostFilter;
-  private ensemble: Ensemble;
-  private delay: TapeDelay;
-  private reverb: Reverb;
-  private cloudSeed: CloudSeed;
-  private width: Width;
+  private ctx: BaseAudioContext;
+  private nodes = new Map<string, FxNode>();
+  private slotTypesKey = "";
+  private started = false;
+  private startedAt = 0;
 
   constructor(ctx: BaseAudioContext, settings: FxChainSettings) {
+    this.ctx = ctx;
     this.input = ctx.createGain();
     this.output = ctx.createGain();
-
-    this.drive = new Drive(ctx, settings.drive);
-    this.postFilter = new PostFilter(ctx, settings.postFilter);
-    this.ensemble = new Ensemble(ctx, settings.ensemble);
-    this.delay = new TapeDelay(ctx, settings.delay);
-    this.reverb = new Reverb(ctx, settings.reverb);
-    this.cloudSeed = new CloudSeed(ctx, settings.cloudSeed);
-    this.width = new Width(ctx, settings.width);
-
-    this.input
-      .connect(this.drive.input);
-    this.drive.output.connect(this.postFilter.input);
-    this.postFilter.output.connect(this.ensemble.input);
-    this.ensemble.output.connect(this.delay.input);
-    this.delay.output.connect(this.reverb.input);
-    this.reverb.output.connect(this.cloudSeed.input);
-    this.cloudSeed.output.connect(this.width.input);
-    this.width.output.connect(this.output);
+    this.rebuild(settings);
   }
 
   /** Muss einmalig aufgerufen werden, um interne LFOs/Oszillatoren zu starten. */
   start(time: number): void {
-    this.ensemble.start(time);
-    this.delay.start(time);
-    this.reverb.start(time);
-    this.cloudSeed.start(time);
+    this.started = true;
+    this.startedAt = time;
+    for (const node of this.nodes.values()) node.start?.(time);
   }
 
   update(settings: FxChainSettings): void {
-    this.drive.update(settings.drive);
-    this.postFilter.update(settings.postFilter);
-    this.ensemble.update(settings.ensemble);
-    this.delay.update(settings.delay);
-    this.reverb.update(settings.reverb);
-    this.cloudSeed.update(settings.cloudSeed);
-    this.width.update(settings.width);
+    const rack = fxRackFromLegacy(settings);
+    const key = rack.slots.map((s) => s.type).join("|");
+    if (key !== this.slotTypesKey) {
+      this.rebuild(settings);
+      return;
+    }
+    for (const slot of rack.slots) {
+      this.nodes.get(slot.id)?.update({ enabled: slot.enabled, ...slot.params });
+    }
   }
 
   setFreeze(freeze: boolean): void {
-    this.delay.setFreeze(freeze);
-    this.reverb.setFreeze(freeze);
-    this.cloudSeed.setFreeze(freeze);
+    for (const node of this.nodes.values()) node.setFreeze?.(freeze);
+  }
+
+  private rebuild(settings: FxChainSettings): void {
+    for (const node of this.nodes.values()) {
+      try { node.dispose(); } catch { /* noop */ }
+    }
+    this.nodes.clear();
+    try { this.input.disconnect(); } catch { /* noop */ }
+
+    const rack = fxRackFromLegacy(settings);
+    this.slotTypesKey = rack.slots.map((s) => s.type).join("|");
+
+    let prev: AudioNode = this.input;
+    for (const slot of rack.slots) {
+      const factory = getFxFactory(slot.type);
+      if (!factory) continue; // Slot-Typ ohne Audio-Implementierung (noch) - übersprungen, nicht verworfen (bleibt im Preset erhalten)
+      const node = factory(this.ctx, { enabled: slot.enabled, ...slot.params });
+      this.nodes.set(slot.id, node);
+      prev.connect(node.input);
+      prev = node.output;
+      if (this.started) node.start?.(this.startedAt);
+    }
+    prev.connect(this.output);
   }
 
   dispose(): void {
-    this.drive.dispose();
-    this.postFilter.dispose();
-    this.ensemble.dispose();
-    this.delay.dispose();
-    this.reverb.dispose();
-    this.cloudSeed.dispose();
-    this.width.dispose();
+    for (const node of this.nodes.values()) {
+      try { node.dispose(); } catch { /* noop */ }
+    }
+    this.nodes.clear();
     this.input.disconnect();
     this.output.disconnect();
   }
