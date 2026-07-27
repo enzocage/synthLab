@@ -126,6 +126,17 @@ button:hover {
   margin-bottom: 4px;
   flex-shrink: 0;
 }
+.preset-browser__navigation {
+  display: grid;
+  grid-template-columns: auto minmax(80px, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+.preset-browser__navigation .preset-browser__count { margin-bottom: 0; }
+.preset-browser__scrubber { width: 100%; min-width: 0; accent-color: var(--color-accent, #4a90d9); }
+.preset-browser__position { min-width: 58px; text-align: right; color: #6b7280; font: 10px monospace; }
 .preset-browser__list {
   flex: 1;
   min-height: 0;

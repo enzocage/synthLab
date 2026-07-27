@@ -57,6 +57,7 @@ export function PresetBrowser() {
   }, []);
 
   const totalCount = filteredIndices.length;
+  const sliderPosition = currentPos >= 0 ? currentPos : 0;
   const totalHeight = totalCount * ROW_HEIGHT;
 
   const startIndex = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - OVERSCAN);
@@ -105,7 +106,21 @@ export function PresetBrowser() {
           nur Favoriten
         </label>
       </div>
-      <div className="preset-browser__count">{filteredIndices.length} / {bank.length} Presets</div>
+      <div className="preset-browser__navigation">
+        <span className="preset-browser__count">{filteredIndices.length} / {bank.length} Presets</span>
+        <input
+          className="preset-browser__scrubber"
+          type="range"
+          min={0}
+          max={Math.max(0, totalCount - 1)}
+          value={sliderPosition}
+          disabled={totalCount === 0}
+          onChange={(event) => setIndexInFiltered(Number(event.target.value))}
+          aria-label="Durch alle gefilterten Presets navigieren"
+          aria-valuetext={totalCount > 0 ? `Preset ${sliderPosition + 1} von ${totalCount}` : "Keine Presets"}
+        />
+        <span className="preset-browser__position">{totalCount > 0 ? `${sliderPosition + 1} / ${totalCount}` : "0 / 0"}</span>
+      </div>
       <div className="preset-browser__list" ref={listRef} style={{ position: "relative" }}>
         <div style={{ height: totalHeight, width: "100%", position: "relative" }}>
           {visibleIndices.map(({ pos, bankIdx }) => {
