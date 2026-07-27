@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import type { Preset } from "../presets/schema";
 import type { ParamSpec } from "../audio/core/types";
 import { getEngine } from "../audio/engines/registry";
+import { AudioController } from "../audio/AudioController";
 import { SynthPreviewBox } from "./SynthPreviewBox";
 import { PresetSaveModal } from "./PresetSaveModal";
 import type { Role } from "../presets/schema";
@@ -32,11 +33,10 @@ export const SynthParameterInspector: React.FC<Props> = ({
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
   const [paramLfos, setParamLfos] = useState<Record<string, ParamLfoConfig>>({});
   const [openLfoDrawers, setOpenLfoDrawers] = useState<Record<string, boolean>>({});
+  const [lfoLiveDisplay, setLfoLiveDisplay] = useState<Record<string, number>>({});
 
   const startTimeRef = useRef(performance.now() / 1000);
   const baseParamsRef = useRef<Record<string, any>>({});
-  const onLiveEditRef = useRef(onLiveEdit);
-  onLiveEditRef.current = onLiveEdit;
 
   let parameters: ParamSpec[] = [];
   let engineName = preset.engine.toUpperCase();
@@ -56,17 +56,25 @@ export const SynthParameterInspector: React.FC<Props> = ({
         baseParamsRef.current[paramId] = preset.params[paramId];
       } else if (!lfo.enabled && baseParamsRef.current[paramId] !== undefined) {
         delete baseParamsRef.current[paramId];
+        setLfoLiveDisplay((prev) => {
+          const next = { ...prev };
+          delete next[paramId];
+          return next;
+        });
       }
     }
   }, [paramLfos, preset.params]);
 
-  // Persistent Real-Time LFO Oscillation Modulator Loop (60 FPS - Never Halts)
+  // Persistent Real-Time LFO Oscillation Modulator Loop (60 FPS - Direct Audio Controller)
   useEffect(() => {
     let animId: number;
 
     const tick = () => {
       const now = performance.now() / 1000;
       const elapsed = now - startTimeRef.current;
+
+      const newDisplays: Record<string, number> = {};
+      let hasLfoUpdates = false;
 
       for (const [paramId, lfo] of Object.entries(paramLfos)) {
         if (!lfo || !lfo.enabled) continue;
@@ -84,7 +92,6 @@ export const SynthParameterInspector: React.FC<Props> = ({
         } else if (lfo.shape === "square") {
           lfoVal = phase < 0.5 ? 1 : -1;
         } else if (lfo.shape === "random") {
-          // Deterministic Sample & Hold Random Waveform based on rate step
           const step = Math.floor(elapsed * lfo.rateHz);
           const hash = Math.sin(step * 12.9898 + 78.233) * 43758.5453;
           const rand01 = hash - Math.floor(hash);
@@ -102,7 +109,15 @@ export const SynthParameterInspector: React.FC<Props> = ({
         nextVal = Math.max(min, Math.min(max, nextVal));
         if (paramSpec.kind === "int") nextVal = Math.round(nextVal);
 
-        onLiveEditRef.current(paramId, nextVal);
+        // Direct real-time audio modulation without re-rendering React or reloading presets
+        AudioController.setLiveParam(paramId, nextVal);
+
+        newDisplays[paramId] = nextVal;
+        hasLfoUpdates = true;
+      }
+
+      if (hasLfoUpdates) {
+        setLfoLiveDisplay((prev) => ({ ...prev, ...newDisplays }));
       }
 
       animId = requestAnimationFrame(tick);
@@ -110,7 +125,7 @@ export const SynthParameterInspector: React.FC<Props> = ({
 
     animId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(animId);
-  }, [paramLfos, parameters]);
+  }, [paramLfos, parameters, preset.params]);
 
   // Group parameters by group field or default to "general"
   const groups: Record<string, ParamSpec[]> = {};
@@ -309,12 +324,14 @@ export const SynthParameterInspector: React.FC<Props> = ({
                   }}
                 >
                   {groupParams.map((param) => {
-                    const rawValue = preset.params[param.id];
-                    const value = rawValue !== undefined ? rawValue : (param as any).default;
-
                     const lfoConfig = paramLfos[param.id] ?? { enabled: false, shape: "sine", rateHz: 2.0, depth: 0.3 };
                     const isLfoActive = lfoConfig.enabled;
                     const isDrawerOpen = Boolean(openLfoDrawers[param.id]);
+
+                    const rawValue = preset.params[param.id];
+                    const value = isLfoActive && lfoLiveDisplay[param.id] !== undefined
+                      ? lfoLiveDisplay[param.id]
+                      : (rawValue !== undefined ? rawValue : (param as any).default);
 
                     return (
                       <div

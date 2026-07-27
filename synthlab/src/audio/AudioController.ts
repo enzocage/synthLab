@@ -195,7 +195,13 @@ class AudioControllerImpl {
   /** Live-Parameteraenderung auf der aktuell klingenden Voice (Makro-/Reglerdrag), ohne Preset-Reload. */
   setLiveParam(paramId: string, value: number | string | boolean): void {
     const now = AudioEngine.currentTime;
-    this.selectedTrackAudio()?.voiceManager?.setParam(paramId, value, now);
+    const track = this.selectedTrackAudio();
+    if (track) {
+      if (track.preset) {
+        track.preset.params[paramId] = value as any;
+      }
+      track.voiceManager?.setParam(paramId, value, now);
+    }
   }
 
   updateFx(fx: Preset["fx"]): void {
