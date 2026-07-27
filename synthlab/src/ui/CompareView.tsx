@@ -37,8 +37,8 @@ export const CompareView: React.FC<Props> = ({
   return (
     <div style={{ display: "flex", gap: 12, height: "100%", overflowY: "auto", padding: 8 }}>
       {/* A/B Compare Box */}
-      <div style={{ width: 220, background: "var(--color-surface-2, #1a1e26)", border: "1px solid var(--color-border, #303744)", borderRadius: 6, padding: 10 }}>
-        <div style={{ fontWeight: "bold", fontSize: 13, color: "var(--color-accent, #4a90d9)", marginBottom: 8 }}>
+      <div style={{ width: 220, background: "var(--color-surface-2, #21201f)", border: "1px solid var(--color-border, #3c3a38)", borderRadius: 6, padding: 10 }}>
+        <div style={{ fontWeight: "bold", fontSize: 13, color: "var(--color-accent, #d9924a)", marginBottom: 8 }}>
           A/B PRESET COMPARE
         </div>
         <div style={{ fontSize: 12, color: "#ccc", marginBottom: 6 }}>
@@ -51,15 +51,15 @@ export const CompareView: React.FC<Props> = ({
       </div>
 
       {/* Variation Grid Box */}
-      <div style={{ flex: 1, background: "var(--color-surface-2, #1a1e26)", border: "1px solid var(--color-border, #303744)", borderRadius: 6, padding: 10 }}>
-        <div style={{ fontWeight: "bold", fontSize: 13, color: "var(--color-accent, #4a90d9)", marginBottom: 8 }}>
+      <div style={{ flex: 1, background: "var(--color-surface-2, #21201f)", border: "1px solid var(--color-border, #3c3a38)", borderRadius: 6, padding: 10 }}>
+        <div style={{ fontWeight: "bold", fontSize: 13, color: "var(--color-accent, #d9924a)", marginBottom: 8 }}>
           MUTATION & VARIATION GRID
         </div>
         <VariationGrid variants={variationGrid} onPlay={handlePlayVariant} onAccept={handleAcceptVariant} />
       </div>
 
       {/* Rating & Notes Box */}
-      <div style={{ width: 240, background: "var(--color-surface-2, #1a1e26)", border: "1px solid var(--color-border, #303744)", borderRadius: 6, padding: 10 }}>
+      <div style={{ width: 240, background: "var(--color-surface-2, #21201f)", border: "1px solid var(--color-border, #3c3a38)", borderRadius: 6, padding: 10 }}>
         <RatingPanel
           rating={ratings[preset.id] ?? 0}
           favorite={!!favorites[preset.id]}

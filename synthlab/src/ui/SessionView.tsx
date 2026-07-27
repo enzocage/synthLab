@@ -19,7 +19,7 @@ export const SessionView: React.FC<Props> = ({ getPresetById }) => {
   const currentPreset = useSessionStore((s) => s.currentPreset());
 
   return (
-    <div style={{ display: "flex", flex: 1, overflowX: "auto", background: "var(--color-surface-1, #13161c)", padding: 8, gap: 8 }}>
+    <div style={{ display: "flex", flex: 1, overflowX: "auto", background: "var(--color-surface-1, #181817)", padding: 8, gap: 8 }}>
       {tracks.map((track) => {
         const isSelected = track.id === selectedTrackId;
         const preset = track.presetId ? getPresetById(track.presetId) : isSelected ? currentPreset : null;
@@ -33,8 +33,8 @@ export const SessionView: React.FC<Props> = ({ getPresetById }) => {
               minWidth: 180,
               display: "flex",
               flexDirection: "column",
-              background: isSelected ? "var(--color-surface-3, #242a36)" : "var(--color-surface-2, #1a1e26)",
-              border: isSelected ? "2px solid var(--color-accent, #4a90d9)" : "1px solid var(--color-border-subtle, #232832)",
+              background: isSelected ? "var(--color-surface-3, #242a36)" : "var(--color-surface-2, #21201f)",
+              border: isSelected ? "2px solid var(--color-accent, #d9924a)" : "1px solid var(--color-border-subtle, #2c2b29)",
               borderRadius: 6,
               overflow: "hidden",
               cursor: "pointer",
@@ -88,19 +88,19 @@ export const SessionView: React.FC<Props> = ({ getPresetById }) => {
                       background: isClipPlaying
                         ? "rgba(74, 217, 122, 0.25)"
                         : clip
-                        ? "rgba(74, 144, 217, 0.15)"
+                        ? "rgba(217, 146, 74, 0.15)"
                         : "rgba(0,0,0,0.15)",
                       border: isClipPlaying
                         ? "1px solid var(--color-playing, #4ad97a)"
                         : clip
-                        ? "1px solid var(--color-accent, #4a90d9)"
-                        : "1px dashed var(--color-border-subtle, #232832)",
+                        ? "1px solid var(--color-accent, #d9924a)"
+                        : "1px dashed var(--color-border-subtle, #2c2b29)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
                       padding: "0 8px",
                       fontSize: 11,
-                      color: isClipPlaying ? "#4ad97a" : clip ? "#e6e9ee" : "#555",
+                      color: isClipPlaying ? "#4ad97a" : clip ? "#ebeae9" : "#555",
                     }}
                   >
                     <span>{clip ? clip.name : `Slot ${slotIdx}`}</span>
@@ -121,8 +121,8 @@ export const SessionView: React.FC<Props> = ({ getPresetById }) => {
                   flex: 1,
                   fontSize: 11,
                   padding: "4px 0",
-                  background: track.muted ? "rgba(230, 126, 34, 0.3)" : "#1a1d22",
-                  borderColor: track.muted ? "#e67e22" : "#2c2f36",
+                  background: track.muted ? "rgba(230, 126, 34, 0.3)" : "#1f1e1d",
+                  borderColor: track.muted ? "#e67e22" : "#33312f",
                   color: track.muted ? "#e67e22" : "#aaa",
                 }}
               >
@@ -137,8 +137,8 @@ export const SessionView: React.FC<Props> = ({ getPresetById }) => {
                   flex: 1,
                   fontSize: 11,
                   padding: "4px 0",
-                  background: track.armed ? "rgba(231, 76, 60, 0.3)" : "#1a1d22",
-                  borderColor: track.armed ? "#e74c3c" : "#2c2f36",
+                  background: track.armed ? "rgba(231, 76, 60, 0.3)" : "#1f1e1d",
+                  borderColor: track.armed ? "#e74c3c" : "#33312f",
                   color: track.armed ? "#e74c3c" : "#aaa",
                 }}
               >

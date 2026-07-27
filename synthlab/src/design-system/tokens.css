@@ -1,27 +1,30 @@
-/* Design System Tokens for SynthLab (Plan 3 §12) */
+/* Design System Tokens for SynthLab (Plan 3 §12) - Ableton-Live-inspiriertes
+ * Farbschema: neutrale warmgraue Flächen (kein Blaustich) + ein einzelner
+ * warmer Orange-Akzent für Fokus/Auswahl/aktive Zustände, analog zu Live's
+ * Record-Enable-/Highlight-Farbe. */
 
 :root {
   /* Surfaces & Canvas */
-  --color-canvas: #0b0d10;
-  --color-surface-1: #13161c;
-  --color-surface-2: #1a1e26;
-  --color-surface-3: #242a36;
-  --color-surface-hover: #2b3340;
-  --color-surface-active: #323b4a;
+  --color-canvas: #0e0e0d;
+  --color-surface-1: #181817;
+  --color-surface-2: #21201f;
+  --color-surface-3: #2f2d2b;
+  --color-surface-hover: #383633;
+  --color-surface-active: #403e3c;
 
   /* Borders & Dividers */
-  --color-border-subtle: #232832;
-  --color-border: #303744;
-  --color-border-focus: #4a90d9;
+  --color-border-subtle: #2c2b29;
+  --color-border: #3c3a38;
+  --color-border-focus: #d9924a;
 
   /* Typography */
-  --color-text-primary: #e6e9ee;
-  --color-text-secondary: #a0a8b6;
-  --color-text-muted: #677080;
+  --color-text-primary: #ebeae9;
+  --color-text-secondary: #aeaba8;
+  --color-text-muted: #78746f;
 
   /* Accent & Semantic Colors */
-  --color-accent: #4a90d9;
-  --color-accent-hover: #60a2ea;
+  --color-accent: #d9924a;
+  --color-accent-hover: #eaa560;
   --color-playing: #4ad97a;
   --color-recording: #e74c3c;
   --color-warning: #e67e22;
@@ -40,8 +43,9 @@
   --space-md: 12px;
   --space-lg: 16px;
 
-  /* Border Radii */
-  --radius-sm: 3px;
-  --radius-md: 5px;
-  --radius-lg: 8px;
+  /* Border Radii - Ableton Live nutzt fast durchgehend scharfe, minimal
+   * gerundete Kanten statt großer Radien. */
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
 }

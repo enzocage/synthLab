@@ -8,7 +8,7 @@ import { useSessionStore } from "../store/sessionStore";
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 20 }}>
-      <h3 style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--color-accent, #4a90d9)", marginBottom: 8 }}>
+      <h3 style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--color-accent, #d9924a)", marginBottom: 8 }}>
         {title}
       </h3>
       {children}
@@ -19,10 +19,10 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function ShortcutRow({ keys, desc }: { keys: string; desc: string }) {
   return (
     <div style={{ display: "flex", gap: 10, padding: "3px 0", fontSize: 12 }}>
-      <span style={{ minWidth: 150, flexShrink: 0, fontFamily: "monospace", color: "#e4e6ea", background: "#1a1d22", border: "1px solid #2c2f36", borderRadius: 3, padding: "1px 6px", height: "fit-content" }}>
+      <span style={{ minWidth: 150, flexShrink: 0, fontFamily: "monospace", color: "#e8e7e6", background: "#1f1e1d", border: "1px solid #33312f", borderRadius: 3, padding: "1px 6px", height: "fit-content" }}>
         {keys}
       </span>
-      <span style={{ color: "#b0b6bf" }}>{desc}</span>
+      <span style={{ color: "#bab8b5" }}>{desc}</span>
     </div>
   );
 }
@@ -60,8 +60,8 @@ export function HelpOverlay() {
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          background: "var(--color-surface-1, #13161c)",
-          border: "1px solid var(--color-border, #303744)",
+          background: "var(--color-surface-1, #181817)",
+          border: "1px solid var(--color-border, #3c3a38)",
           borderRadius: 8,
           width: "min(920px, 100%)",
           maxHeight: "min(88vh, 100%)",
@@ -70,7 +70,7 @@ export function HelpOverlay() {
           boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px", borderBottom: "1px solid #2c2f36", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px", borderBottom: "1px solid #33312f", flexShrink: 0 }}>
           <strong style={{ fontSize: 15 }}>SynthLab – Hilfe & Tastaturbelegung</strong>
           <button onClick={() => setHelpOpen(false)} style={{ fontSize: 16, lineHeight: 1, padding: "4px 10px" }}>×</button>
         </div>
@@ -98,7 +98,7 @@ export function HelpOverlay() {
           </Section>
 
           <Section title="Computer-Tastatur als MIDI-Keyboard (Ableton-Style)">
-            <p style={{ fontSize: 12, color: "#8a919c", margin: "0 0 8px" }}>
+            <p style={{ fontSize: 12, color: "#97938f", margin: "0 0 8px" }}>
               Mit dem 🎹-Button in der Transportleiste (oder durch Klick) aktivierbar. Solange aktiv, spielen
               die unten gezeigten Tasten Noten statt ihrer sonstigen Funktion - genau wie Ableton Lives
               "Computer-MIDI-Tastatur".

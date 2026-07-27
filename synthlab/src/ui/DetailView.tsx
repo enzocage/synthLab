@@ -36,8 +36,8 @@ export const DetailView: React.FC<Props> = (props) => {
     <div
       style={{
         height: detailHeight,
-        background: "var(--color-surface-1, #13161c)",
-        borderTop: "1px solid var(--color-border, #303744)",
+        background: "var(--color-surface-1, #181817)",
+        borderTop: "1px solid var(--color-border, #3c3a38)",
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
@@ -49,8 +49,8 @@ export const DetailView: React.FC<Props> = (props) => {
           display: "flex",
           gap: 4,
           padding: "4px 8px",
-          background: "var(--color-surface-2, #1a1e26)",
-          borderBottom: "1px solid var(--color-border-subtle, #232832)",
+          background: "var(--color-surface-2, #21201f)",
+          borderBottom: "1px solid var(--color-border-subtle, #2c2b29)",
         }}
       >
         {(["device", "clip", "compare"] as DetailTab[]).map((tab) => {
@@ -63,8 +63,8 @@ export const DetailView: React.FC<Props> = (props) => {
                 fontSize: 11,
                 padding: "3px 12px",
                 borderRadius: 4,
-                background: isActive ? "var(--color-accent, #4a90d9)" : "transparent",
-                color: isActive ? "#000" : "var(--color-text-secondary, #a0a8b6)",
+                background: isActive ? "var(--color-accent, #d9924a)" : "transparent",
+                color: isActive ? "#000" : "var(--color-text-secondary, #aeaba8)",
                 border: "none",
                 fontWeight: isActive ? "bold" : "normal",
                 cursor: "pointer",
@@ -75,7 +75,7 @@ export const DetailView: React.FC<Props> = (props) => {
             </button>
           );
         })}
-        <label style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 6, color: "var(--color-text-muted, #677080)", fontSize: 10 }}>
+        <label style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 6, color: "var(--color-text-muted, #78746f)", fontSize: 10 }}>
           Detail
           <input
             type="range"

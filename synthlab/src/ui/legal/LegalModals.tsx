@@ -31,8 +31,8 @@ export const LegalModals: React.FC<LegalModalsProps> = ({ activeModal, onClose }
     >
       <div
         style={{
-          backgroundColor: "#16161e",
-          border: "1px solid #2e2e3e",
+          backgroundColor: "#1b1a18",
+          border: "1px solid #383633",
           borderRadius: "12px",
           width: "90%",
           maxWidth: "750px",
@@ -43,8 +43,8 @@ export const LegalModals: React.FC<LegalModalsProps> = ({ activeModal, onClose }
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #2e2e3e", paddingBottom: "14px", marginBottom: "20px" }}>
-          <h2 style={{ margin: 0, fontSize: "1.35rem", color: "#61dafb", fontWeight: 600 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #383633", paddingBottom: "14px", marginBottom: "20px" }}>
+          <h2 style={{ margin: 0, fontSize: "1.35rem", color: "#fbad60", fontWeight: 600 }}>
             {activeModal === "impressum" && "Impressum / Legal Notice"}
             {activeModal === "privacy" && "Datenschutzerklärung / Privacy Policy"}
             {activeModal === "terms" && "Nutzungsbedingungen / Terms of Service"}
@@ -73,11 +73,11 @@ export const LegalModals: React.FC<LegalModalsProps> = ({ activeModal, onClose }
           {activeModal === "trademarks" && <TrademarksContent />}
         </div>
 
-        <div style={{ marginTop: "24px", paddingTop: "14px", borderTop: "1px solid #2e2e3e", textAlign: "right" }}>
+        <div style={{ marginTop: "24px", paddingTop: "14px", borderTop: "1px solid #383633", textAlign: "right" }}>
           <button
             onClick={onClose}
             style={{
-              backgroundColor: "#2e2e3e",
+              backgroundColor: "#383633",
               color: "#fff",
               border: "none",
               borderRadius: "6px",
@@ -112,19 +112,19 @@ const PrivacyContent: React.FC = () => (
   <div>
     <h3 style={{ color: "#fff", marginTop: 0 }}>Datenschutzerklärung (DSGVO / GDPR)</h3>
 
-    <h4 style={{ color: "#61dafb", marginBottom: "4px" }}>1. Datenschutz auf einen Blick</h4>
+    <h4 style={{ color: "#fbad60", marginBottom: "4px" }}>1. Datenschutz auf einen Blick</h4>
     <p>Diese Web-App verarbeitet Audiodaten und Synthesizer-Einstellungen zu 100% lokal im Browser des Nutzers. Es werden keine Audiosignale oder Eingabedaten an externe Server übermittelt.</p>
 
-    <h4 style={{ color: "#61dafb", marginBottom: "4px" }}>2. Lokale Speicherung (IndexedDB & LocalStorage)</h4>
+    <h4 style={{ color: "#fbad60", marginBottom: "4px" }}>2. Lokale Speicherung (IndexedDB & LocalStorage)</h4>
     <p>Zur Speicherung eigener Presets, Favoriten, Bewertungen und UI-Einstellungen nutzt die App IndexedDB (`dexie`) und LocalStorage im Browser des Nutzers. Die Speicherung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO zur Bereitstellung der technischen App-Funktionalität.</p>
 
-    <h4 style={{ color: "#61dafb", marginBottom: "4px" }}>3. Server-Log-Dateien</h4>
+    <h4 style={{ color: "#fbad60", marginBottom: "4px" }}>3. Server-Log-Dateien</h4>
     <p>Beim Aufruf der Web-App erhebt der Webhosting-Anbieter (z. B. Cloudflare Pages / Vercel / GitHub Pages) automatisch Informationen in Server-Log-Dateien (IP-Adresse, Browser-Typ, Uhrzeit des Zugriffs). Dies erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO zur IT-Sicherheit und DDoS-Abwehr.</p>
 
-    <h4 style={{ color: "#61dafb", marginBottom: "4px" }}>4. Keine Analyse-Tools oder Tracking-Cookies</h4>
+    <h4 style={{ color: "#fbad60", marginBottom: "4px" }}>4. Keine Analyse-Tools oder Tracking-Cookies</h4>
     <p>SynthLab verwendet keine Drittanbieter-Analyse-Tools (wie Google Analytics), keine Marketing-Pixel und keine Tracking-Cookies.</p>
 
-    <h4 style={{ color: "#61dafb", marginBottom: "4px" }}>5. Rechte der betroffenen Person</h4>
+    <h4 style={{ color: "#fbad60", marginBottom: "4px" }}>5. Rechte der betroffenen Person</h4>
     <p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung Ihrer personenbezogenen Daten sowie das Recht auf Beschwerde bei einer Datenschutz-Aufsichtsbehörde.</p>
   </div>
 );
@@ -133,7 +133,7 @@ const TermsContent: React.FC = () => (
   <div>
     <h3 style={{ color: "#fff", marginTop: 0 }}>Nutzungsbedingungen & Rechte an Audiosignalen</h3>
 
-    <h4 style={{ color: "#61dafb", marginBottom: "4px" }}>1. Rechte an generierten Audiodaten</h4>
+    <h4 style={{ color: "#fbad60", marginBottom: "4px" }}>1. Rechte an generierten Audiodaten</h4>
     <p>Nutzer erhalten das <strong>100% uneingeschränkte Eigentum und Urheberrecht</strong> an allen Audiodaten, Musikstücken, Samples und Presets, die mit SynthLab erzeugt oder exportiert werden. Dies umfasst sowohl die kommerzielle als auch die nicht-kommerzielle Nutzung ohne Lizenzgebühren oder Tantiemen.</p>
 
     <h4 style={{ color: "#ff6b6b", marginBottom: "4px" }}>2. Haftungsausschluss & Gehörschutz-Warnung (Audio Safety Warning)</h4>
