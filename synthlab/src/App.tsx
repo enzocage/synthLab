@@ -88,17 +88,25 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [audioReady, selectedTrackId, effectivePreset?.id, JSON.stringify(effectivePreset?.params), JSON.stringify(effectivePreset?.fx)]);
 
-  const startAudio = useCallback(async () => {
-    await AudioController.resume();
+  const enterApp = useCallback(() => {
     AudioController.setSelectedTrack(useTracksStore.getState().selectedTrackId);
     AudioController.setPhraseRole(phraseRole);
     AudioController.setTempo(tempo);
     AudioController.setArpSettings(arpSettings);
     setAudioReady(true);
-    setStatusMessage("Audio bereit · 3.356 Presets geladen");
+    setStatusMessage("3.356 Presets geladen · Audio startet mit der ersten Eingabe");
+    void AudioController.resume()
+      .then(() => setStatusMessage("Audio bereit · 3.356 Presets geladen"))
+      .catch(() => setStatusMessage("Audio wartet auf die erste Tastatur- oder Mausaktion"));
     AudioController.connectHardwareMidi().catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (audioReady) return;
+    const timer = window.setTimeout(enterApp, 1000);
+    return () => window.clearTimeout(timer);
+  }, [audioReady, enterApp]);
 
   const playToggle = useCallback(() => {
     if (playing) {
@@ -106,9 +114,11 @@ function App() {
       setPlaying(false);
       setStatusMessage("Wiedergabe gestoppt");
     } else {
-      AudioController.play();
-      setPlaying(true);
-      setStatusMessage("Wiedergabe läuft");
+      void AudioController.resume().then(() => {
+        AudioController.play();
+        setPlaying(true);
+        setStatusMessage("Wiedergabe läuft");
+      });
     }
   }, [playing, setStatusMessage]);
 
@@ -221,8 +231,12 @@ function App() {
     toggleReferenceDrone: () => AudioController.toggleReferenceDrone(),
     saveToCollection: () => toggleFavorite(preset.id),
     undo: () => {},
-    holdNoteDown: () => AudioController.noteOn(MANUAL_NOTE),
-    holdNoteUp: () => AudioController.noteOff(MANUAL_NOTE),
+    holdNoteDown: () => {
+      void AudioController.resume().then(() => AudioController.noteOn(MANUAL_NOTE));
+    },
+    holdNoteUp: () => {
+      void AudioController.resume().then(() => AudioController.noteOff(MANUAL_NOTE));
+    },
     panic: () => {
       AudioController.panic();
       setStatusMessage("Panic: Alle Stimmen gestoppt");
@@ -231,8 +245,12 @@ function App() {
     pianoMode: {
       enabled: computerKeyboardEnabled,
       octaveBaseNote,
-      onNoteOn: (note) => AudioController.noteOn(note),
-      onNoteOff: (note) => AudioController.noteOff(note),
+      onNoteOn: (note) => {
+        void AudioController.resume().then(() => AudioController.noteOn(note));
+      },
+      onNoteOff: (note) => {
+        void AudioController.resume().then(() => AudioController.noteOff(note));
+      },
       onOctaveShift: (delta) => {
         shiftOctave(delta);
         setStatusMessage(`Oktave ${delta > 0 ? "hoch" : "runter"} verschoben`);
@@ -253,7 +271,8 @@ function App() {
       <div className="start-overlay">
         <h1>SynthLab</h1>
         <p>3.356 Presets über 23 Synthesizer-Engines, Mehrspur-Arrangement, Arp und Live-Tastatur.</p>
-        <button onClick={startAudio}>Audio starten</button>
+        <div className="start-overlay__progress" aria-hidden="true"><span /></div>
+        <div className="start-overlay__status" role="status">Workstation wird geladen …</div>
       </div>
     );
   }

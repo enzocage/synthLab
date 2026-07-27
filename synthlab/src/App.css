@@ -548,6 +548,20 @@ button:hover {
   border-radius: 5px;
   background: var(--color-surface-1, #13161c);
 }
+.synth-picture-card__image-button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+.synth-picture-card__image-button:focus-visible {
+  outline: 2px solid var(--color-selection, #4a90d9);
+  outline-offset: -2px;
+}
 .synth-picture-card img {
   display: block;
   width: 100%;
@@ -587,6 +601,71 @@ button:hover {
 .synth-picture-card__relation--exact {
   border-color: #357653;
   color: var(--color-playing, #4ad97a);
+}
+.synth-picture-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 52px;
+  background: rgba(2, 3, 5, .96);
+  cursor: zoom-out;
+}
+.synth-picture-lightbox img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: calc(100vh - 104px);
+  object-fit: contain;
+  filter: drop-shadow(0 20px 50px rgba(0, 0, 0, .65));
+}
+.synth-picture-lightbox__close {
+  position: fixed;
+  top: 18px;
+  right: 20px;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 24px;
+}
+.synth-picture-lightbox__caption {
+  position: fixed;
+  right: 60px;
+  bottom: 18px;
+  left: 60px;
+  color: var(--color-text-secondary, #a0a8b6);
+  font-size: 12px;
+  text-align: center;
+}
+
+@keyframes synthlab-start-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.start-overlay__progress {
+  width: min(320px, 72vw);
+  height: 2px;
+  margin-top: 22px;
+  overflow: hidden;
+  background: var(--color-border-subtle, #232832);
+}
+.start-overlay__progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: left;
+  background: var(--color-playing, #4ad97a);
+  animation: synthlab-start-progress 1s linear both;
+}
+.start-overlay__status {
+  margin-top: 9px;
+  color: var(--color-text-muted, #677080);
+  font-size: 11px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .start-overlay__progress span { animation: none; transform: scaleX(1); }
 }
 
 /* Track-Liste (Ableton-Style Spuren) */

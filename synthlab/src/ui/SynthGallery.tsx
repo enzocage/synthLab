@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ENGINES } from "../audio/engines/registry";
 import { useUiStore } from "../store/uiStore";
 
@@ -59,15 +59,22 @@ const REFERENCES: Record<string, ImageReference> = {
 export function SynthGallery() {
   const open = useUiStore((state) => state.synthGalleryOpen);
   const setOpen = useUiStore((state) => state.setSynthGalleryOpen);
+  const [fullscreenImage, setFullscreenImage] = useState<ImageReference | null>(null);
 
   useEffect(() => {
     if (!open) return;
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key !== "Escape") return;
+      if (fullscreenImage) setFullscreenImage(null);
+      else setOpen(false);
     };
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [open, setOpen]);
+  }, [fullscreenImage, open, setOpen]);
+
+  useEffect(() => {
+    if (!open) setFullscreenImage(null);
+  }, [open]);
 
   if (!open) return null;
 
@@ -98,7 +105,14 @@ export function SynthGallery() {
             const reference = REFERENCES[engine.id] ?? JUNO;
             return (
               <article className="synth-picture-card" key={engine.id}>
-                <img src={reference.image} alt={`${reference.subject} – Referenzbild für ${engine.name}`} loading="lazy" />
+                <button
+                  type="button"
+                  className="synth-picture-card__image-button"
+                  onClick={() => setFullscreenImage(reference)}
+                  aria-label={`${engine.name}: Synth-Bild im Vollbild öffnen`}
+                >
+                  <img src={reference.image} alt={`${reference.subject} – Referenzbild für ${engine.name}`} loading="lazy" />
+                </button>
                 <div className="synth-picture-card__body">
                   <span className={`synth-picture-card__relation${reference.relation === "Originalgerät" ? " synth-picture-card__relation--exact" : ""}`}>
                     {reference.relation}
@@ -113,6 +127,30 @@ export function SynthGallery() {
             );
           })}
         </div>
+        {fullscreenImage && (
+          <div
+            className="synth-picture-lightbox"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${fullscreenImage.subject} Vollbild`}
+            onClick={() => setFullscreenImage(null)}
+          >
+            <button
+              type="button"
+              className="synth-picture-lightbox__close"
+              onClick={() => setFullscreenImage(null)}
+              aria-label="Vollbild schließen"
+            >
+              ×
+            </button>
+            <img
+              src={fullscreenImage.image}
+              alt={fullscreenImage.subject}
+              onClick={(event) => event.stopPropagation()}
+            />
+            <div className="synth-picture-lightbox__caption">{fullscreenImage.subject}</div>
+          </div>
+        )}
       </section>
     </div>
   );
