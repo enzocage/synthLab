@@ -1,7 +1,6 @@
 // FX-Kette als Geraeteband im Ableton-Live-Stil: jedes Modul ist ein Karte mit
 // Power-Schalter (enabled) und einem aufklappbaren Parameter-Panel. Reihenfolge
 // entspricht dem festen Signalpfad (audio/fx/FxChain.ts).
-import { useState } from "react";
 import type { CloudSeedSettings, FxChainSettings } from "../audio/fx/types";
 import cloudSeedBank from "../data/derived/cloudseed-programs.json";
 
@@ -23,19 +22,17 @@ function Device({
   onToggle(): void;
   children: React.ReactNode;
 }) {
-  const [open, setOpen] = useState(false);
   return (
     <div className={`fx-device${enabled ? " fx-device--on" : ""}`}>
       <div className="fx-device__header">
         <button className="fx-device__power" onClick={onToggle} title="An/Aus">
           {enabled ? "●" : "○"}
         </button>
-        <button className="fx-device__title" onClick={() => setOpen((o) => !o)}>
+        <div className="fx-device__title">
           {title}
-        </button>
-        <span className="fx-device__caret">{open ? "▾" : "▸"}</span>
+        </div>
       </div>
-      {open && <div className="fx-device__body">{children}</div>}
+      <div className="fx-device__body">{children}</div>
     </div>
   );
 }

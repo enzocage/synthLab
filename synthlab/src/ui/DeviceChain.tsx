@@ -10,29 +10,32 @@ interface Props {
   onFxChange(fx: any): void;
 }
 
-export const DeviceChain: React.FC<Props> = ({ preset, onLiveEdit, onFxChange }) => {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8, height: "100%", overflowY: "auto", padding: 8 }}>
-      <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-        {/* Instrument Device Box */}
-        <div style={{ flex: 1, background: "var(--color-surface-2, #1a1e26)", border: "1px solid var(--color-border, #303744)", borderRadius: 6, padding: 10 }}>
-          <div style={{ fontWeight: "bold", fontSize: 13, color: "var(--color-accent, #4a90d9)", marginBottom: 8 }}>
-            INSTRUMENT DEVICE: {preset.name} ({preset.engine})
-          </div>
-          <MacroPanel preset={preset} onLiveEdit={onLiveEdit} />
-          {preset.engine === "sid-chip" && (
-            <SidControlPanel params={preset.params} onChange={onLiveEdit} />
-          )}
+/** Horizontales Ableton-artiges Geräteband; alle FX-Parameter bleiben sichtbar. */
+export const DeviceChain: React.FC<Props> = ({ preset, onLiveEdit, onFxChange }) => (
+  <div className="device-chain">
+    <div className="device-chain__toolbar">
+      <span className="device-chain__label">DEVICE CHAIN</span>
+      <span className="device-chain__signal">Instrument -&gt; FX -&gt; Output</span>
+      <span className="device-chain__hint">Alle Parameter sichtbar · horizontal scrollen</span>
+    </div>
+    <div className="device-chain__canvas">
+      <div className="instrument-device">
+        <div className="instrument-device__header">
+          <span className="instrument-device__kind">INSTRUMENT</span>
+          <span className="instrument-device__name">{preset.name}</span>
+          <span className="instrument-device__engine">{preset.engine}</span>
         </div>
-
-        {/* FX Chain Devices Box */}
-        <div style={{ width: 340, background: "var(--color-surface-2, #1a1e26)", border: "1px solid var(--color-border, #303744)", borderRadius: 6, padding: 10 }}>
-          <div style={{ fontWeight: "bold", fontSize: 13, color: "var(--color-text-secondary, #a0a8b6)", marginBottom: 8 }}>
-            FX RACK & DEVICES
-          </div>
-          <FxRack fx={preset.fx} onChange={onFxChange} />
-        </div>
+        <MacroPanel preset={preset} onLiveEdit={onLiveEdit} />
+        {preset.engine === "sid-chip" && <SidControlPanel params={preset.params} onChange={onLiveEdit} />}
+      </div>
+      <div className="device-chain__arrow" aria-hidden="true">-&gt;</div>
+      <div className="fx-device-group"><FxRack fx={preset.fx} onChange={onFxChange} /></div>
+      <div className="device-chain__arrow" aria-hidden="true">-&gt;</div>
+      <div className="output-device">
+        <span className="output-device__kind">OUTPUT</span>
+        <span className="output-device__meter" aria-label="Output meter"><span /></span>
+        <span className="output-device__value">-inf dB</span>
       </div>
     </div>
-  );
-};
+  </div>
+);
