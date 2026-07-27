@@ -1,4 +1,4 @@
-// Hilfe-Overlay: vollständige Tastaturübersicht + detaillierte App-Beschreibung.
+// Hilfe-Overlay: vollständige, ausführliche App-Dokumentation & Tastaturübersicht.
 // Schließbar über ×-Button, Klick auf Backdrop, oder Escape.
 import { useEffect } from "react";
 import { useUiStore } from "../store/uiStore";
@@ -7,8 +7,19 @@ import { useSessionStore } from "../store/sessionStore";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div style={{ marginBottom: 20 }}>
-      <h3 style={{ fontSize: 13, textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--color-accent, #d9924a)", marginBottom: 8 }}>
+    <div style={{ marginBottom: 24 }}>
+      <h3
+        style={{
+          fontSize: 13,
+          fontWeight: 700,
+          textTransform: "uppercase",
+          letterSpacing: "0.08em",
+          color: "var(--color-accent, #fbad60)",
+          marginBottom: 10,
+          paddingBottom: 4,
+          borderBottom: "1px solid rgba(251, 173, 96, 0.2)",
+        }}
+      >
         {title}
       </h3>
       {children}
@@ -18,11 +29,41 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function ShortcutRow({ keys, desc }: { keys: string; desc: string }) {
   return (
-    <div style={{ display: "flex", gap: 10, padding: "3px 0", fontSize: 12 }}>
-      <span style={{ minWidth: 150, flexShrink: 0, fontFamily: "monospace", color: "#e8e7e6", background: "#1f1e1d", border: "1px solid #33312f", borderRadius: 3, padding: "1px 6px", height: "fit-content" }}>
+    <div style={{ display: "flex", gap: 12, padding: "4px 0", fontSize: 12, alignItems: "center" }}>
+      <span
+        style={{
+          minWidth: 160,
+          flexShrink: 0,
+          fontFamily: "monospace",
+          fontWeight: 600,
+          color: "#fff",
+          background: "#242220",
+          border: "1px solid #3e3b38",
+          borderRadius: 4,
+          padding: "2px 8px",
+          height: "fit-content",
+        }}
+      >
         {keys}
       </span>
-      <span style={{ color: "#bab8b5" }}>{desc}</span>
+      <span style={{ color: "#c8c6c4", lineHeight: 1.4 }}>{desc}</span>
+    </div>
+  );
+}
+
+function FeatureCard({ title, desc }: { title: string; desc: string }) {
+  return (
+    <div
+      style={{
+        background: "#191817",
+        border: "1px solid #2d2b28",
+        borderRadius: 6,
+        padding: "10px 12px",
+        marginBottom: 8,
+      }}
+    >
+      <div style={{ fontWeight: 700, fontSize: 12.5, color: "#fff", marginBottom: 3 }}>{title}</div>
+      <div style={{ fontSize: 12, color: "#aaa", lineHeight: 1.5 }}>{desc}</div>
     </div>
   );
 }
@@ -49,111 +90,196 @@ export function HelpOverlay() {
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(0,0,0,0.65)",
+        background: "rgba(0, 0, 0, 0.75)",
+        backdropFilter: "blur(4px)",
         zIndex: 1000,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: 24,
+        padding: 20,
       }}
     >
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          background: "var(--color-surface-1, #181817)",
-          border: "1px solid var(--color-border, #3c3a38)",
-          borderRadius: 8,
-          width: "min(920px, 100%)",
-          maxHeight: "min(88vh, 100%)",
+          background: "var(--color-surface-1, #181715)",
+          border: "1px solid var(--color-border, #383633)",
+          borderRadius: 10,
+          width: "min(980px, 100%)",
+          maxHeight: "min(90vh, 100%)",
           display: "flex",
           flexDirection: "column",
-          boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+          boxShadow: "0 24px 80px rgba(0,0,0,0.7)",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px", borderBottom: "1px solid #33312f", flexShrink: 0 }}>
-          <strong style={{ fontSize: 15 }}>SynthLab – Hilfe & Tastaturbelegung</strong>
-          <button onClick={() => setHelpOpen(false)} style={{ fontSize: 16, lineHeight: 1, padding: "4px 10px" }}>×</button>
+        {/* Modal Header */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "14px 24px",
+            background: "#211f1c",
+            borderBottom: "1px solid #33312f",
+            flexShrink: 0,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <strong style={{ fontSize: 16, color: "var(--color-accent, #fbad60)" }}>
+              SynthLab – Handbuch &amp; Dokumentation
+            </strong>
+            <span style={{ fontSize: 11, background: "#333", color: "#aaa", padding: "2px 8px", borderRadius: 4 }}>
+              Ableton-Style Workstation
+            </span>
+          </div>
+          <button
+            onClick={() => setHelpOpen(false)}
+            style={{
+              fontSize: 18,
+              lineHeight: 1,
+              padding: "4px 10px",
+              background: "#2a2825",
+              border: "1px solid #444",
+              color: "#fff",
+              borderRadius: 4,
+              cursor: "pointer",
+            }}
+          >
+            ×
+          </button>
         </div>
 
-        <div style={{ overflowY: "auto", padding: "16px 20px", minHeight: 0 }}>
-          <Section title="Über SynthLab">
+        {/* Scrollable Content Container */}
+        <div style={{ overflowY: "auto", padding: "20px 24px", minHeight: 0 }}>
+          {/* Section 1: Overview */}
+          <Section title="1. Übersicht & Architektur">
+            <p style={{ fontSize: 12.5, color: "#c4c9d1", lineHeight: 1.6, margin: "0 0 12px" }}>
+              <strong>SynthLab</strong> ist ein professionelles, browserbasiertes Synthesizer-Labor und Performance-Workstation (React 19, TypeScript, Web Audio API / AudioWorklets) mit <strong>{ENGINES.length} spezialisierten Synthesizer-Engines</strong> und <strong>{bankLength.toLocaleString("de-DE")} kuratierten Presets</strong>.
+            </p>
             <p style={{ fontSize: 12.5, color: "#c4c9d1", lineHeight: 1.6, margin: 0 }}>
-              SynthLab ist eine browserbasierte Synthesizer- und Performance-Plattform (React, TypeScript,
-              Web Audio API) mit {ENGINES.length} spezialisierten Synthesizer-Engines und {bankLength.toLocaleString("de-DE")} kuratierten
-              Presets. Die Engines reichen von klassischer subtraktiver Synthese (VA Poly) über 6-Operator-FM
-              (DX7, mit 1.024 echten Yamaha-Werksvoices), 2-Operator-FM nach Yamaha OPL3 (175 DOS-Ära-Instrumente),
-              eine Juno-106-artige DCO-Engine (128 Roland-Werkspatches), echte Wavetable-Synthese über AKWF-
-              Single-Cycle-Wellenformen, eine C64-SID-Chip-Simulation bis zu Granular-, Modal-, Karplus-Strong-
-              und Wavefolding-Synthese. Viele Presets sind aus echten Original-Hardware-/Software-Datenquellen
-              importiert statt künstlich generiert (siehe README.md / preset_sources.md für die vollständige
-              Herkunftsdokumentation).
-            </p>
-            <p style={{ fontSize: 12.5, color: "#c4c9d1", lineHeight: 1.6, margin: "8px 0 0" }}>
-              Die Oberfläche folgt dem Ableton-Live-Arbeitsmodell: eine <strong>Session View</strong> mit
-              Mehrspur-Arrangement und Clip-Slots in der Mitte, ein durchsuchbarer <strong>Preset-Browser</strong> links,
-              und ein kontextabhängiger <strong>Detail-Bereich</strong> unten mit Device Chain (Makros + FX-Rack +
-              vollständigem Parameter-Editor), Clip &amp; Perform (Arpeggiator + Klaviatur) und Compare &amp; Rating
-              (A/B-Vergleich, Bewertung, Variationen).
+              Die Plattform vereint klassische subtraktive Synthese (VA Poly), 6-Operator-FM (DX7 mit 1.024 Original-ROM-Voices), 2-Operator-FM nach Yamaha OPL3 (175 DOS-Ära-Instrumente), Roland Juno-106 DCO (128 Werkspatches), AKWF-Wavetable-Synthese, C64-SID-Chip-Emulation sowie Granular-, Modal- und Karplus-Strong-Synthese.
             </p>
           </Section>
 
-          <Section title="Computer-Tastatur als MIDI-Keyboard (Ableton-Style)">
-            <p style={{ fontSize: 12, color: "#97938f", margin: "0 0 8px" }}>
-              Mit dem 🎹-Button in der Transportleiste (oder durch Klick) aktivierbar. Solange aktiv, spielen
-              die unten gezeigten Tasten Noten statt ihrer sonstigen Funktion - genau wie Ableton Lives
-              "Computer-MIDI-Tastatur".
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 4, fontFamily: "monospace", fontSize: 12 }}>
-              <div>Schwarze Tasten:  W E &nbsp;&nbsp; T Y U &nbsp;&nbsp; O P</div>
-              <div>Weiße Tasten:&nbsp; A S D F G H J K L ;</div>
+          {/* Section 2: Top Transport Bar */}
+          <Section title="2. Die Obere Steuerleiste (Transport Bar)">
+            <FeatureCard
+              title="Projekt & Rückgängig (Undo / Redo)"
+              desc="Mit den Undo- (Strg+Z) und Redo-Buttons werden Parameter-Änderungen oder Preset-Wechsel schrittweise zurückgenommen. Der orange Punkt indiziert ungespeicherte Projektänderungen."
+            />
+            <FeatureCard
+              title="Wiedergabe & MIDI-Aufnahme (Play & Rec)"
+              desc="Der Play-Button (Leertaste) startet die Audio-Vorschau. Der rote Rec-Button startet die Echtzeit-MIDI-Aufnahme auf der aktuell ausgewählten Spur. Noten von der Computer-Tastatur oder USB-MIDI-Keyboards werden direkt in den aktivierten Clip-Slot aufgenommen."
+            />
+            <FeatureCard
+              title="Tempo & Transportposition"
+              desc="Zeigt Takte, Schläge und Sechzehntel (z.B. 1.1.1). Das globale Master-Tempo ist stufenlos von 20 bis 200 BPM einstellbar (Standard: 120 BPM)."
+            />
+            <FeatureCard
+              title="Live Computer-Tastatur (🎹)"
+              desc="Aktiviert die Computer-Tastatur als vollwertiges MIDI-Keyboard (Reihe A–L für weiße Tasten, W–P für schwarze Tasten). Ist standardmäßig beim Start aktiv."
+            />
+            <FeatureCard
+              title="Panic (🚨 Emergency Stop)"
+              desc="Stoppt sofort alle klingenden Noten und Audio-Voice-Generatoren aller Spuren bei Hängern."
+            />
+          </Section>
+
+          {/* Section 3: Preset Browser */}
+          <Section title="3. Preset-Browser (Links)">
+            <FeatureCard
+              title="Suchfeld & Synthesizer-Filter"
+              desc="Über das Suchfeld kann nach Preset-Namen oder Tags gefiltert werden. Das Dropdown-Menü 'all synthesizers' erlaubt die gezielte Eingrenzung auf eine der 23 Synthesizer-Engines."
+            />
+            <FeatureCard
+              title="Rollen-Filter & Kuratierung"
+              desc="Filtert Presets nach musikalischen Rollen (Bass, Lead, Pad, Pluck, Rhythm, Bell, FX, Chord). Die Option 'nur unbewertet' hilft beim schnellen Durchhören und Bewerten neuer Sounds."
+            />
+          </Section>
+
+          {/* Section 4: Session View & Multitrack Recording */}
+          <Section title="4. Session View Matrix & Clip Recording (Mitte)">
+            <FeatureCard
+              title="Mehrspur-Spuren (Tracks 1 .. 4+)"
+              desc="Jede Spur hält ein eigenes Synthesizer-Instrument und bis zu 4 Clip-Slots. Spuren können stummgeschaltet (Mute), scharfgeschaltet (Arm) oder über '+' neu hinzugefügt werden."
+            />
+            <FeatureCard
+              title="Clip-Slots & Noten-Vorschau (MidiPreviewCanvas)"
+              desc="Aufgenommene Clips zeigen den Namen, die Taktlänge sowie eine Miniatur-Grafik aller enthaltenen MIDI-Noten (Pitch vs. Zeit) in neon-amber/grün. Klick auf ▶ startet die Clip-Schleife, Klick auf ■ stoppt sie."
+            />
+            <FeatureCard
+              title="Clip-Aufnahme auf Spuren"
+              desc="Ist eine Spur 'Arm' geschaltet, zeigt jeder leere Slot einen roten Record-Button (● Slot N). Ein Klick startet die Aufzeichnung, ein weiterer Klick schließt den Clip ab und startet nahtlos die Wiedergabe."
+            />
+          </Section>
+
+          {/* Section 5: Detail View */}
+          <Section title="5. Kontextueller Detail-Bereich & Tabs (Unten)">
+            <FeatureCard
+              title="Verstellbare Trennleisten (Resizer Splitters)"
+              desc="Die Randleisten zwischen Browser, Session View und Detail View lassen sich mit der Maus frei ziehen (Cursor wechselt zu col-resize bzw. row-resize), um die Fenstergrößen anzupassen."
+            />
+            <FeatureCard
+              title="Tab 1: Device Chain & Ableton-FX-Rack"
+              desc="Enthält die 8 Haupt-Makroregler des gewählten Presets sowie das Ableton-Style FX-Rack mit modularen Effekten: Drive, Vibrato, Post-Filter, Ensemble (Chorus), Tape Delay, Reverb (mit Freeze), CloudSeed (Ambient Diffusor) und Stereo Width."
+            />
+            <FeatureCard
+              title="Tab 2: Parameter Inspector & Custom Preset Saver"
+              desc="Zeigt 100% aller steuerbaren Engine-Parameter an. Der Button '🎲 Mutieren' führt eine intelligente, subtile Mutation (5–15% organisches Driften) aus. Über '💾 Als neues Preset speichern' wird der Sound in IndexedDB gesichert."
+            />
+            <FeatureCard
+              title="Tab 3: Clip & Piano Roll Editor"
+              desc="Bietet einen interaktiven Ableton Piano Roll Editor zum Einzeichnen und Bearbeiten von Noten, Tonhöhen und Anschlagsstärken sowie den Arpeggiator."
+            />
+            <FeatureCard
+              title="Tab 4: Compare & Rating"
+              desc="Ermöglicht A/B-Vergleiche zwischen zwei Soundzuständen sowie das Bewerten mit 1–5 Sternen und Verfassen eigener Notizen."
+            />
+          </Section>
+
+          {/* Section 6: Keyboard Shortcuts */}
+          <Section title="6. Tastatur-Tabelle & Shortcuts">
+            <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 12 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--color-accent, #fbad60)" }}>
+                🎹 Computer-Tastatur als MIDI-Keyboard:
+              </div>
+              <ShortcutRow keys="A S D F G H J K L ;" desc="Weiße Tasten (C, D, E, F, G, A, B, C, D, E)" />
+              <ShortcutRow keys="W E · T Y U · O P" desc="Schwarze Tasten (C#, D# · F#, G#, A# · C#, D#)" />
+              <ShortcutRow keys="Z / X" desc="Oktave tiefer / höher schalten" />
             </div>
-            <div style={{ marginTop: 8 }}>
-              <ShortcutRow keys="A S D F G H J K L ;" desc="Weiße Tasten (C D E F G A B C D E, aktuelle Oktave + Anfang der nächsten)" />
-              <ShortcutRow keys="W E · T Y U · O P" desc="Schwarze Tasten (C# D# · F# G# A# · C# D#)" />
-              <ShortcutRow keys="Z / X" desc="Oktave runter / hoch" />
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 12 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--color-accent, #fbad60)" }}>
+                ▶️ Transport & Navigation:
+              </div>
+              <ShortcutRow keys="Leertaste" desc="Wiedergabe starten / stoppen" />
+              <ShortcutRow keys="J / ↓" desc="Nächstes Preset laden (Shift: +10)" />
+              <ShortcutRow keys="K / ↑" desc="Vorheriges Preset laden (Shift: -10)" />
+              <ShortcutRow keys="." desc="Zufälliges unbewertetes Preset anspringen" />
+              <ShortcutRow keys="P" desc="Panic: Alle Noten & Stimmen sofort stummschalten" />
             </div>
-          </Section>
 
-          <Section title="Transport & Navigation">
-            <ShortcutRow keys="Leertaste" desc="Wiedergabe der Phrase starten/stoppen" />
-            <ShortcutRow keys="J / ↓" desc="Nächstes Preset (mit Shift: 10 weiter)" />
-            <ShortcutRow keys="K / ↑" desc="Vorheriges Preset (mit Shift: 10 zurück)" />
-            <ShortcutRow keys="." desc="Zufälliges unbewertetes Preset" />
-            <ShortcutRow keys="Tab" desc="Phrasen-Rolle wechseln" />
-            <ShortcutRow keys="P" desc="Panic: alle Stimmen sofort stoppen" />
-          </Section>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 12 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--color-accent, #fbad60)" }}>
+                ⭐ Bewertung & Variationen:
+              </div>
+              <ShortcutRow keys="1 – 5" desc="Preset mit 1 bis 5 Sternen bewerten" />
+              <ShortcutRow keys="0" desc="Preset verwerfen" />
+              <ShortcutRow keys="F" desc="Als Favorit umschalten" />
+              <ShortcutRow keys="M" desc="Organische Mutation auf Preset anwenden" />
+              <ShortcutRow keys="A / B" desc="Aktuelles Preset in Vergleichs-Slot A/B ablegen" />
+              <ShortcutRow keys="C" desc="Zwischen Vergleichs-Slot A und B umschalten" />
+            </div>
 
-          <Section title="Bewertung & Kuratierung">
-            <ShortcutRow keys="1 – 5" desc="Preset mit 1 bis 5 Sternen bewerten (springt danach weiter)" />
-            <ShortcutRow keys="0" desc="Preset verwerfen" />
-            <ShortcutRow keys="F" desc="Als Favorit markieren/abwählen" />
-            <ShortcutRow keys="S" desc="Preset favorisieren (schnelles Merken)" />
-          </Section>
-
-          <Section title="Variationen & Vergleich">
-            <ShortcutRow keys="M" desc="Jitter-Variationen des aktuellen Presets erzeugen" />
-            <ShortcutRow keys="Q W E R T Z U I" desc="Variation 1–8 anspielen" />
-            <ShortcutRow keys="Enter" desc="Zuletzt angespielte Variation übernehmen" />
-            <ShortcutRow keys="A / B" desc="Aktuelles Preset in Vergleichs-Slot A/B legen" />
-            <ShortcutRow keys="C" desc="Zwischen Slot A und B umschalten" />
-          </Section>
-
-          <Section title="Sonstiges">
-            <ShortcutRow keys="G" desc="Referenz-Drone gegenhören (leiser Kontext-Ton)" />
-            <ShortcutRow keys="H (halten)" desc="Manuelle Testnote halten" />
-            <ShortcutRow keys="Strg/Cmd + Z" desc="Rückgängig" />
-            <ShortcutRow keys="?" desc="Diese Hilfe öffnen/schließen" />
-            <ShortcutRow keys="Esc" desc="Diese Hilfe schließen" />
-          </Section>
-
-          <Section title="Parameter-Editor & eigene Presets">
-            <p style={{ fontSize: 12.5, color: "#c4c9d1", lineHeight: 1.6, margin: 0 }}>
-              Im Detail-Bereich unter "Device Chain" öffnet der Button <strong>🎛️ Alle Parameter</strong> eine
-              vollständige, nach Gruppen sortierte Übersicht sämtlicher Engine-Parameter (nicht nur der 8
-              Makro-Regler). Änderungen sind sofort hörbar. Über <strong>Als neues Preset speichern</strong> lässt
-              sich der aktuelle Klang unter einem eigenen Namen dauerhaft (im Browser, IndexedDB) als neues
-              Preset ablegen - es erscheint danach im Preset-Browser wie jedes andere.
-            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "var(--color-accent, #fbad60)" }}>
+                🛠️ System & Fenster:
+              </div>
+              <ShortcutRow keys="Strg / Cmd + Z" desc="Rückgängig (Undo)" />
+              <ShortcutRow keys="Strg / Cmd + Y" desc="Wiederholen (Redo)" />
+              <ShortcutRow keys="? / F1" desc="Dieses Handbuch öffnen / schließen" />
+              <ShortcutRow keys="Esc" desc="Handbuch / Modale Fenster schließen" />
+            </div>
           </Section>
         </div>
       </div>
