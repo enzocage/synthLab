@@ -2,15 +2,17 @@
 
 ![SynthLab Screenshot](./gfx/Screenshot.jpg)
 
-**SynthLab** ist eine hochmoderne, browserbasierte Synthesizer- und Performance-Plattform, entwickelt mit **React, TypeScript, Vite und Web Audio API**. Sie bietet 20 spezialisierte Synthesizer-Engines und eine kuratierte Bibliothek von **1.896 Presets** mit Mehrspur-Arrangement, interaktivem Audition-System und einem Echtzeit-FX-Rack.
+**SynthLab** ist eine hochmoderne, browserbasierte Synthesizer- und Performance-Plattform, entwickelt mit **React, TypeScript, Vite und Web Audio API**. Sie bietet 22 spezialisierte Synthesizer-Engines und eine kuratierte Bibliothek von **2.332 Presets** mit Mehrspur-Arrangement, interaktivem Audition-System und einem Echtzeit-FX-Rack.
 
 ---
 
 ## 🌟 Hauptmerkmale & Highlights
 
-- **20 Synthesizer-Engines**: Von klassischer subtraktiver Synthese bis zu 6-Op FM, C64-SID Chip-Simulation, Additiv, Wavetable, Granular, Physikalischem Modeling und einer Juno-106-artigen DCO-Engine.
-- **1.896 Kuratierte Presets**: Sämtliche Presets sind Zod-schema-validiert und bieten umfassende Klangfarben für Bass, Lead, Pad, Arp, Pluck, Bell, Rhythm, Drone und FX.
+- **22 Synthesizer-Engines**: Von klassischer subtraktiver Synthese bis zu 6-Op FM, C64-SID Chip-Simulation, Additiv, Wavetable, Granular, Physikalischem Modeling, einer Juno-106-artigen DCO-Engine, echter AKWF-Wavetable-Synthese und Yamaha-OPL3-2-Op-FM.
+- **2.332 Kuratierte Presets**: Sämtliche Presets sind Zod-schema-validiert, davon **835 aus echten Originaldaten importiert** (nicht generiert) und bieten umfassende Klangfarben für Bass, Lead, Pad, Arp, Pluck, Bell, Rhythm, Drone und FX.
 - **Juno-106 Engine (`juno106`)**: DCO-Synthese (Saw+Pulse/PWM+Sub+Noise), 24dB-Tiefpass, Onboard-Chorus I/II und **128 importierte Original-Roland-Werkspatches** (Bänke A/B), dekodiert aus echten SysEx-Parametern (Quelle: [`shorepine/amy`](https://github.com/shorepine/amy), MIT).
+- **AKWF-Wavetable-Engine (`wt-akwf`)**: Wavetable-Scan-Synthese über **261 echte Single-Cycle-Wellenformen**, aus Hardware-Zyklen gesampelt (Quelle: [`KristofferKarlAxelEkstrand/AKWF-FREE`](https://github.com/KristofferKarlAxelEkstrand/AKWF-FREE), CC0-1.0).
+- **OPL3-Engine (`opl3`)**: 2-Operator-FM nach Yamaha YMF262 mit **175 echten DOS-Ära-Instrumenten** (128 General-MIDI-Programme + 47 Perkussion), aus der klassischen DMX-GENMIDI-Bank dekodiert (Quelle: [`sneakernets/DMXOPL`](https://github.com/sneakernets/DMXOPL), MIT).
 - **C64 SID Lab Engine (`sid-chip`)**: Eigene Web-Audio C64-SID-Simulation mit 3-Stimmen-Kostenmodell, Hard-Sync, Ring-Modulation, PWM-Sweeps und 300 originären SID-Technik-Presets.
 - **5 Spezialisierte FM-Engines**: Nachbildung bekannter Open-Source & Hardware FM-Architekturen (Yamaha DX7 6-Op, Sega Genesis YM2612 4-Op, Ameobea Dynamic Morph, Foydel Chaos Feedback & Tone.js Linear Precision).
 - **12 Audition Test-Profile**: Vorhörphrasen für schnelles A/B-Testing (`BASS_LOCK`, `BASS_DRONE`, `ARP_HELD`, `MELODY_LEGATO`, `SYNC_RING_PAIR`, `RANGE_VELOCITY` uvm.).
@@ -26,6 +28,8 @@
 | Engine-ID | Name in der UI | Herkunft / Technische Referenz |
 |---|---|---|
 | `juno106` | **Juno-106 (Roland VA)** | Roland Juno-106 DCO-Architektur; Umrechnungskurven & 128 Werkspatches aus `shorepine/amy` (MIT) |
+| `wt-akwf` | **AKWF Wavetable (Adventure Kid)** | 261 echte Single-Cycle-Wellenformen aus `KristofferKarlAxelEkstrand/AKWF-FREE` (CC0-1.0) |
+| `opl3` | **OPL3 (Yamaha YMF262 2-Op FM)** | Yamaha OPL2/OPL3 2-Op-FM; 175 Instrumente aus `sneakernets/DMXOPL` GENMIDI-Bank (MIT) |
 | `sid-chip` | **SID Lab (C64 SID)** | MOS Technology 6581/8580 Commodore 64 Sound Interface Device |
 | `fm-dx7` | **FM DX7 (Yamaha DX7 6-Op Matrix)** | Yamaha DX7 Hardware & `ms3000/DX7-WebAudio` / `Tone.js` |
 | `fm-4op` | **FM 4-Op (Sega Genesis YM2612 / TX81Z)** | Sega Genesis YM2612 Arcade FM & `g200kg/webaudio-tinysynth` |

@@ -66,6 +66,37 @@ This document tracks all external reference repositories analyzed and adapted fo
 
 ---
 
+## plan5: AKWF-Wavetable-Engine
+
+### [`KristofferKarlAxelEkstrand/AKWF-FREE`](https://github.com/KristofferKarlAxelEkstrand/AKWF-FREE)
+- **License:** CC0-1.0 (Public Domain Dedication)
+- **Usage:** 261 kuratierte Single-Cycle-Wellenformen (jede 16. von 4.162
+  Original-Wellenformen aus `AKWF-js/*.json`), per DFT in kompakte PeriodicWave-
+  Fourier-Koeffizienten (48 Harmonische) umgewandelt (siehe
+  `research/extract/import-akwf.mjs`). Verwendet in der `wt-akwf`-Engine.
+- **Attribution:** Kristoffer Ekstrand ("Adventure Kid").
+
+## plan5: OPL3-Engine
+
+### [`sneakernets/DMXOPL`](https://github.com/sneakernets/DMXOPL)
+- **License:** MIT
+- **Usage:** `GENMIDI.op2` (klassische DMX-GENMIDI-Instrumentenbank, Doom-Engine-
+  Format) liefert 175 echte 2-Operator-FM-Instrumente (128 General-MIDI-
+  Programme + 47 Perkussion) mit vollständigen OPL2/OPL3-Registerwerten
+  (Multiplier, Attack/Decay/Sustain/Release, Output-Level, Waveform, Feedback,
+  Connection). Siehe `research/extract/import-opl3.mjs`.
+- **Byte-Layout-Referenz:** Das binäre GENMIDI-Format selbst ist nicht in DMXOPL
+  dokumentiert; das exakte Byte-Layout (`genmidi_instr_t`/`genmidi_voice_t`/
+  `genmidi_op_t`) wurde gegen
+  [`chocolate-doom/chocolate-doom`](https://github.com/chocolate-doom/chocolate-doom)
+  (`src/i_oplmusic.c`, GPL-2.0) verifiziert - **nur als Formatreferenz**, kein
+  Code aus diesem Repository wurde übernommen (nur die öffentlich dokumentierte
+  Struct-Definition, die den Aufbau eines offenen Binärformats beschreibt).
+- **Attribution:** DMXOPL-Bank sneakernets (MIT). GENMIDI-Format ursprünglich id
+  Software / Digital eXpress Music (DMX), verwendet in Doom, Heretic, Hexen u.a.
+
+---
+
 ## Copyright & Provenance Notice
 
 All 300 presets provided with SID Lab (`sid-chip`) are original synthesised sound designs.

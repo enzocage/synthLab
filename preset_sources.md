@@ -41,6 +41,12 @@ plan5 kommt eine bewusste, dokumentierte Ausnahme hinzu:
   `provenance.upstreamRepo` und den Original-Werksnamen (z.B. "A14 Flutes") in
   `provenance.derivedFrom`. Details und Begründung: `research/LICENSES.md` und
   `plan5.md` §3.1 (Variante A).
-- Perspektivisch (siehe `plan5.md`) sollen auf dieselbe Weise 1.024 DX7-Voices und
-  175 OPL3-Instrumente hinzukommen — ebenfalls mit vollständiger Attribution statt
-  eigener Erfindung.
+- Die **AKWF-Wavetable-Engine** (`wt-akwf`) importiert **261 echte Single-Cycle-
+  Wellenformen** aus [`KristofferKarlAxelEkstrand/AKWF-FREE`](https://github.com/KristofferKarlAxelEkstrand/AKWF-FREE)
+  (CC0-1.0) als PeriodicWave-Fourier-Koeffizienten. `provenance.source: "akwf-free"`.
+- Die **OPL3-Engine** (`opl3`) importiert **175 echte DOS-Ära-Instrumente** (128
+  General-MIDI-Programme + 47 Perkussion) aus der klassischen DMX-GENMIDI-Bank
+  ([`sneakernets/DMXOPL`](https://github.com/sneakernets/DMXOPL), MIT).
+  `provenance.source: "dmxopl-genmidi"`.
+- Perspektivisch (siehe `plan5.md`) sollen auf dieselbe Weise 1.024 DX7-Voices
+  hinzukommen — ebenfalls mit vollständiger Attribution statt eigener Erfindung.

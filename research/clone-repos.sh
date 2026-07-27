@@ -86,7 +86,11 @@ sparse-branch() {
 sparse-branch cloudseed https://github.com/ValdemarOrn/CloudSeed.git legacy-v1 \
                    'CloudSeed.Native' 'Factory Programs' 'license.txt' 'readme.md'
 full airwindows    https://github.com/airwindows/airwindows.git
-full akwf          https://github.com/KristofferKarlAxelEkstrand/AKWF-FREE.git
+# AKWF-FREE als Vollklon ist >1.7GB (WAV/PNG-Vorschauen in jeder Sammlung) und
+# bricht per Timeout ab - nur AKWF-js (die fuer die eigene DFT-Extraktion
+# benoetigten JSON-Wellenformdaten) sparse klonen, ~45MB.
+sparse akwf        https://github.com/KristofferKarlAxelEkstrand/AKWF-FREE.git \
+                   'AKWF-js' 'README.md' 'LICENSE.md'
 full dmxopl        https://github.com/sneakernets/DMXOPL.git
 full signalsmith-stretch https://github.com/Signalsmith-Audio/signalsmith-stretch.git
 full dattorro-verb https://github.com/el-visio/dattorro-verb.git

@@ -13,6 +13,8 @@ import type { Preset } from "./schema";
 import { SID_PRESETS } from "./sidPresets";
 import { FM_PRESETS } from "./fmPresets";
 import { JUNO106_PRESETS } from "./junoPresets";
+import { WT_AKWF_PRESETS } from "./wtAkwfPresets";
+import { OPL3_PRESETS } from "./opl3Presets";
 
 const VARIANTS_PER_COMBO = 3; // variant 0 = Kernpreset (kein Jitter), 1..N = Seed-Variation
 
@@ -37,7 +39,7 @@ export function generateFullBank(): Preset[] {
   const presets: Preset[] = [];
 
   for (const engine of ENGINES) {
-    if (engine.id === "sid-chip" || engine.id.startsWith("fm-") && engine.id !== "fm6") continue; // Exclude SID & custom FM engines from auto-archetype generation
+    if (engine.id === "sid-chip" || engine.id === "wt-akwf" || engine.id === "opl3" || engine.id.startsWith("fm-") && engine.id !== "fm6") continue; // Exclude SID, AKWF-Wavetable, OPL3 (eigene kuratierte Bank) & custom FM engines from auto-archetype generation
     for (const archetype of ARCHETYPES) {
       for (let variant = 0; variant < VARIANTS_PER_COMBO; variant++) {
         const seed = variant; // Kernseed = 0..N-1, deterministisch pro Variante
@@ -76,6 +78,8 @@ export function generateFullBank(): Preset[] {
   presets.push(...SID_PRESETS);
   presets.push(...FM_PRESETS);
   presets.push(...JUNO106_PRESETS);
+  presets.push(...WT_AKWF_PRESETS);
+  presets.push(...OPL3_PRESETS);
   return presets;
 }
 
