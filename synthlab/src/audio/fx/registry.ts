@@ -1,5 +1,6 @@
 import type { FxModuleId, FxParamValue } from "./types";
 import { Drive } from "./Drive";
+import { Vibrato } from "./Vibrato";
 import { PostFilter } from "./PostFilter";
 import { Ensemble } from "./Ensemble";
 import { TapeDelay } from "./TapeDelay";
@@ -69,6 +70,7 @@ const asAny = (settings: Record<string, FxParamValue>) => settings as never;
 /** Central metadata registry for the rack UI, preset browser and audio graph. */
 export const FX_MODULES: readonly FxModuleDefinition[] = [
   { id: "drive", title: "Drive", category: "dynamics", defaultOrder: 10, legacyKey: "drive", params: [b("enabled", "Power"), n("amount", "Amount", 0.2, 0, 1), n("mix", "Mix", 1, 0, 1)], create: (ctx, s) => new Drive(ctx, asAny(s)) as unknown as FxNode },
+  { id: "vibrato", title: "Vibrato", category: "modulation", defaultOrder: 15, legacyKey: "vibrato", params: [b("enabled", "Power"), n("rateHz", "Rate", 5, 0.5, 15, "Hz"), n("depthCents", "Depth", 15, 0, 100, "ct")], create: (ctx, s) => new Vibrato(ctx, asAny(s)) as unknown as FxNode },
   { id: "postFilter", title: "Filter", category: "utility", defaultOrder: 20, legacyKey: "postFilter", params: [b("enabled", "Power"), e("type", "Type", "lowpass", ["lowpass", "highpass", "bandpass"]), n("cutoffHz", "Cutoff", 12000, 20, 20000, "Hz", "logarithmic"), n("q", "Q", 0.7, 0.1, 10)], create: (ctx, s) => new PostFilter(ctx, asAny(s)) as unknown as FxNode },
   { id: "ensemble", title: "Ensemble", category: "modulation", defaultOrder: 30, legacyKey: "ensemble", params: [b("enabled", "Power"), n("amount", "Amount", 0.3, 0, 1), n("rateHz", "Rate", 0.3, 0.05, 5, "Hz", "logarithmic"), n("depthMs", "Depth", 4, 0, 20, "ms")], create: (ctx, s) => new Ensemble(ctx, asAny(s)) as unknown as FxNode },
   { id: "delay", title: "Delay", category: "time", defaultOrder: 40, legacyKey: "delay", params: [b("enabled", "Power"), e("mode", "Mode", "pingpong", ["tape", "pingpong"]), n("timeSeconds", "Time", 0.5, 0.05, 2, "s"), n("feedback", "Feedback", 0.3, 0, 0.95), n("mix", "Mix", 0.25, 0, 1), n("tone", "Tone", 0.5, 0, 1), n("wowFlutterDepth", "Wow/Flutter", 0.1, 0, 1)], create: (ctx, s) => new TapeDelay(ctx, asAny(s)) as unknown as FxNode },

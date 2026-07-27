@@ -112,8 +112,15 @@ export interface CloudSeedSettings {
  */
 export type FxExtraSettings = { enabled: boolean } & Record<string, FxParamValue>;
 
+export interface VibratoSettings {
+  enabled: boolean;
+  rateHz: number;
+  depthCents: number;
+}
+
 export interface FxChainSettings {
   drive: DriveSettings;
+  vibrato: VibratoSettings;
   postFilter: PostFilterSettings;
   ensemble: EnsembleSettings;
   delay: DelaySettings;
@@ -139,7 +146,7 @@ export interface FxRackState {
   slots: FxSlot[];
 }
 
-const LEGACY_FX_ORDER: FxModuleId[] = ["drive", "postFilter", "ensemble", "delay", "reverb", "cloudSeed", "width"];
+const LEGACY_FX_ORDER: FxModuleId[] = ["drive", "vibrato", "postFilter", "ensemble", "delay", "reverb", "cloudSeed", "width"];
 
 /** Erzeugt aus dem bisherigen benannten V1-Objekt ein stabiles Slot-Rack,
  * einschließlich aller `extras`-Module (plan10, an das Ende der Kette gehängt,
@@ -178,6 +185,7 @@ export function legacyFxFromRack(rack: FxRackState, fallback: FxChainSettings): 
 export function defaultFxChainSettings(): FxChainSettings {
   return {
     drive: { enabled: false, amount: 0.2 },
+    vibrato: { enabled: false, rateHz: 5, depthCents: 15 },
     postFilter: { enabled: false, type: "lowpass", cutoffHz: 12000, q: 0.7 },
     ensemble: { enabled: false, amount: 0.3, rateHz: 0.3, depthMs: 4 },
     delay: { enabled: false, mode: "pingpong", timeSeconds: 0.5, feedback: 0.3, mix: 0.25, tone: 0.5, wowFlutterDepth: 0.1 },

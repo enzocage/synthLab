@@ -8,6 +8,7 @@ describe("versioned FX rack compatibility", () => {
     expect(rack.version).toBe(2);
     expect(rack.slots.map((slot) => slot.type)).toEqual([
       "drive",
+      "vibrato",
       "postFilter",
       "ensemble",
       "delay",

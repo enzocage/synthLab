@@ -7,6 +7,8 @@ import { CompareView } from "./CompareView";
 import { SynthParameterInspector } from "./SynthParameterInspector";
 import type { Preset } from "../presets/schema";
 
+import { subtleMutate } from "../presets/mutate";
+
 interface Props {
   preset: Preset;
   onLiveEdit(paramId: string, value: number | string | boolean): void;
@@ -33,7 +35,6 @@ export const DetailView: React.FC<Props> = (props) => {
   const setDetailHeight = useUiStore((s) => s.setDetailHeight);
 
   const saveAsCustomPreset = useSessionStore((s) => s.saveAsCustomPreset);
-  const generateVariations = useSessionStore((s) => s.generateVariations);
 
   if (!detailOpen) return null;
 
@@ -111,7 +112,12 @@ export const DetailView: React.FC<Props> = (props) => {
             preset={props.preset}
             onLiveEdit={props.onLiveEdit}
             onSaveAsCustomPreset={saveAsCustomPreset}
-            onMutate={() => generateVariations(1)}
+            onMutate={() => {
+              const mutated = subtleMutate(props.preset, 0.15);
+              for (const [paramId, val] of Object.entries(mutated)) {
+                props.onLiveEdit(paramId, val);
+              }
+            }}
           />
         )}
         {activeTab === "clip" && (

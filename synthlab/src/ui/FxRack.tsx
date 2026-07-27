@@ -61,6 +61,11 @@ export function FxRack({ fx, onChange }: Props) {
         <Slider label="Amount" value={fx.drive.amount} min={0} max={1} step={0.01} onChange={(v) => onChange({ drive: { ...fx.drive, amount: v } })} />
       </Device>
 
+      <Device title="Vibrato" enabled={fx.vibrato?.enabled ?? false} onToggle={() => onChange({ vibrato: { ...fx.vibrato, enabled: !(fx.vibrato?.enabled ?? false) } })}>
+        <Slider label="Rate" value={fx.vibrato?.rateHz ?? 5} min={0.5} max={15} step={0.1} onChange={(v) => onChange({ vibrato: { ...fx.vibrato, rateHz: v } })} unit="Hz" />
+        <Slider label="Depth" value={fx.vibrato?.depthCents ?? 15} min={0} max={100} step={1} onChange={(v) => onChange({ vibrato: { ...fx.vibrato, depthCents: v } })} unit="ct" />
+      </Device>
+
       <Device title="Filter" enabled={fx.postFilter.enabled} onToggle={() => onChange({ postFilter: { ...fx.postFilter, enabled: !fx.postFilter.enabled } })}>
         <label className="fx-select">
           <span>Typ</span>

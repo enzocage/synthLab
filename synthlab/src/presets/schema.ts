@@ -33,6 +33,7 @@ export const MacroValuesSchema = z.object(
 const FxNumberRange = z.number();
 export const FxChainSettingsSchema = z.object({
   drive: z.object({ enabled: z.boolean(), amount: FxNumberRange }),
+  vibrato: z.object({ enabled: z.boolean(), rateHz: FxNumberRange, depthCents: FxNumberRange }),
   postFilter: z.object({
     enabled: z.boolean(),
     type: z.enum(["lowpass", "highpass", "bandpass"]),

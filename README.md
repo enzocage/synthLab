@@ -1,6 +1,6 @@
 # SynthLab – Next-Gen Web Audio Synthesizer Suite
 
-![SynthLab Title Banner](./gfx/title.png)
+![SynthLab Title Banner](./gfx/title2.png)
 
 > **SynthLab** is a high-performance, browser-based digital synthesizer workstation and sound design laboratory built with **React 19, TypeScript, Vite, and Web Audio API / AudioWorklets**. It features **23 specialized synthesizer engines**, **3,356 curated and schema-validated presets**, a multi-stage audition system, and an Ableton-style modular FX rack featuring diffusion reverbs, tape delays, and analog choruses.
 >
@@ -300,7 +300,7 @@ Below is the full catalog of all **23 synthesizer engines** in SynthLab, along w
 ### 23. DX7 Werksvoices Engine – 1,024 Original Factory Voices
 **Engine ID:** `dx7` | **Paradigms:** 6-Op FM AudioWorklet, 1,024 Imported Yamaha DX7 Rom Voices
 
-![DX7 Werksvoices](./gfx/title2.png)
+![DX7 Werksvoices](./gfx/title.png)
 
 - **Description:** Flagship 6-operator FM engine powered by a custom `AudioWorkletProcessor`, pre-loaded with **1,024 authentic Yamaha DX7 ROM factory presets** ("BRASS 1", "E.PIANO 1", "MARIMBA", "TUBBELL", etc.) decoded directly from original 156-byte voice binary dumps.
 - **Hardware Inspiration:** Original 1983 Yamaha DX7 Hardware.

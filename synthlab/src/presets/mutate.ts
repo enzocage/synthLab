@@ -50,3 +50,55 @@ export function mutate(preset: Preset, amount: number, seed: number): Preset {
 export function mutateN(preset: Preset, amount: number, count: number, baseSeed: number): Preset[] {
   return Array.from({ length: count }, (_, i) => mutate(preset, amount, baseSeed + i));
 }
+
+/**
+ * Intelligente & subtile Live-Mutation für den Parametereinspektor.
+ * Führt geringfügige organisches Driften auf Parameter aus, ohne den grundlegenden
+ * Charakter des Presets zu zerstören.
+ */
+export function subtleMutate(preset: Preset, amount = 0.15): Record<string, ParamValue> {
+  const engine = getEngine(preset.engine);
+  const newParams: Record<string, ParamValue> = { ...preset.params };
+
+  for (const spec of engine.params) {
+    const weight = spec.mutationWeight ?? 0.5;
+    const strength = amount * weight;
+    if (strength <= 0) continue;
+
+    const current = newParams[spec.id] ?? spec.default;
+
+    if (spec.kind === "float" || spec.kind === "int") {
+      const curNum = Number(current);
+
+      if ((spec as any).curve === "log" && curNum > 0) {
+        // Logarithmische Mutation (z.B. Filter-Cutoff oder Envelopes) -> relatives Driften (+-10-20%)
+        const factor = 1 + (Math.random() * 2 - 1) * strength * 0.25;
+        let next = curNum * factor;
+        next = Math.min(spec.max, Math.max(spec.min, next));
+        newParams[spec.id] = spec.kind === "int" ? Math.round(next) : next;
+      } else {
+        // Lineare Mutation (subtiler Ausschlagsbereich)
+        const range = spec.max - spec.min;
+        const delta = (Math.random() * 2 - 1) * strength * range * 0.12;
+        let next = curNum + delta;
+        next = Math.min(spec.max, Math.max(spec.min, next));
+        newParams[spec.id] = spec.kind === "int" ? Math.round(next) : next;
+      }
+    } else if (spec.kind === "enum") {
+      // Sehr geringe Wahrscheinlichkeit zum Wechseln von Enums (5%), um Grundcharakter zu wahren
+      if (Math.random() < strength * 0.1 && spec.options.length > 1) {
+        const otherOptions = spec.options.filter((o) => o !== current);
+        if (otherOptions.length > 0) {
+          newParams[spec.id] = otherOptions[Math.floor(Math.random() * otherOptions.length)];
+        }
+      }
+    } else if (spec.kind === "bool") {
+      // Geringe Wahrscheinlichkeit für Toggles (5%)
+      if (Math.random() < strength * 0.1) {
+        newParams[spec.id] = !Boolean(current);
+      }
+    }
+  }
+
+  return newParams;
+}

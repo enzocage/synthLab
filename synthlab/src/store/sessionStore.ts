@@ -5,7 +5,7 @@ import { create } from "zustand";
 import { generateFullBank } from "../presets/generate";
 import { mutateN } from "../presets/mutate";
 import type { Preset, Role } from "../presets/schema";
-import type { FxChainSettings } from "../audio/fx/types";
+import { defaultFxChainSettings, type FxChainSettings } from "../audio/fx/types";
 
 import { loadUserDataFromDb, saveRatingToDb, saveFavoriteToDb, saveNoteToDb, saveEditToDb, saveCustomPresetToDb, loadCustomPresetsFromDb, type CustomPresetRecord } from "../db/database";
 
@@ -84,7 +84,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
         roles: c.roles,
         tags: c.tags,
         params: c.params,
-        fx: c.fx ?? (template?.fx ?? { drive: 0, tone: 0.5, ensemble: 0, delayTime: 0.3, delayFeedback: 0.3, delayMix: 0, reverbSize: 0.5, reverbMix: 0, stereoWidth: 1 }),
+        fx: c.fx ?? (template?.fx ?? defaultFxChainSettings()),
       }));
 
       set((s) => ({
