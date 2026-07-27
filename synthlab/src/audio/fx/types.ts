@@ -114,6 +114,47 @@ export interface FxChainSettings {
   width: WidthSettings;
 }
 
+export type FxModuleId = keyof FxChainSettings;
+export type FxParamValue = number | string | boolean;
+
+/** Versioniertes, frei sortierbares Rackformat für die plan5-V2-Migration. */
+export interface FxSlot {
+  id: string;
+  type: FxModuleId | string;
+  enabled: boolean;
+  params: Record<string, FxParamValue>;
+}
+
+export interface FxRackState {
+  version: 2;
+  slots: FxSlot[];
+}
+
+const LEGACY_FX_ORDER: FxModuleId[] = ["drive", "postFilter", "ensemble", "delay", "reverb", "cloudSeed", "width"];
+
+/** Erzeugt aus dem bisherigen benannten V1-Objekt ein stabiles Slot-Rack. */
+export function fxRackFromLegacy(settings: FxChainSettings): FxRackState {
+  return {
+    version: 2,
+    slots: LEGACY_FX_ORDER.map((type, index) => {
+      const module = settings[type];
+      const { enabled, ...params } = module;
+      return { id: `${type}-${index + 1}`, type, enabled, params };
+    }),
+  };
+}
+
+/** Projiziert bekannte V2-Slots zurück auf das laufende V1-Audioformat. */
+export function legacyFxFromRack(rack: FxRackState, fallback: FxChainSettings): FxChainSettings {
+  const next = structuredClone(fallback);
+  for (const slot of rack.slots) {
+    if (!LEGACY_FX_ORDER.includes(slot.type as FxModuleId)) continue;
+    const type = slot.type as FxModuleId;
+    next[type] = { ...next[type], ...slot.params, enabled: slot.enabled } as never;
+  }
+  return next;
+}
+
 export function defaultFxChainSettings(): FxChainSettings {
   return {
     drive: { enabled: false, amount: 0.2 },

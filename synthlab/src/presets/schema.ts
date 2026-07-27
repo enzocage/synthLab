@@ -3,6 +3,7 @@
 // generisch über die Engine-Registry auflösen.
 import { z } from "zod";
 import { MACRO_IDS } from "../audio/core/types";
+import type { FxRackState } from "../audio/fx/types";
 
 export const RoleSchema = z.enum([
   "drone",
@@ -89,6 +90,18 @@ export const FxChainSettingsSchema = z.object({
   }),
 });
 
+export const FxSlotSchema = z.object({
+  id: z.string().min(1),
+  type: z.string().min(1),
+  enabled: z.boolean(),
+  params: z.record(z.string(), z.union([z.number(), z.string(), z.boolean()])),
+});
+
+export const FxRackStateSchema: z.ZodType<FxRackState> = z.object({
+  version: z.literal(2),
+  slots: z.array(FxSlotSchema),
+});
+
 export const ProvenanceSchema = z.object({
   source: z.string(),
   license: z.string(),
@@ -130,6 +143,8 @@ export const PresetSchema = z.object({
   params: z.record(z.string(), z.union([z.number(), z.string(), z.boolean()])),
   macros: MacroValuesSchema,
   fx: FxChainSettingsSchema,
+  /** Optional V2 representation; V1 `fx` remains canonical until graph migration. */
+  fxRack: FxRackStateSchema.optional(),
   provenance: ProvenanceSchema,
   metrics: AudioMetricsSchema.optional(),
   rating: z.number().int().min(0).max(5).default(0),
