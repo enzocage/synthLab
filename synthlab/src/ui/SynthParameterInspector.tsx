@@ -12,6 +12,8 @@ export interface ParamLfoConfig {
   shape: "sine" | "triangle" | "sawtooth" | "square" | "random";
   rateHz: number; // 0.05 .. 20.0 Hz
   depth: number;  // 0.0 .. 1.0 (0% .. 100%)
+  minBound: number; // 0.0 .. 1.0 normalized low boundary
+  maxBound: number; // 0.0 .. 1.0 normalized high boundary
 }
 
 interface Props {
@@ -98,15 +100,23 @@ export const SynthParameterInspector: React.FC<Props> = ({
           lfoVal = rand01 * 2 - 1;
         }
 
-        // Static base value before modulation
-        const baseVal = Number(baseParamsRef.current[paramId] ?? preset.params[paramId] ?? (paramSpec as any).default ?? 0);
-        const min = (paramSpec as any).min ?? 0;
-        const max = (paramSpec as any).max ?? 1;
-        const range = max - min;
-        const modAmount = lfoVal * (range / 2) * lfo.depth;
+        // Compute Range Definer Boundaries
+        const pMin = (paramSpec as any).min ?? 0;
+        const pMax = (paramSpec as any).max ?? 1;
+        const pSpan = pMax - pMin;
 
-        let nextVal = baseVal + modAmount;
-        nextVal = Math.max(min, Math.min(max, nextVal));
+        const minBoundNorm = lfo.minBound ?? 0.0;
+        const maxBoundNorm = lfo.maxBound ?? 1.0;
+
+        const effMin = pMin + minBoundNorm * pSpan;
+        const effMax = pMin + maxBoundNorm * pSpan;
+        const effSpan = effMax - effMin;
+
+        const midPoint = effMin + effSpan / 2;
+        const halfSpan = (effSpan / 2) * lfo.depth;
+
+        let nextVal = midPoint + lfoVal * halfSpan;
+        nextVal = Math.max(effMin, Math.min(effMax, nextVal));
         if (paramSpec.kind === "int") nextVal = Math.round(nextVal);
 
         // Direct real-time audio modulation without re-rendering React or reloading presets
@@ -145,7 +155,7 @@ export const SynthParameterInspector: React.FC<Props> = ({
 
   const toggleLfoEnable = (paramId: string) => {
     setParamLfos((prev) => {
-      const existing = prev[paramId] ?? { enabled: false, shape: "sine", rateHz: 2.0, depth: 0.3 };
+      const existing = prev[paramId] ?? { enabled: false, shape: "sine", rateHz: 2.0, depth: 1.0, minBound: 0.0, maxBound: 1.0 };
       return {
         ...prev,
         [paramId]: { ...existing, enabled: !existing.enabled },
@@ -155,7 +165,7 @@ export const SynthParameterInspector: React.FC<Props> = ({
 
   const updateLfo = (paramId: string, patch: Partial<ParamLfoConfig>) => {
     setParamLfos((prev) => {
-      const existing = prev[paramId] ?? { enabled: true, shape: "sine", rateHz: 2.0, depth: 0.3 };
+      const existing = prev[paramId] ?? { enabled: true, shape: "sine", rateHz: 2.0, depth: 1.0, minBound: 0.0, maxBound: 1.0 };
       return {
         ...prev,
         [paramId]: { ...existing, ...patch },
@@ -555,7 +565,7 @@ export const SynthParameterInspector: React.FC<Props> = ({
                             {/* LFO Depth / Range (%) */}
                             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                               <div style={{ display: "flex", justifyContent: "space-between", color: "#aaa" }}>
-                                <span>Tiefe (Range):</span>
+                                <span>Tiefe (Intensität):</span>
                                 <span style={{ color: isLfoActive ? "#4ad97a" : "#fff", fontFamily: "monospace" }}>
                                   {Math.round(lfoConfig.depth * 100)}%
                                 </span>
@@ -569,6 +579,52 @@ export const SynthParameterInspector: React.FC<Props> = ({
                                 onChange={(e) => updateLfo(param.id, { depth: Number(e.target.value) })}
                                 style={{ accentColor: "#4ad97a", width: "100%", height: 16, cursor: "pointer" }}
                               />
+                            </div>
+
+                            {/* Range Definer (Bereichs-Begrenzer Min & Max) */}
+                            <div style={{ display: "flex", flexDirection: "column", gap: 4, marginTop: 2, paddingTop: 6, borderTop: "1px dashed #3a3835" }}>
+                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", color: "#ddd", fontWeight: 700, fontSize: 9 }}>
+                                <span>Range Definer (Grenzen):</span>
+                                <span style={{ color: isLfoActive ? "#4ad97a" : "#aaa", fontFamily: "monospace", fontSize: 9 }}>
+                                  {formatParamReadout(param, ((param as any).min ?? 0) + (lfoConfig.minBound ?? 0) * (((param as any).max ?? 1) - ((param as any).min ?? 0)))}
+                                  {" ➔ "}
+                                  {formatParamReadout(param, ((param as any).min ?? 0) + (lfoConfig.maxBound ?? 1) * (((param as any).max ?? 1) - ((param as any).min ?? 0)))}
+                                </span>
+                              </div>
+
+                              {/* Min Bound Slider */}
+                              <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", color: "#aaa", fontSize: 9 }}>
+                                  <span>Untergrenze (Min):</span>
+                                  <span style={{ fontFamily: "monospace" }}>{Math.round((lfoConfig.minBound ?? 0) * 100)}%</span>
+                                </div>
+                                <input
+                                  type="range"
+                                  min={0}
+                                  max={lfoConfig.maxBound ?? 1}
+                                  step={0.01}
+                                  value={lfoConfig.minBound ?? 0}
+                                  onChange={(e) => updateLfo(param.id, { minBound: Number(e.target.value) })}
+                                  style={{ accentColor: "#4ad97a", width: "100%", height: 14, cursor: "pointer" }}
+                                />
+                              </div>
+
+                              {/* Max Bound Slider */}
+                              <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", color: "#aaa", fontSize: 9 }}>
+                                  <span>Obergrenze (Max):</span>
+                                  <span style={{ fontFamily: "monospace" }}>{Math.round((lfoConfig.maxBound ?? 1) * 100)}%</span>
+                                </div>
+                                <input
+                                  type="range"
+                                  min={lfoConfig.minBound ?? 0}
+                                  max={1}
+                                  step={0.01}
+                                  value={lfoConfig.maxBound ?? 1}
+                                  onChange={(e) => updateLfo(param.id, { maxBound: Number(e.target.value) })}
+                                  style={{ accentColor: "#4ad97a", width: "100%", height: 14, cursor: "pointer" }}
+                                />
+                              </div>
                             </div>
                           </div>
                         )}
