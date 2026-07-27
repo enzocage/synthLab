@@ -37,6 +37,7 @@ clean silhouette, restrained reflections, deep but readable shadows, high detail
 sharp focus across the full front panel, no people, no hands, no stand, no loose
 cables, no packaging, no scenery, no text overlay, no readable logos, no
 watermark, no duplicate instrument, no cropped keyboard, no fisheye distortion.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 1. VA Poly – Moog / Roland subtractive
@@ -58,6 +59,7 @@ thick unison, filter sweeps and classic analog performance. Photorealistic
 premium product photography, landscape 16:9, one complete instrument centered
 in frame, front three-quarter view from slightly above, dark charcoal seamless
 studio background, no readable brand names or logos, no people, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 2. Wavetable
@@ -77,6 +79,7 @@ suggesting evolving digital pads and animated spectra without looking like a
 computer monitor. Photorealistic product photography, 16:9, complete instrument,
 front three-quarter view from above, dark studio background, no readable logos,
 no text overlay, no people, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 3. FM6 – 6-operator FM
@@ -96,6 +99,7 @@ with a few sturdy data sliders. It should look deep, disciplined and capable of
 metallic bells, glassy keys and slowly evolving FM drones. Photorealistic
 premium product shot, landscape 16:9, full instrument visible, dark neutral
 studio, no readable brand names, no watermark, no people.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 4. Additive
@@ -115,6 +119,7 @@ feel like a high-end scientific musical instrument, elegant rather than busy,
 capable of organ-like purity, spectral bells and organic moving drones.
 Photorealistic studio product photography, 16:9, complete single instrument,
 front three-quarter angle, no text overlay, no logo, no people, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 5. Granular
@@ -134,6 +139,7 @@ feel atmospheric, cinematic and physical, suggesting clouds of sound rather
 than a generic workstation. Photorealistic premium product shot, landscape
 16:9, entire instrument visible, dark seamless studio, no readable logos or
 pseudo-text, no people, no cables, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 6. Modal – resonator bank
@@ -153,6 +159,7 @@ machined details, calm acoustic-laboratory personality. It should suggest
 marimba, vibraphone, bell, wood and resonant ambient textures. Photorealistic
 16:9 product photography, full instrument, three-quarter top-front view, no
 brand text, no people, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 7. String – Karplus–Strong physical modeling
@@ -172,6 +179,7 @@ The machine should visually promise plucked strings, hammered wires, bowed
 drones and long muted resonances. Photorealistic premium product photograph,
 landscape 16:9, complete instrument visible, dark studio background, no readable
 logos, no hands, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 8. Noise Field – filtered noise
@@ -191,6 +199,7 @@ should feel playable and plausible, like a boutique studio instrument for wind,
 breath, surf, static and evolving atmospheric beds. Photorealistic 16:9 studio
 product photography, one complete unit, no text overlay, no brand, no people,
 no smoke obscuring the product, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 9. Drone – detuned oscillator stack
@@ -210,6 +219,7 @@ warm analog construction. It should look hypnotic, monumental and suitable for
 long evolving tones rather than melodies. Photorealistic premium product shot,
 landscape 16:9, entire device centered, dark charcoal studio background, no
 readable logos, no people, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 10. Wavefold – West Coast complex oscillator
@@ -228,6 +238,7 @@ warm LEDs and precise engraved geometric markings without readable branding.
 The instrument should feel handcrafted, exploratory and capable of rich,
 animated harmonics. Photorealistic 16:9 product photography, complete device,
 front three-quarter top view, dark neutral studio, no people, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 11. Phase Distortion
@@ -246,6 +257,7 @@ copying a known model. It should suggest sharp animated brass, hollow digital
 pads and sync sweeps. Photorealistic premium product image, landscape 16:9,
 full keyboard visible, dark studio background, no readable logos or brand
 names, no people, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 12. Percussion
@@ -264,6 +276,7 @@ do not make it resemble a specific commercial drum machine. It should feel
 robust, playable and optimized for sparse ambient percussion as well as
 electronic rhythms. Photorealistic product photography, 16:9, full unit visible,
 three-quarter top-front view, no logo, no hands, no cables, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 13. Sub Bass
@@ -282,6 +295,7 @@ should look dense, stable and powerful, designed for fundamental bass drones
 and controlled low-end rather than flashy leads. Photorealistic premium studio
 product photography, landscape 16:9, complete instrument centered, dark
 background, no text overlay, no readable brand, no people, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 14. SID Lab – C64 SID
@@ -301,6 +315,7 @@ selection and a few red power LEDs. The unit should feel authentically
 capable of chip leads, arpeggios, bass and gritty pads. Photorealistic 16:9
 product shot, entire instrument, dark studio, no readable branding, no game
 characters, no people, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 15. FM DX7 – simplified six-operator matrix
@@ -319,6 +334,7 @@ plausible modernized hardware interpretation for glassy electric pianos,
 metallic bells and expressive digital pads, not an exact replica of a branded
 keyboard. Photorealistic studio product photography, landscape 16:9, whole
 instrument visible, no readable logo, no people, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 16. FM 4-Op – YM2612 / TX81Z character
@@ -337,6 +353,7 @@ immediately suggesting punchy bass, glassy mallets, crunchy brass and game-era
 digital percussion without displaying any console branding. Photorealistic
 16:9 product photography, complete instrument centered, dark neutral studio,
 no text overlay, no logos, no people, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 17. FM Morph
@@ -356,6 +373,7 @@ The object should visually communicate evolving glass textures, animated pads
 and liquid digital motion. Photorealistic premium product shot, 16:9, full
 instrument, three-quarter top view, dark seamless studio, no readable logos,
 no people, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 18. FM Feedback – high-chaos dual FM
@@ -375,6 +393,7 @@ remains believable and usable, not science-fiction machinery. It should imply
 abrasive metallic drones, unstable harmonics and controlled high-energy FM.
 Photorealistic landscape 16:9 studio product image, whole device visible, no
 smoke, no warning text, no readable logo, no people, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 19. FM Linear – precision linear FM
@@ -394,6 +413,7 @@ mathematical accuracy, pure tones, controlled sidebands and polished digital
 textures. Photorealistic premium product photography, landscape 16:9, complete
 single keyboard centered, dark charcoal studio background, no readable brand,
 no people, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 20. Juno-106 – Roland-style virtual analog
@@ -412,6 +432,7 @@ The instrument should appear clean, authentic and gently used, with realistic
 plastic keys, painted steel and period-correct LEDs. Photorealistic 16:9 studio
 product photography, whole keyboard visible, front three-quarter view from
 above, neutral dark background, no people, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 21. AKWF Wavetable
@@ -430,6 +451,7 @@ frame. The instrument should look archival and exploratory, balancing a huge
 wave library with immediate tactile control and suggesting evolving digital
 pads and unusual harmonic motion. Photorealistic landscape 16:9 product shot,
 complete instrument, dark studio, no readable logos, no people, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 22. OPL3 – YMF262 two-operator FM
@@ -449,6 +471,7 @@ industrial styling. It should evoke DOS-era game music, organs, bells and
 metallic two-operator tones while remaining a credible modern instrument.
 Photorealistic 16:9 studio product photography, full device visible, no readable
 chip markings or logos, no people, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## 23. DX7 – authentic six-operator factory-data engine
@@ -469,6 +492,7 @@ studio unit, communicating electric piano, bell, brass and complex FM factory
 sounds. Photorealistic premium product photography, landscape 16:9, complete
 keyboard centered, front three-quarter view from slightly above, dark neutral
 seamless background, no people, no stand, no cables, no watermark.
+Author credit: SynthLab, by enzo cage.
 ```
 
 ## Export checklist
@@ -486,4 +510,3 @@ For each generated image:
    smaller web-delivery version.
 8. For SynthLab, target a web version around 1600 × 900 and preferably below
    500 KB per image.
-
