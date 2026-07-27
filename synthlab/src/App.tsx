@@ -19,6 +19,7 @@ import { PHRASE_ROLES } from "./midi/phrases";
 import { defaultArpSettings, type ArpSettings } from "./midi/arpeggiator";
 import type { Role } from "./presets/schema";
 import type { FxChainSettings } from "./audio/fx/types";
+import titleImage from "../../gfx/title.png";
 import "./design-system/tokens.css";
 import "./App.css";
 
@@ -304,10 +305,13 @@ function App() {
   if (!audioReady) {
     return (
       <div className="start-overlay">
-        <h1>SynthLab</h1>
-        <p>3.356 Presets über 23 Synthesizer-Engines, Mehrspur-Arrangement, Arp und Live-Tastatur.</p>
-        <div className="start-overlay__progress" aria-hidden="true"><span /></div>
-        <div className="start-overlay__status" role="status">Workstation wird geladen …</div>
+        <h1 className="start-overlay__sr-title">SynthLab</h1>
+        <img className="start-overlay__title-image" src={titleImage} alt="SynthLab" />
+        <div className="start-overlay__copy">
+          <p>3.356 Presets über 23 Synthesizer-Engines, Mehrspur-Arrangement, Arp und Live-Tastatur.</p>
+          <div className="start-overlay__progress" aria-hidden="true"><span /></div>
+          <div className="start-overlay__status" role="status">Workstation wird geladen …</div>
+        </div>
       </div>
     );
   }
