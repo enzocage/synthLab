@@ -19,7 +19,7 @@ import { PHRASE_ROLES } from "./midi/phrases";
 import { defaultArpSettings, type ArpSettings } from "./midi/arpeggiator";
 import type { Role } from "./presets/schema";
 import type { FxChainSettings } from "./audio/fx/types";
-import titleImage from "../../gfx/title.png";
+import titleImage from "../../gfx/title2.png";
 import "./design-system/tokens.css";
 import "./App.css";
 
