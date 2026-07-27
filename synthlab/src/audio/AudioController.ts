@@ -7,6 +7,7 @@
 // mischen in AudioEngine.masterInput. Tastatur/Arp/Hardware-MIDI zielen immer
 // auf die aktuell ausgewaehlte Spur (setSelectedTrack).
 import { AudioEngine } from "./core/AudioEngine";
+import { ensureDx7WorkletLoaded } from "./engines/dx7";
 import { Meters, type MeterReading } from "./core/Meters";
 import { TrackAudio } from "./TrackAudio";
 import { generatePhrase, type Phrase } from "../midi/phrases";
@@ -98,6 +99,7 @@ class AudioControllerImpl {
   /** Laedt ein Preset klickfrei (Crossfade) auf die aktuell ausgewaehlte Spur. */
   async loadPreset(preset: Preset): Promise<void> {
     await this.resume();
+    if (preset.engine === "dx7") await ensureDx7WorkletLoaded(AudioEngine.ctx);
     if (!this.selectedTrackId) return;
     this.ensureTrackAudio(this.selectedTrackId).loadPreset(preset);
     this.restartPhrase();

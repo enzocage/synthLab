@@ -48,5 +48,7 @@ plan5 kommt eine bewusste, dokumentierte Ausnahme hinzu:
   General-MIDI-Programme + 47 Perkussion) aus der klassischen DMX-GENMIDI-Bank
   ([`sneakernets/DMXOPL`](https://github.com/sneakernets/DMXOPL), MIT).
   `provenance.source: "dmxopl-genmidi"`.
-- Perspektivisch (siehe `plan5.md`) sollen auf dieselbe Weise 1.024 DX7-Voices
-  hinzukommen — ebenfalls mit vollständiger Attribution statt eigener Erfindung.
+- Die **DX7-Engine** (`dx7`) importiert **1.024 echte Yamaha-DX7-Werksvoices**
+  ("BRASS 1", "E.PIANO 1", "STRINGS 1" u.v.m.) aus
+  [`shorepine/amy`](https://github.com/shorepine/amy) (MIT), generiert mit
+  `bwhitman/learnfm`. `provenance.source: "amy-dx7"`.

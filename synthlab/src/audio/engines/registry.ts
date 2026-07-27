@@ -23,6 +23,7 @@ import { fmLinearEngine } from "./fmLinear";
 import { juno106Engine } from "./juno106";
 import { wtAkwfEngine } from "./wtAkwf";
 import { opl3Engine } from "./opl3";
+import { dx7Engine } from "./dx7";
 
 export const ENGINES: Engine[] = [
   vaPolyEngine,
@@ -47,6 +48,7 @@ export const ENGINES: Engine[] = [
   juno106Engine,
   wtAkwfEngine,
   opl3Engine,
+  dx7Engine,
 ];
 
 export const ENGINE_MAP: Record<string, Engine> = Object.fromEntries(ENGINES.map((e) => [e.id, e]));

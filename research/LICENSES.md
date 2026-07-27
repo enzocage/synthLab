@@ -97,6 +97,39 @@ This document tracks all external reference repositories analyzed and adapted fo
 
 ---
 
+## plan5: DX7-Engine (AudioWorklet)
+
+### [`shorepine/amy`](https://github.com/shorepine/amy)
+- **License:** MIT (Copyright (c) 2022 Brian Whitman and Daniel PW Ellis)
+- **Usage (Werksvoices):** `amy/default-dx7-patches.bin` liefert **1.024 echte
+  DX7-Werksvoices** im klassischen 156-Byte-"unpacked"-Format, generiert mit
+  `dx7db` aus [`bwhitman/learnfm`](https://github.com/bwhitman/learnfm). Byte-
+  Layout 1:1 aus `amy/fm.py` (`DX7Patch.from_bytestream`) portiert - verifiziert
+  durch erfolgreiches Dekodieren aller 1.024 klassischen ROM1A/1B-Namen
+  ("BRASS 1", "E.PIANO 1", "STRINGS 1" usw.), siehe
+  `research/extract/import-dx7.mjs`.
+- **Usage (Envelope-/Frequenz-Formeln):** `amy/fm.py` liefert die empirisch
+  gegen DX7-Hardware gefitteten Umrechnungsformeln (`dx7level_to_linear`,
+  `coarse_fine_ratio`, `coarse_fine_fixed_hz`, `calc_loglin_eg_breakpoints`,
+  Feedback-Skalierung) - portiert nach
+  `synthlab/src/audio/worklets/dx7Math.ts`.
+- **Usage (Algorithmus-Routing-Tabelle):** `amy/src/algorithms.c` enthält die
+  32 DX7-Algorithmen als kompakte Bus-Routing-Flags (`FmAlgorithm`-Tabelle) samt
+  der Render-Logik (Bus1/Bus2-Akkumulation, Feedback-Selbstmodulation,
+  Scratch-Buffer bei gleichzeitigem Lesen/Schreiben von Bus1) - 1:1 nach
+  `synthlab/src/audio/worklets/dx7.worklet.ts` portiert. AMY attribuiert diese
+  Operator-Struktur im Quelltext selbst an "MSFA" (Music Synthesizer for
+  Android, ein bekanntes Open-Source-DX7-Emulationsprojekt).
+- **Attribution:** Brian Whitman & Daniel P. W. Ellis (AMY-Projekt); DX7-Voice-
+  Bank via `bwhitman/learnfm`; Algorithmus-Struktur mit Dank an MSFA (laut
+  AMY-Quelltextkommentar).
+
+(`chocolate-doom/chocolate-doom` wurde bereits im OPL3-Abschnitt oben als reine
+Formatreferenz für das GENMIDI-Binärformat dokumentiert - dieselbe Referenz
+deckt auch keinen weiteren Code-Übernahmebedarf für DX7 ab.)
+
+---
+
 ## Copyright & Provenance Notice
 
 All 300 presets provided with SID Lab (`sid-chip`) are original synthesised sound designs.

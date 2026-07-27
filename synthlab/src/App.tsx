@@ -93,7 +93,7 @@ function App() {
     AudioController.setTempo(tempo);
     AudioController.setArpSettings(arpSettings);
     setAudioReady(true);
-    setStatusMessage("Audio bereit · 2.332 Presets geladen");
+    setStatusMessage("Audio bereit · 3.356 Presets geladen");
     AudioController.connectHardwareMidi().catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -234,7 +234,7 @@ function App() {
     return (
       <div className="start-overlay">
         <h1>SynthLab</h1>
-        <p>2.332 Presets über 22 Synthesizer-Engines, Mehrspur-Arrangement, Arp und Live-Tastatur.</p>
+        <p>3.356 Presets über 23 Synthesizer-Engines, Mehrspur-Arrangement, Arp und Live-Tastatur.</p>
         <button onClick={startAudio}>Audio starten</button>
       </div>
     );
