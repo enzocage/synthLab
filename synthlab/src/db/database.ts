@@ -1,6 +1,6 @@
 // Dexie IndexedDB Persistence Layer für SynthLab Session & User Data
 import Dexie, { type EntityTable } from "dexie";
-import type { FxChainSettings } from "../audio/fx/types";
+import { fxRackFromLegacy, type FxChainSettings, type FxRackState } from "../audio/fx/types";
 
 export interface UserRating {
   presetId: string;
@@ -21,6 +21,8 @@ export interface UserEdit {
   presetId: string;
   params: Record<string, number | string | boolean>;
   fx?: FxChainSettings;
+  /** V2 slot representation; kept alongside V1 during the audio-graph migration. */
+  fxRack?: FxRackState;
 }
 
 const db = new Dexie("SynthLabDatabase") as Dexie & {
@@ -36,6 +38,24 @@ db.version(1).stores({
   notes: "presetId",
   edits: "presetId",
 });
+
+// Additive migration: preserve the V1 object while materializing a lossless
+// V2 rack for existing edits. Keeping both formats makes rollback safe.
+db.version(2)
+  .stores({
+    ratings: "presetId",
+    favorites: "presetId",
+    notes: "presetId",
+    edits: "presetId",
+  })
+  .upgrade(async (tx) => {
+    await tx
+      .table<UserEdit>("edits")
+      .toCollection()
+      .modify((edit) => {
+        if (edit.fx && !edit.fxRack) edit.fxRack = fxRackFromLegacy(edit.fx);
+      });
+  });
 
 export async function loadUserDataFromDb() {
   const ratingsArr = await db.ratings.toArray();
@@ -54,12 +74,14 @@ export async function loadUserDataFromDb() {
 
   const editedParams: Record<string, Record<string, number | string | boolean>> = {};
   const editedFx: Record<string, FxChainSettings> = {};
+  const editedFxRack: Record<string, FxRackState> = {};
   for (const e of editsArr) {
     if (e.params) editedParams[e.presetId] = e.params;
     if (e.fx) editedFx[e.presetId] = e.fx;
+    if (e.fxRack) editedFxRack[e.presetId] = e.fxRack;
   }
 
-  return { ratings, favorites, notes, editedParams, editedFx };
+  return { ratings, favorites, notes, editedParams, editedFx, editedFxRack };
 }
 
 export async function saveRatingToDb(presetId: string, rating: number) {
@@ -74,8 +96,13 @@ export async function saveNoteToDb(presetId: string, note: string) {
   await db.notes.put({ presetId, note });
 }
 
-export async function saveEditToDb(presetId: string, params: Record<string, number | string | boolean>, fx?: FxChainSettings) {
-  await db.edits.put({ presetId, params, fx });
+export async function saveEditToDb(
+  presetId: string,
+  params: Record<string, number | string | boolean>,
+  fx?: FxChainSettings,
+  fxRack?: FxRackState,
+) {
+  await db.edits.put({ presetId, params, fx, fxRack: fxRack ?? (fx ? fxRackFromLegacy(fx) : undefined) });
 }
 
 export { db };
