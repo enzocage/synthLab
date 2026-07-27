@@ -19,7 +19,7 @@ coherent collection:
 - Realistic materials, controls, shadows, reflections, and manufacturing detail.
 - No people, hands, cables crossing the foreground, stands, furniture, packaging,
   floating parts, or decorative text.
-- No readable brand names, logos, watermarks, signatures, captions, or UI mockup
+- No extra readable brand names, logos, watermarks, signatures, captions, or UI mockup
   frames.
 - Controls may use tiny abstract markings, but avoid generated pseudo-words.
 - Keep the front panel readable at thumbnail size.
@@ -46,6 +46,7 @@ Filename suggestion: `va-poly.png`
 
 ```text
 Create a believable late-1970s polyphonic analog subtractive synthesizer that
+Product identity: the front-panel nameplate must read exactly “SynthLab Aurora Poly — by enzo cage”.
 combines the tactile warmth of classic American knob-based instruments with the
 clear section layout of classic Japanese polysynths, while remaining an original
 unbranded design. Five-octave keyboard, dark graphite steel chassis, slim walnut
@@ -68,6 +69,7 @@ Filename suggestion: `wavetable.png`
 
 ```text
 Design an original modern hardware wavetable synthesizer with a five-octave
+Product identity: the front-panel nameplate must read exactly “SynthLab Spectra — by enzo cage”.
 keyboard and a wide color display showing a smooth three-dimensional wavetable
 surface made from many waveform frames. Matte black aluminum body, compact
 symmetrical control groups, eight dark endless encoders with thin cyan LED
@@ -88,6 +90,7 @@ Filename suggestion: `fm6.png`
 
 ```text
 Create an original six-operator FM synthesizer keyboard inspired by the clean
+Product identity: the front-panel nameplate must read exactly “SynthLab Operator Six — by enzo cage”.
 industrial design of early-1980s digital instruments, but not a replica of any
 specific product. Long dark brown and charcoal chassis, five-octave keyboard,
 small turquoise backlit LCD, 32 algorithm buttons arranged as a compact matrix,
@@ -108,6 +111,7 @@ Filename suggestion: `additive.png`
 
 ```text
 Design a futuristic additive synthesis keyboard whose interface makes harmonic
+Product identity: the front-panel nameplate must read exactly “SynthLab Harmonic Atlas — by enzo cage”.
 construction tangible. Five-octave keyboard, low-profile silver-black aluminum
 chassis, one panoramic display showing 32 vertical harmonic partial bars fading
 from warm white at the fundamental to cool blue in the upper spectrum. Below
@@ -128,6 +132,7 @@ Filename suggestion: `granular.png`
 
 ```text
 Create an original hardware granular synthesizer and sampler with a four-octave
+Product identity: the front-panel nameplate must read exactly “SynthLab Grain Cloud — by enzo cage”.
 keyboard. Dark anodized aluminum, subtly asymmetrical panel, large central
 display visualizing a horizontal audio waveform surrounded by hundreds of tiny
 glowing grain particles. Include tactile controls for Grain Size, Density,
@@ -148,6 +153,7 @@ Filename suggestion: `modal.png`
 
 ```text
 Design an original modal synthesis instrument focused on struck and resonating
+Product identity: the front-panel nameplate must read exactly “SynthLab Resonance Forge — by enzo cage”.
 materials. Use a compact four-octave keyboard in a warm dark-gray metal body
 with narrow ash-wood side panels. The central display shows eight concentric
 resonance arcs and individual decaying mode lines. Provide a row of twelve
@@ -168,6 +174,7 @@ Filename suggestion: `string.png`
 
 ```text
 Create a distinctive physical-modeling string synthesizer, an original hybrid
+Product identity: the front-panel nameplate must read exactly “SynthLab String Field — by enzo cage”.
 between a keyboard instrument and a digital waveguide laboratory. Four-octave
 keyboard, brushed dark bronze enclosure, slim maple side cheeks, central display
 showing a vibrating string and reflected delay pulses. Include large controls
@@ -188,6 +195,7 @@ Filename suggestion: `noise-field.png`
 
 ```text
 Design an original experimental noise-field synthesizer with no conventional
+Product identity: the front-panel nameplate must read exactly “SynthLab Airloom — by enzo cage”.
 keyboard: a wide desktop instrument using a grid of twelve touch plates and
 three large joysticks. Black textured metal enclosure, central display showing
 white, pink and brown noise spectra moving through multiple band-pass peaks.
@@ -208,6 +216,7 @@ Filename suggestion: `drone.png`
 
 ```text
 Create a large original desktop drone synthesizer built for continuously
+Product identity: the front-panel nameplate must read exactly “SynthLab Deep Drift — by enzo cage”.
 evolving oscillator stacks. Heavy black powder-coated steel body with dark oak
 side cheeks, no keyboard, eight identical oscillator columns with large tuning
 knobs, fine detune controls and slowly pulsing amber indicators. Include ratio
@@ -228,6 +237,7 @@ Filename suggestion: `wavefold.png`
 
 ```text
 Design an original West-Coast-style complex synthesizer keyboard with a
+Product identity: the front-panel nameplate must read exactly “SynthLab Fold Circuit — by enzo cage”.
 three-octave keybed and a patchable semi-modular panel. Brushed natural aluminum
 faceplate, deep blue side panels, two large complex oscillator sections,
 prominent wavefolder controls for Fold, Symmetry and Timbre, modulation
@@ -247,6 +257,7 @@ Filename suggestion: `phase-distortion.png`
 
 ```text
 Create an original mid-1980s phase-distortion digital synthesizer. Slim
+Product identity: the front-panel nameplate must read exactly “SynthLab Phase Vector — by enzo cage”.
 five-octave keyboard, dark graphite plastic-and-metal body, angular end cheeks,
 blue-green two-line LCD, a row of eight digital waveform buttons and a clear
 multi-stage envelope diagram printed as simple geometric lines. Include controls
@@ -266,6 +277,7 @@ Filename suggestion: `percussion.png`
 
 ```text
 Design an original performance-oriented analog and modal percussion synthesizer.
+Product identity: the front-panel nameplate must read exactly “SynthLab Pulse Cabinet — by enzo cage”.
 Wide desktop unit with twelve velocity-sensitive square pads, four larger accent
 pads and a compact sequencer strip. Each voice has dedicated Tone, Pitch,
 Decay, Punch, Noise, Body and Drive knobs. Separate clearly color-coded sections
@@ -285,6 +297,7 @@ Filename suggestion: `sub-bass.png`
 
 ```text
 Create a compact original monophonic sub-bass synthesizer with a 32-key keyboard.
+Product identity: the front-panel nameplate must read exactly “SynthLab Sub Anchor — by enzo cage”.
 Heavy matte-black enclosure, minimal panel, one oversized oscillator knob,
 sub-wave selector, octave switches, saturation drive, low-pass cutoff,
 resonance, glide and a dedicated Mono Below Frequency control centered around
@@ -304,6 +317,7 @@ Filename suggestion: `sid-chip.png`
 
 ```text
 Design an original hardware synthesizer built around the visual language of
+Product identity: the front-panel nameplate must read exactly “SynthLab Chip Bloom — by enzo cage”.
 early-1980s home-computer sound chips. Compact three-octave keyboard, warm
 beige-and-brown enclosure, three oscillator channels arranged as vertical
 strips, chunky controls for Triangle, Saw, Pulse and Noise, pulse-width
@@ -324,6 +338,7 @@ Filename suggestion: `fm-dx7.png`
 
 ```text
 Create an original performance synthesizer clearly rooted in classic
+Product identity: the front-panel nameplate must read exactly “SynthLab Matrix Six — by enzo cage”.
 six-operator matrix FM. Five-octave keyboard, dark chocolate-brown metal case,
 turquoise two-line LCD, eight large algorithm-selection buttons, six operator
 columns with ratio and level sliders, feedback control and four-stage envelope
@@ -343,6 +358,7 @@ Filename suggestion: `fm-4op.png`
 
 ```text
 Design an original four-operator FM synthesizer combining the compact rack
+Product identity: the front-panel nameplate must read exactly “SynthLab Fourfold — by enzo cage”.
 character of late-1980s modules with the gritty personality of a 16-bit console
 sound chip. A slim desktop module with a short three-octave keyboard, dark gray
 metal, small green LCD, four clearly separated operator strips, multiplier
@@ -362,6 +378,7 @@ Filename suggestion: `fm-morph.png`
 
 ```text
 Create a futuristic original FM morphing synthesizer centered around continuous
+Product identity: the front-panel nameplate must read exactly “SynthLab Morph Current — by enzo cage”.
 movement between carrier shapes and modulation states. Four-octave keyboard,
 smooth black aluminum enclosure, large square XY morph pad glowing cyan and
 violet, display showing a sine wave gradually transforming into triangle and
@@ -382,6 +399,7 @@ Filename suggestion: `fm-feedback.png`
 
 ```text
 Design an original experimental dual-FM feedback synthesizer that looks
+Product identity: the front-panel nameplate must read exactly “SynthLab Feedback Reactor — by enzo cage”.
 dangerous but professionally engineered. Desktop instrument without keyboard,
 two mirrored oscillator sections connected by a prominent illuminated feedback
 loop diagram. Large central Chaos Feedback knob protected by a raised metal
@@ -402,6 +420,7 @@ Filename suggestion: `fm-linear.png`
 
 ```text
 Create an original precision linear-FM synthesizer with a calm laboratory
+Product identity: the front-panel nameplate must read exactly “SynthLab Linear Prism — by enzo cage”.
 aesthetic. Four-octave keyboard, silver-gray machined aluminum, exceptionally
 clean layout, two high-resolution waveform displays aligned side by side for
 carrier and modulator. Large controls for Harmonicity Ratio and Modulation
@@ -422,6 +441,7 @@ Filename suggestion: `juno106.png`
 
 ```text
 Create a highly faithful museum-quality product photograph of a classic
+Product identity: the front-panel nameplate must read exactly “SynthLab Juno Garden — by enzo cage”.
 mid-1980s six-voice analog polysynth in the visual family of the Juno-106:
 five-octave keyboard, long dark charcoal panel, red and blue horizontal accent
 stripes, left-to-right LFO, DCO, HPF, VCF, VCA, envelope and dual-chorus
@@ -441,6 +461,7 @@ Filename suggestion: `wt-akwf.png`
 
 ```text
 Design an original boutique wavetable synthesizer dedicated to scanning a vast
+Product identity: the front-panel nameplate must read exactly “SynthLab Wave Archive — by enzo cage”.
 library of single-cycle waveforms. Four-octave keyboard, compact matte-black
 aluminum case with violet side cheeks, wide display containing a horizontal
 filmstrip of many distinct waveform thumbnails and one enlarged selected wave.
@@ -460,6 +481,7 @@ Filename suggestion: `opl3.png`
 
 ```text
 Create an original hardware synthesizer inspired by the Yamaha YMF262 OPL3 era,
+Product identity: the front-panel nameplate must read exactly “SynthLab OPL Matrix — by enzo cage”.
 combining a 1990s ISA sound-card aesthetic with a playable desktop module.
 Compact two-octave keyboard, dark green exposed circuit-board details safely
 framed inside a smoked transparent top, one visible square FM chip, gold traces
@@ -480,6 +502,7 @@ Filename suggestion: `dx7.png`
 
 ```text
 Create a museum-quality product photograph of a classic early-1980s flagship
+Product identity: the front-panel nameplate must read exactly “SynthLab DX Heritage — by enzo cage”.
 six-operator digital FM keyboard in the visual family of the Yamaha DX7.
 Five-octave keyboard, slim angular dark brown metal chassis, turquoise-green
 two-line LCD, dense membrane-button panel at the right, algorithm and function
