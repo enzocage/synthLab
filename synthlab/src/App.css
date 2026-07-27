@@ -72,6 +72,17 @@ button:hover {
   background: #7a2020;
   border-color: #a23030;
 }
+.transport-bar__play--active {
+  border-color: var(--color-playing, #4ad97a);
+  color: var(--color-playing, #4ad97a);
+}
+.transport-bar__position {
+  min-width: 54px;
+  color: var(--color-text-secondary, #a0a8b6);
+  font: 11px/1.2 ui-monospace, "Cascadia Mono", monospace;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
 
 .app-columns {
   flex: 1;

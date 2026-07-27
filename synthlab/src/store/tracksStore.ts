@@ -4,6 +4,7 @@
 import { create } from "zustand";
 import type { NoteEvent } from "../midi/phrases";
 import { AudioController } from "../audio/AudioController";
+import { useUiStore } from "./uiStore";
 
 export interface Clip {
   id: string;
@@ -67,12 +68,18 @@ export const useTracksStore = create<TracksState>((set, get) => ({
     set((s) => {
       const tracks = s.tracks.filter((t) => t.id !== id);
       const selectedTrackId = s.selectedTrackId === id ? (tracks[0]?.id ?? "") : s.selectedTrackId;
+      if (selectedTrackId) {
+        useUiStore.getState().setSelection({ kind: "track", trackIds: [selectedTrackId], anchorId: selectedTrackId });
+      } else {
+        useUiStore.getState().clearSelection();
+      }
       return { tracks, selectedTrackId };
     });
   },
 
   selectTrack(id) {
     set({ selectedTrackId: id });
+    useUiStore.getState().setSelection({ kind: "track", trackIds: [id], anchorId: id });
   },
 
   renameTrack(id, name) {
@@ -122,7 +129,11 @@ export const useTracksStore = create<TracksState>((set, get) => ({
   },
 }));
 
-useTracksStore.setState((s) => ({ selectedTrackId: s.tracks[0].id }));
+useTracksStore.setState((s) => {
+  const selectedTrackId = s.tracks[0].id;
+  useUiStore.getState().setSelection({ kind: "track", trackIds: [selectedTrackId], anchorId: selectedTrackId });
+  return { selectedTrackId };
+});
 
 export function newClipId(): string {
   return makeId("clip");

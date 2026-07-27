@@ -5,17 +5,32 @@ import { DEFAULT_OCTAVE_BASE_NOTE, MIN_OCTAVE_BASE_NOTE, MAX_OCTAVE_BASE_NOTE } 
 export type DetailTab = "device" | "clip" | "compare" | "params";
 
 export type Selection =
-  | { kind: "track"; trackId: string }
-  | { kind: "clip"; trackId: string; clipId: string }
-  | { kind: "device"; trackId: string; deviceId: string }
-  | { kind: "preset"; presetId: string; preview: boolean }
-  | { kind: "compare"; presetId: string };
+  | { kind: "none" }
+  | { kind: "track"; trackIds: string[]; anchorId: string }
+  | { kind: "scene"; sceneIds: string[]; anchorId: string }
+  | { kind: "clip"; clipIds: string[]; anchorId: string }
+  | { kind: "time"; startBeat: number; endBeat: number; trackIds: string[] }
+  | { kind: "device"; trackId: string; slotIds: string[]; anchorId: string }
+  | { kind: "parameter"; trackId: string; slotId: string; paramId: string }
+  | { kind: "browser"; itemIds: string[]; anchorId: string };
+
+export type MainView = "session" | "arrangement";
+export type FocusZone = "control-bar" | "browser-sidebar" | "browser-filter" | "browser-results" | "main-view" | "detail-view" | "info-view";
 
 const savedDetailHeight = typeof window !== "undefined" ? Number(window.localStorage.getItem("synthlab.detailHeight")) : NaN;
 const initialDetailHeight = Number.isFinite(savedDetailHeight) ? Math.max(240, Math.min(720, savedDetailHeight)) : 380;
+const savedMainView = typeof window !== "undefined" ? window.localStorage.getItem("synthlab.mainView") : null;
+const initialMainView: MainView = savedMainView === "arrangement" ? "arrangement" : "session";
+const readStoredBoolean = (key: string, fallback: boolean) => {
+  if (typeof window === "undefined") return fallback;
+  const value = window.localStorage.getItem(key);
+  return value === null ? fallback : value === "true";
+};
 
 interface UiState {
   selection: Selection;
+  activeMainView: MainView;
+  focusZone: FocusZone;
   activeDetailTab: DetailTab;
   browserOpen: boolean;
   detailOpen: boolean;
@@ -27,6 +42,9 @@ interface UiState {
   octaveBaseNote: number;
 
   setSelection(selection: Selection): void;
+  clearSelection(): void;
+  setActiveMainView(view: MainView): void;
+  setFocusZone(zone: FocusZone): void;
   setActiveDetailTab(tab: DetailTab): void;
   toggleBrowser(): void;
   toggleDetail(): void;
@@ -41,10 +59,12 @@ interface UiState {
 }
 
 export const useUiStore = create<UiState>((set) => ({
-  selection: { kind: "track", trackId: "" },
+  selection: { kind: "none" },
+  activeMainView: initialMainView,
+  focusZone: "main-view",
   activeDetailTab: "device",
-  browserOpen: true,
-  detailOpen: true,
+  browserOpen: readStoredBoolean("synthlab.browserOpen", true),
+  detailOpen: readStoredBoolean("synthlab.detailOpen", true),
   detailHeight: initialDetailHeight,
   statusMessage: "Bereit · SynthLab Ableton-Style Workstation",
   helpOpen: false,
@@ -56,16 +76,37 @@ export const useUiStore = create<UiState>((set) => ({
     set({ selection });
   },
 
+  clearSelection() {
+    set({ selection: { kind: "none" } });
+  },
+
+  setActiveMainView(activeMainView) {
+    if (typeof window !== "undefined") window.localStorage.setItem("synthlab.mainView", activeMainView);
+    set({ activeMainView });
+  },
+
+  setFocusZone(focusZone) {
+    set({ focusZone });
+  },
+
   setActiveDetailTab(tab) {
     set({ activeDetailTab: tab, detailOpen: true });
   },
 
   toggleBrowser() {
-    set((s) => ({ browserOpen: !s.browserOpen }));
+    set((s) => {
+      const browserOpen = !s.browserOpen;
+      if (typeof window !== "undefined") window.localStorage.setItem("synthlab.browserOpen", String(browserOpen));
+      return { browserOpen };
+    });
   },
 
   toggleDetail() {
-    set((s) => ({ detailOpen: !s.detailOpen }));
+    set((s) => {
+      const detailOpen = !s.detailOpen;
+      if (typeof window !== "undefined") window.localStorage.setItem("synthlab.detailOpen", String(detailOpen));
+      return { detailOpen };
+    });
   },
 
   setDetailHeight(height) {

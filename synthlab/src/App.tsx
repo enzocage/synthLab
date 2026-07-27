@@ -3,6 +3,8 @@ import { AudioController } from "./audio/AudioController";
 import { useSessionStore } from "./store/sessionStore";
 import { useTracksStore } from "./store/tracksStore";
 import { useUiStore } from "./store/uiStore";
+import { useRuntimeStore } from "./store/runtimeStore";
+import { useCommandStore } from "./store/commandStore";
 import { getEngine } from "./audio/engines/registry";
 import { PresetBrowser } from "./ui/PresetBrowser";
 import { TransportBar } from "./ui/TransportBar";
@@ -24,15 +26,21 @@ const MANUAL_NOTE = 57; // A3
 
 function App() {
   const [audioReady, setAudioReady] = useState(false);
-  const [playing, setPlaying] = useState(false);
   const [phraseRole, setPhraseRoleState] = useState<Role>("pad");
-  const [tempo, setTempoState] = useState(66);
   const [arpSettings, setArpSettingsState] = useState<ArpSettings>(defaultArpSettings());
   const lastVariantIdx = useRef<number | null>(null);
 
   const browserOpen = useUiStore((s) => s.browserOpen);
   const statusMessage = useUiStore((s) => s.statusMessage);
   const setStatusMessage = useUiStore((s) => s.setStatusMessage);
+  const transportStatus = useRuntimeStore((s) => s.transportStatus);
+  const tempo = useRuntimeStore((s) => s.tempo);
+  const setRuntimeTempo = useRuntimeStore((s) => s.setTempo);
+  const markTransportStarting = useRuntimeStore((s) => s.markTransportStarting);
+  const markTransportPlaying = useRuntimeStore((s) => s.markTransportPlaying);
+  const markTransportStopped = useRuntimeStore((s) => s.markTransportStopped);
+  const markTransportError = useRuntimeStore((s) => s.markTransportError);
+  const updateTransportPosition = useRuntimeStore((s) => s.updateTransportPosition);
 
   const bank = useSessionStore((s) => s.bank);
   const currentIndex = useSessionStore((s) => s.currentIndex);
@@ -108,19 +116,32 @@ function App() {
     return () => window.clearTimeout(timer);
   }, [audioReady, enterApp]);
 
+  useEffect(() => {
+    if (transportStatus !== "playing" && transportStatus !== "recording") return;
+    const timer = window.setInterval(() => updateTransportPosition(AudioController.currentTime), 50);
+    return () => window.clearInterval(timer);
+  }, [transportStatus, updateTransportPosition]);
+
   const playToggle = useCallback(() => {
-    if (playing) {
+    if (transportStatus === "playing" || transportStatus === "recording" || transportStatus === "starting") {
       AudioController.stopTransport();
-      setPlaying(false);
+      markTransportStopped();
       setStatusMessage("Wiedergabe gestoppt");
     } else {
-      void AudioController.resume().then(() => {
-        AudioController.play();
-        setPlaying(true);
-        setStatusMessage("Wiedergabe läuft");
-      });
+      markTransportStarting();
+      void AudioController.resume()
+        .then(() => {
+          AudioController.play();
+          markTransportPlaying(AudioController.currentTime);
+          setStatusMessage("Wiedergabe läuft");
+        })
+        .catch((error: unknown) => {
+          const message = error instanceof Error ? error.message : "Audio konnte nicht gestartet werden";
+          markTransportError(message);
+          setStatusMessage(`Transportfehler: ${message}`);
+        });
     }
-  }, [playing, setStatusMessage]);
+  }, [markTransportError, markTransportPlaying, markTransportStarting, markTransportStopped, setStatusMessage, transportStatus]);
 
   const cyclePhrase = useCallback(() => {
     const idx = PHRASE_ROLES.indexOf(phraseRole);
@@ -141,11 +162,24 @@ function App() {
 
   const onTempoChange = useCallback(
     (bpm: number) => {
-      setTempoState(bpm);
-      AudioController.setTempo(bpm);
-      setStatusMessage(`Tempo: ${bpm} BPM`);
+      const previousTempo = useRuntimeStore.getState().tempo;
+      const nextTempo = Math.max(20, Math.min(999, Math.round(bpm * 100) / 100));
+      if (nextTempo === previousTempo) return;
+      useCommandStore.getState().execute({
+        id: `tempo-${Date.now()}`,
+        label: `Tempo auf ${nextTempo} BPM`,
+        execute: () => {
+          setRuntimeTempo(nextTempo);
+          AudioController.setTempo(nextTempo);
+        },
+        undo: () => {
+          setRuntimeTempo(previousTempo);
+          AudioController.setTempo(previousTempo);
+        },
+      });
+      setStatusMessage(`Tempo: ${nextTempo} BPM`);
     },
-    [setStatusMessage]
+    [setRuntimeTempo, setStatusMessage]
   );
 
   const onArpChange = useCallback(
@@ -230,7 +264,7 @@ function App() {
     },
     toggleReferenceDrone: () => AudioController.toggleReferenceDrone(),
     saveToCollection: () => toggleFavorite(preset.id),
-    undo: () => {},
+    undo: () => useCommandStore.getState().undo(),
     holdNoteDown: () => {
       void AudioController.resume().then(() => AudioController.noteOn(MANUAL_NOTE));
     },
@@ -283,11 +317,9 @@ function App() {
     <div className="app-shell">
       {/* Top Bar (42px) */}
       <TransportBar
-        playing={playing}
         onPlayToggle={playToggle}
         phraseRole={phraseRole}
         onPhraseRoleChange={onPhraseRoleChange}
-        tempo={tempo}
         onTempoChange={onTempoChange}
         onPanic={() => AudioController.panic()}
       />

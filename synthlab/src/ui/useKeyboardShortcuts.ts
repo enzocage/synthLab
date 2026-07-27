@@ -7,6 +7,7 @@
 // Aktivierung ebenfalls überlagert).
 import { useEffect, useRef } from "react";
 import { KEY_NOTE_LOOKUP, PIANO_MODE_KEYS, OCTAVE_DOWN_KEY, OCTAVE_UP_KEY } from "../midi/computerKeyboardMap";
+import { resolveCommand } from "./commands/commandRegistry";
 
 export interface PianoModeConfig {
   enabled: boolean;
@@ -38,15 +39,6 @@ export interface KeyboardHandlers {
   toggleHelp(): void;
   pianoMode: PianoModeConfig;
 }
-
-const VARIANT_KEYS = ["q", "w", "e", "r", "t", "z", "u", "i"];
-// Alle Einzeltasten, die dieser Hook konsumiert - nur fuer diese wird das
-// native Browserverhalten (Select-Typeahead, Leertaste klickt Button, ...)
-// unterdrueckt; alles andere (F12, Strg+..., Browser-Shortcuts) bleibt unberuehrt.
-const HANDLED_KEYS = new Set([
-  " ", "j", "arrowdown", "k", "arrowup", ".", "0", "1", "2", "3", "4", "5",
-  "f", "tab", "m", "enter", "a", "b", "c", "g", "s", "h", "p", "?", ...VARIANT_KEYS,
-]);
 
 export function useKeyboardShortcuts(handlers: KeyboardHandlers): void {
   // Store the absolute note per physical key so octave changes while a key is
@@ -82,8 +74,9 @@ export function useKeyboardShortcuts(handlers: KeyboardHandlers): void {
 
       if (isTypingTarget(e.target)) return;
 
-      const isUndo = key === "z" && (e.ctrlKey || e.metaKey);
-      if (!HANDLED_KEYS.has(key) && !isUndo) return;
+      const normalizedKey = key === "arrowdown" ? "j" : key === "arrowup" ? "k" : key;
+      const command = resolveCommand(normalizedKey, e.ctrlKey || e.metaKey);
+      if (!command) return;
 
       // Fokus auf Formularelementen (z.B. die Filter-<select>s) darf die globalen
       // Shortcuts nicht zusaetzlich mit nativem Browser-Verhalten (Typeahead,
@@ -92,26 +85,26 @@ export function useKeyboardShortcuts(handlers: KeyboardHandlers): void {
       if (el && el !== document.body && typeof el.blur === "function") el.blur();
       e.preventDefault();
 
-      if (isUndo) { handlers.undo(); return; }
-      if (key === " ") { handlers.playToggle(); return; }
-      if (key === "j" || key === "arrowdown") { handlers.nextPreset(e.shiftKey); return; }
-      if (key === "k" || key === "arrowup") { handlers.prevPreset(e.shiftKey); return; }
-      if (key === ".") { handlers.nextUnrated(); return; }
-      if (key >= "1" && key <= "5") { handlers.rate(Number(key)); return; }
-      if (key === "0") { handlers.discard(); return; }
-      if (key === "f") { handlers.favorite(); return; }
-      if (key === "tab") { handlers.cyclePhrase(); return; }
-      if (key === "m") { handlers.mutate(); return; }
-      if (VARIANT_KEYS.includes(key)) { handlers.playVariant(VARIANT_KEYS.indexOf(key)); return; }
-      if (key === "enter") { handlers.acceptVariant(); return; }
-      if (key === "a") { handlers.setSlot("A"); return; }
-      if (key === "b") { handlers.setSlot("B"); return; }
-      if (key === "c") { handlers.setSlot("toggle"); return; }
-      if (key === "g") { handlers.toggleReferenceDrone(); return; }
-      if (key === "s") { handlers.saveToCollection(); return; }
-      if (key === "h") { handlers.holdNoteDown(); return; }
-      if (key === "p") { handlers.panic(); return; }
-      if (key === "?") { handlers.toggleHelp(); return; }
+      if (command === "history.undo") handlers.undo();
+      else if (command === "transport.toggle") handlers.playToggle();
+      else if (command === "preset.next") handlers.nextPreset(e.shiftKey);
+      else if (command === "preset.previous") handlers.prevPreset(e.shiftKey);
+      else if (command === "preset.nextUnrated") handlers.nextUnrated();
+      else if (command.startsWith("preset.rate")) handlers.rate(Number(command.at(-1)));
+      else if (command === "preset.discard") handlers.discard();
+      else if (command === "preset.favorite") handlers.favorite();
+      else if (command === "phrase.cycle") handlers.cyclePhrase();
+      else if (command === "variation.generate") handlers.mutate();
+      else if (command.startsWith("variation.play")) handlers.playVariant(Number(command.at(-1)));
+      else if (command === "variation.accept") handlers.acceptVariant();
+      else if (command === "ab.storeA") handlers.setSlot("A");
+      else if (command === "ab.storeB") handlers.setSlot("B");
+      else if (command === "ab.toggle") handlers.setSlot("toggle");
+      else if (command === "reference.toggle") handlers.toggleReferenceDrone();
+      else if (command === "collection.save") handlers.saveToCollection();
+      else if (command === "note.hold") handlers.holdNoteDown();
+      else if (command === "audio.panic") handlers.panic();
+      else if (command === "help.toggle") handlers.toggleHelp();
     }
 
     function onKeyUp(e: KeyboardEvent) {

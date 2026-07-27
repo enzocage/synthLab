@@ -2,18 +2,17 @@ import { PHRASE_ROLES } from "../midi/phrases";
 import type { Role } from "../presets/schema";
 import { MeterDisplay } from "./MeterDisplay";
 import { useUiStore } from "../store/uiStore";
+import { useRuntimeStore } from "../store/runtimeStore";
 
 interface Props {
-  playing: boolean;
   onPlayToggle(): void;
   phraseRole: Role;
   onPhraseRoleChange(role: Role): void;
-  tempo: number;
   onTempoChange(bpm: number): void;
   onPanic(): void;
 }
 
-export function TransportBar({ playing, onPlayToggle, phraseRole, onPhraseRoleChange, tempo, onTempoChange, onPanic }: Props) {
+export function TransportBar({ onPlayToggle, phraseRole, onPhraseRoleChange, onTempoChange, onPanic }: Props) {
   const toggleBrowser = useUiStore((s) => s.toggleBrowser);
   const toggleDetail = useUiStore((s) => s.toggleDetail);
   const browserOpen = useUiStore((s) => s.browserOpen);
@@ -23,6 +22,11 @@ export function TransportBar({ playing, onPlayToggle, phraseRole, onPhraseRoleCh
   const octaveBaseNote = useUiStore((s) => s.octaveBaseNote);
   const toggleHelp = useUiStore((s) => s.toggleHelp);
   const toggleSynthGallery = useUiStore((s) => s.toggleSynthGallery);
+  const transportStatus = useRuntimeStore((s) => s.transportStatus);
+  const tempo = useRuntimeStore((s) => s.tempo);
+  const bar = useRuntimeStore((s) => s.bar);
+  const beatInBar = useRuntimeStore((s) => s.beatInBar);
+  const isTransportActive = transportStatus === "playing" || transportStatus === "recording" || transportStatus === "starting";
   const octaveNumber = Math.floor(octaveBaseNote / 12) - 1;
 
   return (
@@ -30,7 +34,17 @@ export function TransportBar({ playing, onPlayToggle, phraseRole, onPhraseRoleCh
       <button onClick={toggleBrowser} style={{ background: browserOpen ? "#2c4a6b" : undefined }}>
         📁 Browser
       </button>
-      <button onClick={onPlayToggle}>{playing ? "■ Stop" : "▶ Play"}</button>
+      <button
+        onClick={onPlayToggle}
+        className={isTransportActive ? "transport-bar__play transport-bar__play--active" : "transport-bar__play"}
+        aria-pressed={isTransportActive}
+        title={transportStatus === "error" ? "Transportfehler – erneut versuchen" : "Play/Stop (Leertaste)"}
+      >
+        {transportStatus === "starting" ? "… Start" : isTransportActive ? "■ Stop" : "▶ Play"}
+      </button>
+      <output className="transport-bar__position" aria-label="Transportposition">
+        {bar}.{Math.floor(beatInBar)}.{Math.floor((beatInBar % 1) * 4) + 1}
+      </output>
       <select value={phraseRole} onChange={(e) => onPhraseRoleChange(e.target.value as Role)}>
         {PHRASE_ROLES.map((r) => (
           <option key={r} value={r}>{r}</option>

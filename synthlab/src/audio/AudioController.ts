@@ -299,6 +299,10 @@ class AudioControllerImpl {
     return this.selectedTrackAudio()?.voiceManager?.voiceCount ?? 0;
   }
 
+  get currentTime(): number {
+    return AudioEngine.currentTime;
+  }
+
   dispose(): void {
     if (this.rafId) cancelAnimationFrame(this.rafId);
     this.phrasePlayer?.dispose();
