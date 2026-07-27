@@ -10,7 +10,8 @@ import { PresetBrowser } from "./ui/PresetBrowser";
 import { TransportBar } from "./ui/TransportBar";
 import { SessionView } from "./ui/SessionView";
 import { DetailView } from "./ui/DetailView";
-import { StatusBar } from "./ui/StatusBar";
+import { InfoView } from "./ui/InfoView";
+import { ArrangementView } from "./ui/ArrangementView";
 import { HelpOverlay } from "./ui/HelpOverlay";
 import { SynthGallery } from "./ui/SynthGallery";
 import { useKeyboardShortcuts } from "./ui/useKeyboardShortcuts";
@@ -31,8 +32,8 @@ function App() {
   const lastVariantIdx = useRef<number | null>(null);
 
   const browserOpen = useUiStore((s) => s.browserOpen);
-  const statusMessage = useUiStore((s) => s.statusMessage);
   const setStatusMessage = useUiStore((s) => s.setStatusMessage);
+  const activeMainView = useUiStore((s) => s.activeMainView);
   const transportStatus = useRuntimeStore((s) => s.transportStatus);
   const tempo = useRuntimeStore((s) => s.tempo);
   const setRuntimeTempo = useRuntimeStore((s) => s.setTempo);
@@ -342,7 +343,9 @@ function App() {
           </div>
 
           {/* Ableton-Style Session View Matrix */}
-          <SessionView getPresetById={getPresetById} />
+          {activeMainView === "session"
+            ? <SessionView getPresetById={getPresetById} />
+            : <ArrangementView />}
         </div>
       </div>
 
@@ -369,7 +372,7 @@ function App() {
       />
 
       {/* Status Bar Footer (24px) */}
-      <StatusBar text={statusMessage} />
+      <InfoView />
       <HelpOverlay />
       <SynthGallery />
     </div>
