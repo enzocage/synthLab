@@ -1,10 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import type { Preset } from "../presets/schema";
 import type { ParamSpec } from "../audio/core/types";
 import { getEngine } from "../audio/engines/registry";
 import { SynthPreviewBox } from "./SynthPreviewBox";
 import { PresetSaveModal } from "./PresetSaveModal";
 import type { Role } from "../presets/schema";
+
+export interface ParamLfoConfig {
+  enabled: boolean;
+  shape: "sine" | "triangle" | "sawtooth" | "square" | "random";
+  rateHz: number; // 0.05 .. 20.0 Hz
+  depth: number;  // 0.0 .. 1.0 (0% .. 100%)
+}
 
 interface Props {
   preset: Preset;
@@ -23,6 +30,8 @@ export const SynthParameterInspector: React.FC<Props> = ({
 }) => {
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
+  const [paramLfos, setParamLfos] = useState<Record<string, ParamLfoConfig>>({});
+  const [openLfoDrawers, setOpenLfoDrawers] = useState<Record<string, boolean>>({});
 
   let parameters: ParamSpec[] = [];
   let engineName = preset.engine.toUpperCase();
@@ -35,6 +44,54 @@ export const SynthParameterInspector: React.FC<Props> = ({
     /* fallback if engine not found */
   }
 
+  // Real-Time LFO Oscillation Modulator Loop (60 FPS)
+  useEffect(() => {
+    let animId: number;
+    const startTime = performance.now() / 1000;
+
+    const tick = () => {
+      const now = performance.now() / 1000;
+      const elapsed = now - startTime;
+
+      for (const [paramId, lfo] of Object.entries(paramLfos)) {
+        if (!lfo || !lfo.enabled) continue;
+        const paramSpec = parameters.find((p) => p.id === paramId);
+        if (!paramSpec) continue;
+
+        const phase = (elapsed * lfo.rateHz) % 1;
+        let lfoVal = 0;
+        if (lfo.shape === "sine") {
+          lfoVal = Math.sin(2 * Math.PI * phase);
+        } else if (lfo.shape === "triangle") {
+          lfoVal = phase < 0.5 ? 4 * phase - 1 : 3 - 4 * phase;
+        } else if (lfo.shape === "sawtooth") {
+          lfoVal = 2 * phase - 1;
+        } else if (lfo.shape === "square") {
+          lfoVal = phase < 0.5 ? 1 : -1;
+        } else if (lfo.shape === "random") {
+          lfoVal = Math.sin(2 * Math.PI * Math.floor(elapsed * lfo.rateHz * 5));
+        }
+
+        const baseVal = Number(preset.params[paramId] ?? (paramSpec as any).default ?? 0);
+        const min = (paramSpec as any).min ?? 0;
+        const max = (paramSpec as any).max ?? 1;
+        const range = max - min;
+        const modAmount = lfoVal * (range / 2) * lfo.depth;
+
+        let nextVal = baseVal + modAmount;
+        nextVal = Math.max(min, Math.min(max, nextVal));
+        if (paramSpec.kind === "int") nextVal = Math.round(nextVal);
+
+        onLiveEdit(paramId, nextVal);
+      }
+
+      animId = requestAnimationFrame(tick);
+    };
+
+    animId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animId);
+  }, [paramLfos, parameters, preset.params, onLiveEdit]);
+
   // Group parameters by group field or default to "general"
   const groups: Record<string, ParamSpec[]> = {};
   for (const param of parameters) {
@@ -45,6 +102,30 @@ export const SynthParameterInspector: React.FC<Props> = ({
 
   const toggleGroup = (group: string) => {
     setCollapsedGroups((prev) => ({ ...prev, [group]: !prev[group] }));
+  };
+
+  const toggleLfoDrawer = (paramId: string) => {
+    setOpenLfoDrawers((prev) => ({ ...prev, [paramId]: !prev[paramId] }));
+  };
+
+  const toggleLfoEnable = (paramId: string) => {
+    setParamLfos((prev) => {
+      const existing = prev[paramId] ?? { enabled: false, shape: "sine", rateHz: 2.0, depth: 0.3 };
+      return {
+        ...prev,
+        [paramId]: { ...existing, enabled: !existing.enabled },
+      };
+    });
+  };
+
+  const updateLfo = (paramId: string, patch: Partial<ParamLfoConfig>) => {
+    setParamLfos((prev) => {
+      const existing = prev[paramId] ?? { enabled: true, shape: "sine", rateHz: 2.0, depth: 0.3 };
+      return {
+        ...prev,
+        [paramId]: { ...existing, ...patch },
+      };
+    });
   };
 
   return (
@@ -202,7 +283,7 @@ export const SynthParameterInspector: React.FC<Props> = ({
                 <div
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(215px, 1fr))",
                     gap: 10,
                     padding: 12,
                   }}
@@ -210,12 +291,17 @@ export const SynthParameterInspector: React.FC<Props> = ({
                   {groupParams.map((param) => {
                     const rawValue = preset.params[param.id];
                     const value = rawValue !== undefined ? rawValue : (param as any).default;
+
+                    const lfoConfig = paramLfos[param.id] ?? { enabled: false, shape: "sine", rateHz: 2.0, depth: 0.3 };
+                    const isLfoActive = lfoConfig.enabled;
+                    const isDrawerOpen = Boolean(openLfoDrawers[param.id]);
+
                     return (
                       <div
                         key={param.id}
                         style={{
                           background: "#141312",
-                          border: "1px solid #2c2a28",
+                          border: isLfoActive ? "1px solid #4ad97a" : "1px solid #2c2a28",
                           borderRadius: 6,
                           padding: "8px 10px",
                           display: "flex",
@@ -224,14 +310,38 @@ export const SynthParameterInspector: React.FC<Props> = ({
                           gap: 6,
                           minHeight: 62,
                           boxSizing: "border-box",
+                          transition: "border-color 0.15s ease",
                         }}
                       >
-                        {/* Parameter Header (Label & Readout) */}
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: 11 }}>
-                          <span style={{ color: "#ddd", fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={param.label}>
-                            {param.label}
-                          </span>
-                          <span style={{ color: "var(--color-accent, #fbad60)", fontFamily: "monospace", fontSize: 10, fontWeight: 700, marginLeft: 6, flexShrink: 0 }}>
+                        {/* Parameter Header (Label, Oscillation Icon & Readout) */}
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 4, overflow: "hidden" }}>
+                            {/* Oscillation Icon Button */}
+                            <button
+                              type="button"
+                              onClick={() => toggleLfoDrawer(param.id)}
+                              style={{
+                                background: "none",
+                                border: "none",
+                                padding: "0 2px",
+                                cursor: "pointer",
+                                color: isLfoActive ? "#4ad97a" : "#666",
+                                fontSize: 13,
+                                fontWeight: 700,
+                                lineHeight: 1,
+                                transition: "color 0.15s ease",
+                              }}
+                              title={isLfoActive ? "Oszillator aktiv (Klick zum Konfigurieren)" : "Oszillator inaktiv (Klick zum Konfigurieren)"}
+                            >
+                              〰
+                            </button>
+
+                            <span style={{ color: "#ddd", fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={param.label}>
+                              {param.label}
+                            </span>
+                          </div>
+
+                          <span style={{ color: isLfoActive ? "#4ad97a" : "var(--color-accent, #fbad60)", fontFamily: "monospace", fontSize: 10, fontWeight: 700, marginLeft: 6, flexShrink: 0 }}>
                             {formatParamReadout(param, value)}
                           </span>
                         </div>
@@ -247,7 +357,7 @@ export const SynthParameterInspector: React.FC<Props> = ({
                               value={Number(value)}
                               onChange={(e) => onLiveEdit(param.id, Number(e.target.value))}
                               style={{
-                                accentColor: "var(--color-accent, #fbad60)",
+                                accentColor: isLfoActive ? "#4ad97a" : "var(--color-accent, #fbad60)",
                                 width: "100%",
                                 height: 20,
                                 cursor: "pointer",
@@ -265,7 +375,7 @@ export const SynthParameterInspector: React.FC<Props> = ({
                               value={Number(value)}
                               onChange={(e) => onLiveEdit(param.id, Math.round(Number(e.target.value)))}
                               style={{
-                                accentColor: "var(--color-accent, #fbad60)",
+                                accentColor: isLfoActive ? "#4ad97a" : "var(--color-accent, #fbad60)",
                                 width: "100%",
                                 height: 20,
                                 cursor: "pointer",
@@ -322,6 +432,109 @@ export const SynthParameterInspector: React.FC<Props> = ({
                             </button>
                           )}
                         </div>
+
+                        {/* Inline Expandable LFO Oscillator Drawer */}
+                        {isDrawerOpen && (
+                          <div
+                            style={{
+                              marginTop: 6,
+                              padding: "8px 10px",
+                              background: "#1a1918",
+                              border: isLfoActive ? "1px solid #4ad97a" : "1px solid #3e3b38",
+                              borderRadius: 5,
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: 8,
+                              fontSize: 10,
+                            }}
+                          >
+                            {/* Drawer Header: Power Toggle Button */}
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                              <button
+                                type="button"
+                                onClick={() => toggleLfoEnable(param.id)}
+                                style={{
+                                  background: isLfoActive ? "#4ad97a" : "#282624",
+                                  color: isLfoActive ? "#000" : "#aaa",
+                                  border: isLfoActive ? "1px solid #4ad97a" : "1px solid #444",
+                                  borderRadius: 3,
+                                  padding: "3px 8px",
+                                  fontSize: 10,
+                                  fontWeight: 700,
+                                  cursor: "pointer",
+                                }}
+                              >
+                                {isLfoActive ? "● OSZILLATOR AN" : "○ OSZILLATOR AUS"}
+                              </button>
+
+                              <span style={{ color: isLfoActive ? "#4ad97a" : "#888", fontWeight: 600 }}>
+                                {isLfoActive ? "Dynamisch" : "Statisch"}
+                              </span>
+                            </div>
+
+                            {/* LFO Waveform Shape */}
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 4 }}>
+                              <span style={{ color: "#aaa" }}>Wellenform:</span>
+                              <select
+                                value={lfoConfig.shape}
+                                onChange={(e) => updateLfo(param.id, { shape: e.target.value as any })}
+                                style={{
+                                  background: "#252321",
+                                  border: "1px solid #3e3b38",
+                                  color: "#fff",
+                                  borderRadius: 3,
+                                  padding: "2px 6px",
+                                  fontSize: 10,
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <option value="sine">Sinus (Sin)</option>
+                                <option value="triangle">Dreieck (Tri)</option>
+                                <option value="sawtooth">Sägezahn (Saw)</option>
+                                <option value="square">Rechteck (Sq)</option>
+                                <option value="random">Zufall (Rnd)</option>
+                              </select>
+                            </div>
+
+                            {/* LFO Rate / Frequency (Hz) */}
+                            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                              <div style={{ display: "flex", justifyContent: "space-between", color: "#aaa" }}>
+                                <span>Frequenz:</span>
+                                <span style={{ color: isLfoActive ? "#4ad97a" : "#fff", fontFamily: "monospace" }}>
+                                  {lfoConfig.rateHz.toFixed(2)} Hz
+                                </span>
+                              </div>
+                              <input
+                                type="range"
+                                min={0.05}
+                                max={20.0}
+                                step={0.05}
+                                value={lfoConfig.rateHz}
+                                onChange={(e) => updateLfo(param.id, { rateHz: Number(e.target.value) })}
+                                style={{ accentColor: "#4ad97a", width: "100%", height: 16, cursor: "pointer" }}
+                              />
+                            </div>
+
+                            {/* LFO Depth / Range (%) */}
+                            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                              <div style={{ display: "flex", justifyContent: "space-between", color: "#aaa" }}>
+                                <span>Tiefe (Range):</span>
+                                <span style={{ color: isLfoActive ? "#4ad97a" : "#fff", fontFamily: "monospace" }}>
+                                  {Math.round(lfoConfig.depth * 100)}%
+                                </span>
+                              </div>
+                              <input
+                                type="range"
+                                min={0}
+                                max={1}
+                                step={0.01}
+                                value={lfoConfig.depth}
+                                onChange={(e) => updateLfo(param.id, { depth: Number(e.target.value) })}
+                                style={{ accentColor: "#4ad97a", width: "100%", height: 16, cursor: "pointer" }}
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
