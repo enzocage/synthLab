@@ -1,6 +1,28 @@
 import { useEffect, useState } from "react";
 import { ENGINES } from "../audio/engines/registry";
 import { useUiStore } from "../store/uiStore";
+import synthPic1 from "../../../gfx/1.png";
+import synthPic2 from "../../../gfx/2.png";
+import synthPic3 from "../../../gfx/3.png";
+import synthPic4 from "../../../gfx/4.png";
+import synthPic5 from "../../../gfx/5.png";
+import synthPic6 from "../../../gfx/6.png";
+import synthPic7 from "../../../gfx/7.png";
+import synthPic8 from "../../../gfx/8.png";
+import synthPic9 from "../../../gfx/9.png";
+import synthPic10 from "../../../gfx/10.png";
+import synthPic11 from "../../../gfx/11.png";
+import synthPic12 from "../../../gfx/12.png";
+import synthPic13 from "../../../gfx/13.png";
+import synthPic14 from "../../../gfx/14.png";
+import synthPic15 from "../../../gfx/15.png";
+import synthPic16 from "../../../gfx/16.png";
+import synthPic17 from "../../../gfx/17.png";
+import synthPic18 from "../../../gfx/18.png";
+import synthPic19 from "../../../gfx/19.png";
+import synthPic20 from "../../../gfx/20.png";
+import synthPic21 from "../../../gfx/21.png";
+import synthPic22 from "../../../gfx/22.png";
 
 interface ImageReference {
   image: string;
@@ -16,18 +38,44 @@ const JUNO: ImageReference = {
   image: "/synth-images/juno106.jpg",
   subject: "Roland Juno-106",
   relation: "Nahes Referenzgerät",
-  sourceUrl: "https://commons.wikimedia.org/wiki/File:Roland-Juno-106.jpg",
-  credit: "Iainf / Wikimedia Commons",
-  license: "Public Domain",
+  sourceUrl: "https://github.com/enzocage/ambient-genetics",
+  credit: "SynthLab / enzo cage",
+  license: "Original generated artwork",
 };
 
 const DX7: ImageReference = {
   image: "/synth-images/dx7.jpg",
   subject: "Yamaha DX7",
   relation: "Nahes Referenzgerät",
-  sourceUrl: "https://commons.wikimedia.org/wiki/File:Yamaha_DX7.jpg",
-  credit: "Leo-setä / Wikimedia Commons",
-  license: "CC BY 2.0",
+  sourceUrl: "https://github.com/enzocage/ambient-genetics",
+  credit: "SynthLab / enzo cage",
+  license: "Original generated artwork",
+};
+
+const SYNTH_PICS: Record<string, string> = {
+  "va-poly": synthPic1,
+  wavetable: synthPic2,
+  fm6: synthPic3,
+  additive: synthPic4,
+  granular: synthPic5,
+  modal: synthPic6,
+  string: synthPic7,
+  noisefield: synthPic8,
+  drone: synthPic9,
+  wavefold: synthPic10,
+  phasedist: synthPic11,
+  perc: synthPic12,
+  subbass: synthPic13,
+  "sid-chip": synthPic14,
+  "fm-dx7": synthPic15,
+  "fm-4op": synthPic16,
+  "fm-morph": synthPic17,
+  "fm-feedback": synthPic18,
+  "fm-linear": synthPic19,
+  juno106: synthPic20,
+  "wt-akwf": synthPic21,
+  opl3: synthPic22,
+  dx7: synthPic22,
 };
 
 const REFERENCES: Record<string, ImageReference> = {
@@ -102,7 +150,7 @@ export function SynthGallery() {
         </div>
         <div className="synth-gallery__grid">
           {ENGINES.map((engine) => {
-            const reference = REFERENCES[engine.id] ?? JUNO;
+            const reference = { ...(REFERENCES[engine.id] ?? JUNO), image: SYNTH_PICS[engine.id] ?? synthPic22 };
             return (
               <article className="synth-picture-card" key={engine.id}>
                 <button
