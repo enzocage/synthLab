@@ -49,7 +49,9 @@ const HANDLED_KEYS = new Set([
 ]);
 
 export function useKeyboardShortcuts(handlers: KeyboardHandlers): void {
-  const heldPianoKeys = useRef<Set<string>>(new Set());
+  // Store the absolute note per physical key so octave changes while a key is
+  // held still release the note that was actually started.
+  const heldPianoKeys = useRef<Map<string, number>>(new Map());
 
   useEffect(() => {
     function isTypingTarget(el: EventTarget | null): boolean {
@@ -58,23 +60,27 @@ export function useKeyboardShortcuts(handlers: KeyboardHandlers): void {
     }
 
     function onKeyDown(e: KeyboardEvent) {
-      if (isTypingTarget(e.target)) return;
       const key = e.key.toLowerCase();
 
       // Computer-Tastatur-Piano-Modus hat Vorrang vor allen sonstigen Shortcuts
       // fuer die von ihm belegten Tasten (siehe Dateikopf-Kommentar).
       if (handlers.pianoMode.enabled && PIANO_MODE_KEYS.has(key)) {
-        const el = e.target as HTMLElement | null;
-        if (el && el !== document.body && typeof el.blur === "function") el.blur();
+        // This branch intentionally runs even when an input, select or button
+        // owns focus. The keyboard instrument must remain playable at all times.
         e.preventDefault();
         if (heldPianoKeys.current.has(key)) return; // OS-Tastenwiederholung ignorieren
-        heldPianoKeys.current.add(key);
         if (key === OCTAVE_DOWN_KEY) { handlers.pianoMode.onOctaveShift(-1); return; }
         if (key === OCTAVE_UP_KEY) { handlers.pianoMode.onOctaveShift(1); return; }
         const offset = KEY_NOTE_LOOKUP.get(key);
-        if (offset !== undefined) handlers.pianoMode.onNoteOn(handlers.pianoMode.octaveBaseNote + offset);
+        if (offset !== undefined) {
+          const note = handlers.pianoMode.octaveBaseNote + offset;
+          heldPianoKeys.current.set(key, note);
+          handlers.pianoMode.onNoteOn(note);
+        }
         return;
       }
+
+      if (isTypingTarget(e.target)) return;
 
       const isUndo = key === "z" && (e.ctrlKey || e.metaKey);
       if (!HANDLED_KEYS.has(key) && !isUndo) return;
@@ -109,14 +115,15 @@ export function useKeyboardShortcuts(handlers: KeyboardHandlers): void {
     }
 
     function onKeyUp(e: KeyboardEvent) {
-      if (isTypingTarget(e.target)) return;
       const key = e.key.toLowerCase();
       if (handlers.pianoMode.enabled && PIANO_MODE_KEYS.has(key)) {
+        e.preventDefault();
+        const note = heldPianoKeys.current.get(key);
         heldPianoKeys.current.delete(key);
-        const offset = KEY_NOTE_LOOKUP.get(key);
-        if (offset !== undefined) handlers.pianoMode.onNoteOff(handlers.pianoMode.octaveBaseNote + offset);
+        if (note !== undefined) handlers.pianoMode.onNoteOff(note);
         return;
       }
+      if (isTypingTarget(e.target)) return;
       if (key === "h") handlers.holdNoteUp();
     }
 
