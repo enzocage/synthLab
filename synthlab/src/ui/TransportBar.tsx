@@ -18,6 +18,11 @@ export function TransportBar({ playing, onPlayToggle, phraseRole, onPhraseRoleCh
   const toggleDetail = useUiStore((s) => s.toggleDetail);
   const browserOpen = useUiStore((s) => s.browserOpen);
   const detailOpen = useUiStore((s) => s.detailOpen);
+  const computerKeyboardEnabled = useUiStore((s) => s.computerKeyboardEnabled);
+  const toggleComputerKeyboard = useUiStore((s) => s.toggleComputerKeyboard);
+  const octaveBaseNote = useUiStore((s) => s.octaveBaseNote);
+  const toggleHelp = useUiStore((s) => s.toggleHelp);
+  const octaveNumber = Math.floor(octaveBaseNote / 12) - 1;
 
   return (
     <div className="transport-bar">
@@ -41,9 +46,19 @@ export function TransportBar({ playing, onPlayToggle, phraseRole, onPhraseRoleCh
           style={{ width: 56 }}
         />
       </label>
+      <button
+        onClick={toggleComputerKeyboard}
+        title="Computertastatur als MIDI-Keyboard (Ableton-Style: A S D F G H J K L = weiße Tasten, W E T Y U O P = schwarze Tasten, Z/X = Oktave)"
+        style={{ background: computerKeyboardEnabled ? "#2c4a6b" : undefined }}
+      >
+        🎹 Keyboard{computerKeyboardEnabled ? ` (Oktave ${octaveNumber})` : ""}
+      </button>
       <MeterDisplay />
       <button onClick={toggleDetail} style={{ background: detailOpen ? "#2c4a6b" : undefined }}>
         🎛️ Detail
+      </button>
+      <button onClick={toggleHelp} title="Hilfe: Tastaturbelegung & App-Beschreibung (Taste ?)">
+        ❓ Hilfe
       </button>
       <button className="transport-bar__panic" onClick={onPanic}>Panic</button>
     </div>

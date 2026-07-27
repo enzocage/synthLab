@@ -9,6 +9,7 @@ import { TransportBar } from "./ui/TransportBar";
 import { SessionView } from "./ui/SessionView";
 import { DetailView } from "./ui/DetailView";
 import { StatusBar } from "./ui/StatusBar";
+import { HelpOverlay } from "./ui/HelpOverlay";
 import { useKeyboardShortcuts } from "./ui/useKeyboardShortcuts";
 import { PHRASE_ROLES } from "./midi/phrases";
 import { defaultArpSettings, type ArpSettings } from "./midi/arpeggiator";
@@ -178,6 +179,11 @@ function App() {
     [variationGrid, preset, setEditedParam, clearVariations, setStatusMessage]
   );
 
+  const computerKeyboardEnabled = useUiStore((s) => s.computerKeyboardEnabled);
+  const octaveBaseNote = useUiStore((s) => s.octaveBaseNote);
+  const shiftOctave = useUiStore((s) => s.shiftOctave);
+  const toggleHelp = useUiStore((s) => s.toggleHelp);
+
   useKeyboardShortcuts({
     playToggle,
     nextPreset: (big) => stepFiltered(big ? 10 : 1),
@@ -219,6 +225,17 @@ function App() {
     panic: () => {
       AudioController.panic();
       setStatusMessage("Panic: Alle Stimmen gestoppt");
+    },
+    toggleHelp,
+    pianoMode: {
+      enabled: computerKeyboardEnabled,
+      octaveBaseNote,
+      onNoteOn: (note) => AudioController.noteOn(note),
+      onNoteOff: (note) => AudioController.noteOff(note),
+      onOctaveShift: (delta) => {
+        shiftOctave(delta);
+        setStatusMessage(`Oktave ${delta > 0 ? "hoch" : "runter"} verschoben`);
+      },
     },
   });
 
@@ -301,6 +318,7 @@ function App() {
 
       {/* Status Bar Footer (24px) */}
       <StatusBar text={statusMessage} />
+      <HelpOverlay />
     </div>
   );
 }

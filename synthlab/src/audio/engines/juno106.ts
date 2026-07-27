@@ -131,7 +131,7 @@ class Juno106Voice implements Voice {
     this.note = note;
     this.params = values;
 
-    const range = Boolean(values.stop16) ? 0.5 : Boolean(values.stop4) ? 2 : 1;
+    const range = values.stop16 ? 0.5 : values.stop4 ? 2 : 1;
     this.baseFreqHz = midiToHz(note) * range;
 
     // --- Pulse (mit PWM via Zwei-Saw-Differenz-Technik) ---
