@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { PHRASE_ROLES } from "../midi/phrases";
 import type { Role } from "../presets/schema";
 import { MeterDisplay } from "./MeterDisplay";
 import { useUiStore } from "../store/uiStore";
@@ -10,13 +9,13 @@ import { Icon } from "./Icon";
 
 interface Props {
   onPlayToggle(): void;
-  phraseRole: Role;
-  onPhraseRoleChange(role: Role): void;
+  phraseRole?: Role;
+  onPhraseRoleChange?(role: Role): void;
   onTempoChange(bpm: number): void;
   onPanic(): void;
 }
 
-export function TransportBar({ onPlayToggle, phraseRole, onPhraseRoleChange, onTempoChange, onPanic }: Props) {
+export function TransportBar({ onPlayToggle, onTempoChange, onPanic }: Props) {
   const [isFullscreen, setIsFullscreen] = useState(() => Boolean(document.fullscreenElement));
   const toggleBrowser = useUiStore((s) => s.toggleBrowser);
   const toggleDetail = useUiStore((s) => s.toggleDetail);
@@ -135,11 +134,6 @@ export function TransportBar({ onPlayToggle, phraseRole, onPhraseRoleChange, onT
       <output className="transport-bar__position" aria-label="Transportposition">
         {bar}.{Math.floor(beatInBar)}.{Math.floor((beatInBar % 1) * 4) + 1}
       </output>
-      <select value={phraseRole} onChange={(e) => onPhraseRoleChange(e.target.value as Role)}>
-        {PHRASE_ROLES.map((r) => (
-          <option key={r} value={r}>{r}</option>
-        ))}
-      </select>
       <label>
         Tempo
         <input
