@@ -1,8 +1,10 @@
 import React from "react";
 import { useUiStore, type DetailTab } from "../store/uiStore";
+import { useSessionStore } from "../store/sessionStore";
 import { DeviceChain } from "./DeviceChain";
 import { ClipView } from "./ClipView";
 import { CompareView } from "./CompareView";
+import { SynthParameterInspector } from "./SynthParameterInspector";
 import type { Preset } from "../presets/schema";
 
 interface Props {
@@ -30,6 +32,9 @@ export const DetailView: React.FC<Props> = (props) => {
   const detailHeight = useUiStore((s) => s.detailHeight);
   const setDetailHeight = useUiStore((s) => s.setDetailHeight);
 
+  const saveAsCustomPreset = useSessionStore((s) => s.saveAsCustomPreset);
+  const generateVariations = useSessionStore((s) => s.generateVariations);
+
   if (!detailOpen) return null;
 
   return (
@@ -53,7 +58,7 @@ export const DetailView: React.FC<Props> = (props) => {
           borderBottom: "1px solid var(--color-border-subtle, #2c2b29)",
         }}
       >
-        {(["device", "clip", "compare"] as DetailTab[]).map((tab) => {
+        {(["device", "params", "clip", "compare"] as DetailTab[]).map((tab) => {
           const isActive = activeTab === tab;
           return (
             <button
@@ -71,7 +76,13 @@ export const DetailView: React.FC<Props> = (props) => {
                 textTransform: "uppercase",
               }}
             >
-              {tab === "device" ? "Device Chain" : tab === "clip" ? "Clip & Perform" : "Compare & Rating"}
+              {tab === "device"
+                ? "Device Chain"
+                : tab === "params"
+                ? "Parameter Inspector & Saver"
+                : tab === "clip"
+                ? "Clip & Perform"
+                : "Compare & Rating"}
             </button>
           );
         })}
@@ -84,7 +95,7 @@ export const DetailView: React.FC<Props> = (props) => {
             step={10}
             value={detailHeight}
             onChange={(event) => setDetailHeight(Number(event.target.value))}
-            aria-label="HÃ¶he des Detailbereichs"
+            aria-label="Höhe des Detailbereichs"
           />
           {detailHeight}px
         </label>
@@ -94,6 +105,14 @@ export const DetailView: React.FC<Props> = (props) => {
       <div style={{ flex: 1, overflow: "hidden" }}>
         {activeTab === "device" && (
           <DeviceChain preset={props.preset} onLiveEdit={props.onLiveEdit} onFxChange={props.onFxChange} />
+        )}
+        {activeTab === "params" && (
+          <SynthParameterInspector
+            preset={props.preset}
+            onLiveEdit={props.onLiveEdit}
+            onSaveAsCustomPreset={saveAsCustomPreset}
+            onMutate={() => generateVariations(1)}
+          />
         )}
         {activeTab === "clip" && (
           <ClipView arpSettings={props.arpSettings} onArpChange={props.onArpChange} />

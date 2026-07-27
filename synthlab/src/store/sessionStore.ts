@@ -7,7 +7,7 @@ import { mutateN } from "../presets/mutate";
 import type { Preset, Role } from "../presets/schema";
 import type { FxChainSettings } from "../audio/fx/types";
 
-import { loadUserDataFromDb, saveRatingToDb, saveFavoriteToDb, saveNoteToDb, saveEditToDb } from "../db/database";
+import { loadUserDataFromDb, saveRatingToDb, saveFavoriteToDb, saveNoteToDb, saveEditToDb, saveCustomPresetToDb, loadCustomPresetsFromDb, type CustomPresetRecord } from "../db/database";
 
 export interface FilterState {
   search: string;
@@ -48,6 +48,8 @@ interface SessionState {
   setEditedParam(presetId: string, paramId: string, value: number | string | boolean): void;
   setEditedFx(presetId: string, fx: FxChainSettings): void;
 
+  saveAsCustomPreset(name: string, role: Role, tags: string[], author?: string, notes?: string): Preset;
+
   generateVariations(amount: number): void;
   clearVariations(): void;
 
@@ -72,13 +74,27 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   async initPersistence() {
     try {
       const data = await loadUserDataFromDb();
-      set({
+      const loadedCustoms = await loadCustomPresetsFromDb();
+      const template = generateFullBank()[0];
+      const customPresets: Preset[] = loadedCustoms.map((c) => ({
+        ...(template ?? {}),
+        id: c.id,
+        name: c.name,
+        engine: c.engine,
+        roles: c.roles,
+        tags: c.tags,
+        params: c.params,
+        fx: c.fx ?? (template?.fx ?? { drive: 0, tone: 0.5, ensemble: 0, delayTime: 0.3, delayFeedback: 0.3, delayMix: 0, reverbSize: 0.5, reverbMix: 0, stereoWidth: 1 }),
+      }));
+
+      set((s) => ({
         ratings: data.ratings,
         favorites: data.favorites,
         notes: data.notes,
         editedParams: data.editedParams,
         editedFx: data.editedFx,
-      });
+        bank: customPresets.length > 0 ? [...customPresets, ...s.bank] : s.bank,
+      }));
     } catch {
       /* noop */
     }
@@ -176,6 +192,44 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   setEditedFx(presetId, fx) {
     set((s) => ({ editedFx: { ...s.editedFx, [presetId]: fx } }));
     saveEditToDb(presetId, get().editedParams[presetId] ?? {}, fx).catch(() => {});
+  },
+
+  saveAsCustomPreset(name, role, tags, author, notes) {
+    const current = get().currentPreset();
+    if (!current) throw new Error("Kein Preset ausgewählt");
+    const effective = get().effectivePreset(current);
+    const id = `custom-${Date.now()}`;
+    const newPreset: Preset = {
+      ...effective,
+      id,
+      name,
+      engine: effective.engine,
+      roles: [role],
+      tags: Array.from(new Set(["custom", ...tags])),
+      params: { ...effective.params },
+      fx: { ...effective.fx },
+    };
+
+    const record: CustomPresetRecord = {
+      id,
+      name,
+      engine: effective.engine,
+      roles: [role],
+      tags: newPreset.tags,
+      params: newPreset.params,
+      fx: newPreset.fx,
+      author,
+      notes,
+      createdAt: Date.now(),
+    };
+
+    set((s) => ({
+      bank: [newPreset, ...s.bank],
+      currentIndex: 0,
+    }));
+
+    saveCustomPresetToDb(record).catch(() => {});
+    return newPreset;
   },
 
   generateVariations(amount) {
