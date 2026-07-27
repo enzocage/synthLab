@@ -169,6 +169,7 @@ class GranularVoice implements Voice {
 export const granularEngine: Engine = {
   id: "granular",
   name: "Granular",
+  maxVoices: 4,
   params,
   defaultMacroMap: {
     density: [{ paramId: "density", atZero: 2, atOne: 50 }],

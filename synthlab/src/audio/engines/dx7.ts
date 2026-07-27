@@ -108,6 +108,7 @@ class Dx7Voice implements Voice {
 export const dx7Engine: Engine = {
   id: "dx7",
   name: "DX7 (Yamaha 6-Op FM, echte Werksdaten)",
+  maxVoices: 4,
   params,
   defaultMacroMap: {
     brightness: [{ paramId: "op2OutputLevel", atZero: 0, atOne: 99 }],

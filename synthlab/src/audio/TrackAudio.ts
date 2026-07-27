@@ -36,7 +36,7 @@ export class TrackAudio {
   loadPreset(preset: Preset): void {
     this.currentPreset = preset;
     const engine = getEngine(preset.engine);
-    this.loader.load(engine, preset.params, 8);
+    this.loader.load(engine, preset.params);
     this.fxChain.update(preset.fx);
   }
 

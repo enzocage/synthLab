@@ -104,6 +104,8 @@ export interface Engine {
   readonly name: string;
   readonly params: ParamSpec[];
   readonly defaultMacroMap: MacroMap;
+  /** Maximale Stimmenzahl für ressourcenintensive Engines; Default bleibt 8. */
+  readonly maxVoices?: number;
   createVoice(globals: EngineGlobals, params: ParamValues, note: number): Voice;
 }
 

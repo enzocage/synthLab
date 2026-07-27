@@ -19,6 +19,9 @@ import { DX7_PRESETS } from "./dx7Presets";
 
 const VARIANTS_PER_COMBO = 3; // variant 0 = Kernpreset (kein Jitter), 1..N = Seed-Variation
 
+let bankCache: Preset[] | null = null;
+let bankIndex: Map<string, Preset> | null = null;
+
 function jitterMacros(base: MacroValues, spread: number, rng: () => number): MacroValues {
   const out = { ...base };
   for (const key of Object.keys(out) as (keyof MacroValues)[]) {
@@ -37,6 +40,8 @@ function presetName(engineName: string, archetypeName: string, variant: number):
 }
 
 export function generateFullBank(): Preset[] {
+  if (bankCache) return bankCache;
+
   const presets: Preset[] = [];
 
   for (const engine of ENGINES) {
@@ -82,11 +87,20 @@ export function generateFullBank(): Preset[] {
   presets.push(...WT_AKWF_PRESETS);
   presets.push(...OPL3_PRESETS);
   presets.push(...DX7_PRESETS);
+
+  const index = new Map<string, Preset>();
+  for (const preset of presets) {
+    if (index.has(preset.id)) throw new Error(`Doppelte Preset-ID: ${preset.id}`);
+    index.set(preset.id, preset);
+  }
+
+  bankCache = presets;
+  bankIndex = index;
   return presets;
 }
 
 /** Rekonstruiert ein einzelnes Preset exakt aus seinen Koordinaten (Determinismus-Garantie). */
 export function generatePresetById(id: string): Preset | null {
-  const all = generateFullBank();
-  return all.find((p) => p.id === id) ?? null;
+  generateFullBank();
+  return bankIndex?.get(id) ?? null;
 }

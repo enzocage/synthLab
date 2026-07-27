@@ -28,7 +28,7 @@ export class PresetLoader {
   }
 
   /** Baut den neuen Engine-Graphen auf und blendet ihn klickfrei ein; der alte klingt aus. */
-  load(engine: Engine, params: ParamValues, maxVoices = 8): VoiceManager {
+  load(engine: Engine, params: ParamValues, maxVoices = engine.maxVoices ?? 8): VoiceManager {
     const now = this.ctx.currentTime;
     const gain = this.ctx.createGain();
     gain.gain.value = 0;
