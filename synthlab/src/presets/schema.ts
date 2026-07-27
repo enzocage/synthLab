@@ -60,12 +60,42 @@ export const FxChainSettingsSchema = z.object({
     freeze: z.boolean(),
   }),
   width: z.object({ enabled: z.boolean(), amount: FxNumberRange }),
+  cloudSeed: z.object({
+    enabled: z.boolean(),
+    preDelay: FxNumberRange,
+    highPass: FxNumberRange,
+    lowPass: FxNumberRange,
+    tapCount: FxNumberRange,
+    tapLength: FxNumberRange,
+    tapDecay: FxNumberRange,
+    diffusionDelay: FxNumberRange,
+    diffusionFeedback: FxNumberRange,
+    lineCount: FxNumberRange,
+    lineDelay: FxNumberRange,
+    lineDecay: FxNumberRange,
+    lateDiffusionDelay: FxNumberRange,
+    lateDiffusionFeedback: FxNumberRange,
+    lineModAmount: FxNumberRange,
+    lineModRate: FxNumberRange,
+    postLowShelfGain: FxNumberRange,
+    postLowShelfFrequency: FxNumberRange,
+    postHighShelfGain: FxNumberRange,
+    postHighShelfFrequency: FxNumberRange,
+    postCutoffFrequency: FxNumberRange,
+    crossSeed: FxNumberRange,
+    dryOut: FxNumberRange,
+    earlyOut: FxNumberRange,
+    mainOut: FxNumberRange,
+  }),
 });
 
 export const ProvenanceSchema = z.object({
   source: z.string(),
   license: z.string(),
   derivedFrom: z.string().optional(),
+  /** Bei importierten Presets (plan5): Original-Repo/-Datei der Quelle (z.B. AMY Juno-106-Bank). */
+  upstreamRepo: z.string().optional(),
+  upstreamFile: z.string().optional(),
 });
 
 export const AudioMetricsSchema = z

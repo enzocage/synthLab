@@ -20,6 +20,7 @@ import { fm4OpEngine } from "./fm4Op";
 import { fmMorphEngine } from "./fmMorph";
 import { fmFeedbackEngine } from "./fmFeedback";
 import { fmLinearEngine } from "./fmLinear";
+import { juno106Engine } from "./juno106";
 
 export const ENGINES: Engine[] = [
   vaPolyEngine,
@@ -41,6 +42,7 @@ export const ENGINES: Engine[] = [
   fmMorphEngine,
   fmFeedbackEngine,
   fmLinearEngine,
+  juno106Engine,
 ];
 
 export const ENGINE_MAP: Record<string, Engine> = Object.fromEntries(ENGINES.map((e) => [e.id, e]));

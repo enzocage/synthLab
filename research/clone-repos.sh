@@ -67,5 +67,29 @@ sparse sonicpi     https://github.com/sonic-pi-net/sonic-pi.git \
 sparse fluidsynth  https://github.com/FluidSynth/fluidsynth.git \
                    'src/synth' 'src/rvoice'
 
+# --- plan5: Synth-Engines & FX-Module (permissive Lizenzen) --------------------
+sparse eurorack    https://github.com/pichenettes/eurorack.git \
+                   'plaits/dsp' 'rings/dsp' 'warps/dsp' 'clouds/dsp' 'elements/dsp'
+full moogladders   https://github.com/ddiakopoulos/MoogLadders.git
+sparse soundpipe   https://github.com/PaulBatchelor/Soundpipe.git \
+                   'modules' 'lib' 'h'
+# CloudSeed: der Default-Branch "master" enthaelt nur Doku-Dateien, der eigentliche
+# Quellcode + Factory-Programme liegen auf dem Branch "legacy-v1".
+sparse-branch() {
+  local name="$1" url="$2" branch="$3"; shift 3
+  if [ -d "$VENDOR/$name/.git" ]; then log "SKIP  $name (bereits vorhanden)"; return; fi
+  log "SPRS  $name@$branch  [$*]"
+  git clone --depth 1 --branch "$branch" --filter=blob:none --sparse --quiet "$url" "$VENDOR/$name" >>"$LOG" 2>&1 || { log "  FAIL $name"; return; }
+  ( cd "$VENDOR/$name" && git sparse-checkout set --no-cone "$@" >>"$LOG" 2>&1 ) \
+    && log "  ok  $name" || log "  FAIL sparse $name"
+}
+sparse-branch cloudseed https://github.com/ValdemarOrn/CloudSeed.git legacy-v1 \
+                   'CloudSeed.Native' 'Factory Programs' 'license.txt' 'readme.md'
+full airwindows    https://github.com/airwindows/airwindows.git
+full akwf          https://github.com/KristofferKarlAxelEkstrand/AKWF-FREE.git
+full dmxopl        https://github.com/sneakernets/DMXOPL.git
+full signalsmith-stretch https://github.com/Signalsmith-Audio/signalsmith-stretch.git
+full dattorro-verb https://github.com/el-visio/dattorro-verb.git
+
 log "=== Vendor-Clone Ende ==="
 du -sh "$VENDOR"/* 2>/dev/null | tee -a "$LOG"

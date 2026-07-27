@@ -1,10 +1,12 @@
-// Feste FX-Kette pro Preset (PLAN.md Phase 4):
-// Drive -> Post-Filter -> Ensemble -> Delay (Tape/PingPong) -> Reverb (FDN/Shimmer) -> Width.
+// Feste FX-Kette pro Preset (PLAN.md Phase 4, erweitert um plan5 CloudSeed):
+// Drive -> Post-Filter -> Ensemble -> Delay (Tape/PingPong) -> Reverb (FDN/Shimmer)
+// -> CloudSeed (Diffusions-Reverb) -> Width.
 import { Drive } from "./Drive";
 import { PostFilter } from "./PostFilter";
 import { Ensemble } from "./Ensemble";
 import { TapeDelay } from "./TapeDelay";
 import { Reverb } from "./Reverb";
+import { CloudSeed } from "./CloudSeed";
 import { Width } from "./Width";
 import type { FxChainSettings } from "./types";
 
@@ -16,6 +18,7 @@ export class FxChain {
   private ensemble: Ensemble;
   private delay: TapeDelay;
   private reverb: Reverb;
+  private cloudSeed: CloudSeed;
   private width: Width;
 
   constructor(ctx: BaseAudioContext, settings: FxChainSettings) {
@@ -27,6 +30,7 @@ export class FxChain {
     this.ensemble = new Ensemble(ctx, settings.ensemble);
     this.delay = new TapeDelay(ctx, settings.delay);
     this.reverb = new Reverb(ctx, settings.reverb);
+    this.cloudSeed = new CloudSeed(ctx, settings.cloudSeed);
     this.width = new Width(ctx, settings.width);
 
     this.input
@@ -35,7 +39,8 @@ export class FxChain {
     this.postFilter.output.connect(this.ensemble.input);
     this.ensemble.output.connect(this.delay.input);
     this.delay.output.connect(this.reverb.input);
-    this.reverb.output.connect(this.width.input);
+    this.reverb.output.connect(this.cloudSeed.input);
+    this.cloudSeed.output.connect(this.width.input);
     this.width.output.connect(this.output);
   }
 
@@ -44,6 +49,7 @@ export class FxChain {
     this.ensemble.start(time);
     this.delay.start(time);
     this.reverb.start(time);
+    this.cloudSeed.start(time);
   }
 
   update(settings: FxChainSettings): void {
@@ -52,12 +58,14 @@ export class FxChain {
     this.ensemble.update(settings.ensemble);
     this.delay.update(settings.delay);
     this.reverb.update(settings.reverb);
+    this.cloudSeed.update(settings.cloudSeed);
     this.width.update(settings.width);
   }
 
   setFreeze(freeze: boolean): void {
     this.delay.setFreeze(freeze);
     this.reverb.setFreeze(freeze);
+    this.cloudSeed.setFreeze(freeze);
   }
 
   dispose(): void {
@@ -66,6 +74,7 @@ export class FxChain {
     this.ensemble.dispose();
     this.delay.dispose();
     this.reverb.dispose();
+    this.cloudSeed.dispose();
     this.width.dispose();
     this.input.disconnect();
     this.output.disconnect();

@@ -12,6 +12,7 @@ import type { Preset } from "./schema";
 
 import { SID_PRESETS } from "./sidPresets";
 import { FM_PRESETS } from "./fmPresets";
+import { JUNO106_PRESETS } from "./junoPresets";
 
 const VARIANTS_PER_COMBO = 3; // variant 0 = Kernpreset (kein Jitter), 1..N = Seed-Variation
 
@@ -74,6 +75,7 @@ export function generateFullBank(): Preset[] {
 
   presets.push(...SID_PRESETS);
   presets.push(...FM_PRESETS);
+  presets.push(...JUNO106_PRESETS);
   return presets;
 }
 

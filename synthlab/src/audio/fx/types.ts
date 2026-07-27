@@ -65,12 +65,52 @@ export interface WidthSettings {
   amount: number; // 0..2 (1 = unveraendert, >1 = breiter)
 }
 
+/**
+ * CloudSeed-artiges Diffusions-Reverb (plan5, Architekturreferenz:
+ * ValdemarOrn/CloudSeed, MIT, siehe research/LICENSES.md). Eigenständige
+ * Neuimplementierung: Multitap-Diffusor (frühe Reflexionen) -> modulierte
+ * Allpass-Diffusor-Kette -> parallele gedämpfte, modulierte Verzögerungsleitungen
+ * mit Cross-Seed-Kopplung zwischen den Kanälen -> Post-EQ (Low-/High-Shelf +
+ * Cutoff) -> Dry/Early/Main-Ausgangsmischung. Alle Parameter sind bewusst
+ * 0..1-normalisiert (identisch zur Original-Preset-JSON-Struktur von CloudSeed),
+ * damit die 9 importierten Factory-Programme ohne Umrechnung übernommen werden
+ * können (siehe research/extract/import-cloudseed.mjs).
+ */
+export interface CloudSeedSettings {
+  enabled: boolean;
+  preDelay: number; // 0..1 -> 0..100ms
+  highPass: number; // 0..1 -> 20..2000Hz
+  lowPass: number; // 0..1 -> 1000..18000Hz
+  tapCount: number; // 0..1 -> 1..8 Taps (int)
+  tapLength: number; // 0..1 -> 5..100ms
+  tapDecay: number; // 0..1
+  diffusionDelay: number; // 0..1 -> 5..50ms
+  diffusionFeedback: number; // 0..1 -> 0.3..0.9
+  lineCount: number; // 0..1 -> 4..12 Lines (int)
+  lineDelay: number; // 0..1 -> 20..150ms
+  lineDecay: number; // 0..1 -> 0.3..15s (T60)
+  lateDiffusionDelay: number; // 0..1 -> 5..40ms
+  lateDiffusionFeedback: number; // 0..1 -> 0.3..0.9
+  lineModAmount: number; // 0..1 -> 0..3ms
+  lineModRate: number; // 0..1 -> 0.05..1.5Hz
+  postLowShelfGain: number; // 0..1 -> -12..+6dB
+  postLowShelfFrequency: number; // 0..1 -> 100..1000Hz
+  postHighShelfGain: number; // 0..1 -> -12..+6dB
+  postHighShelfFrequency: number; // 0..1 -> 2000..12000Hz
+  postCutoffFrequency: number; // 0..1 -> 2000..18000Hz
+  crossSeed: number; // 0..1 -> 0..0.35 Stereo-Cross-Feed
+  dryOut: number; // 0..1
+  earlyOut: number; // 0..1
+  mainOut: number; // 0..1
+}
+
 export interface FxChainSettings {
   drive: DriveSettings;
   postFilter: PostFilterSettings;
   ensemble: EnsembleSettings;
   delay: DelaySettings;
   reverb: ReverbSettings;
+  cloudSeed: CloudSeedSettings;
   width: WidthSettings;
 }
 
@@ -90,6 +130,33 @@ export function defaultFxChainSettings(): FxChainSettings {
       inputLowCutHz: 80,
       outputHighCutHz: 10000,
       freeze: false,
+    },
+    cloudSeed: {
+      enabled: false,
+      preDelay: 0,
+      highPass: 0,
+      lowPass: 0.8,
+      tapCount: 0.4,
+      tapLength: 0.3,
+      tapDecay: 0.8,
+      diffusionDelay: 0.4,
+      diffusionFeedback: 0.6,
+      lineCount: 0.7,
+      lineDelay: 0.4,
+      lineDecay: 0.5,
+      lateDiffusionDelay: 0.4,
+      lateDiffusionFeedback: 0.5,
+      lineModAmount: 0.3,
+      lineModRate: 0.3,
+      postLowShelfGain: 0.5,
+      postLowShelfFrequency: 0.3,
+      postHighShelfGain: 0.5,
+      postHighShelfFrequency: 0.6,
+      postCutoffFrequency: 0.8,
+      crossSeed: 0.5,
+      dryOut: 1,
+      earlyOut: 0.7,
+      mainOut: 0.7,
     },
     width: { enabled: false, amount: 1.2 },
   };

@@ -26,3 +26,21 @@ Importe.
 interne Generatoren abgebildet werden, sowie 36 eigene Klangarchetypen pro
 Profil: insgesamt 1080 eindeutige Presets. Die Auswahl ist seed-stabil,
 rollenbewusst und liefert Parameter plus Makros an die Vorschlags-Engine.
+
+## Ausnahme: importierte Werkspatches (plan5)
+
+Die obige Regel ("keine fremden Factory-Bänke kopiert") gilt weiterhin für alle
+prozedural erzeugten Bänke (`generate.ts`, `fmPresets.ts`, `sidPresets.ts`). Mit
+plan5 kommt eine bewusste, dokumentierte Ausnahme hinzu:
+
+- Die **Juno-106-Engine** (`juno106`) importiert die **128 Roland-Juno-106-
+  Werkspatches** (Bänke A/B) aus [`shorepine/amy`](https://github.com/shorepine/amy)
+  (MIT). Es handelt sich um reine Parameterzahlen (18-Byte-SysEx-Werte), nicht um
+  Audio, ROM-Dumps oder Notenmaterial; AMY verbreitet sie seit Jahren unter MIT.
+  Jedes importierte Preset trägt `provenance.source: "amy-juno106"`,
+  `provenance.upstreamRepo` und den Original-Werksnamen (z.B. "A14 Flutes") in
+  `provenance.derivedFrom`. Details und Begründung: `research/LICENSES.md` und
+  `plan5.md` §3.1 (Variante A).
+- Perspektivisch (siehe `plan5.md`) sollen auf dieselbe Weise 1.024 DX7-Voices und
+  175 OPL3-Instrumente hinzukommen — ebenfalls mit vollständiger Attribution statt
+  eigener Erfindung.

@@ -27,6 +27,45 @@ This document tracks all external reference repositories analyzed and adapted fo
 
 ---
 
+---
+
+## plan5: Juno-106 Engine & Werkspatches
+
+### [`shorepine/amy`](https://github.com/shorepine/amy)
+- **License:** MIT (Copyright (c) 2022 Brian Whitman and Daniel PW Ellis)
+- **Usage:** `amy/juno.py` liefert die vollständige Roland-Juno-106-Emulation
+  (Umrechnungskurven `to_filter_freq`, `to_resonance`, `to_attack_time`,
+  `to_decay_time`, `to_release_time`, `to_lfo_freq`, `to_lfo_delay`) sowie **128
+  Werks-Patches** (Bänke A/B, `_PATCHES`-Tabelle) als 18-Byte-Parametersätze.
+- **Provenance-Entscheidung (plan5 §3.1, Variante A):** Die Parameterdaten werden
+  mit vollständiger Attribution übernommen (Werksname, AMY als Quelle). Es handelt
+  sich um reine Zahlenwerte, keine Audiodaten, keine Binärdumps von Original-ROMs;
+  AMY verbreitet sie seit Jahren unter MIT. `preset_sources.md` wurde entsprechend
+  ergänzt.
+- **Attribution:** Original work Brian Whitman & Daniel P. W. Ellis (AMY-Projekt).
+  Filterkurven-Regression laut Quellcode-Kommentar zusätzlich referenziert auf
+  [`pendragon-andyh/junox`](https://github.com/pendragon-andyh/junox) (GPL-3.0,
+  nur als Vergleichsreferenz zitiert, kein Code übernommen) und ein Arturia-
+  Demo-Video.
+
+## plan5: FX-Module
+
+### [`ValdemarOrn/CloudSeed`](https://github.com/ValdemarOrn/CloudSeed) (Branch `legacy-v1`)
+- **License:** MIT (Copyright (c) 2018 Valdemar Erlingsson)
+- **Usage:** Architekturreferenz für das `cloudseed`-Reverb-Modul: Multitap-
+  Diffusor für frühe Reflexionen, modulierte Allpass-Diffusor-Kette, parallele
+  gedämpfte Verzögerungsleitungen ("Lines") mit Cross-Seed-Kopplung zwischen den
+  Kanälen (`CloudSeed.Native/ReverbChannel.h`, `MultitapDiffuser.h`,
+  `AllpassDiffuser.h`, `DelayLine.h`). Neu implementiert mit den in SynthLab
+  bereits vorhandenen DSP-Bausteinen (`dsp/allpass.ts`, `dsp/onepole.ts`) statt
+  einer 1:1-Portierung des C++-Codes.
+- **Presets:** 9 Factory-Programme (`Factory Programs/*.json`) direkt als reale
+  Parametersätze übernommen (bereits 0..1-normalisiert, Parameter-Namen 1:1
+  kompatibel zur eigenen Implementierung).
+- **Attribution:** Original work Valdemar Erlingsson.
+
+---
+
 ## Copyright & Provenance Notice
 
 All 300 presets provided with SID Lab (`sid-chip`) are original synthesised sound designs.

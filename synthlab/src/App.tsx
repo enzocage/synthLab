@@ -43,7 +43,10 @@ function App() {
     return {
       ...preset,
       params: editsForPreset ? { ...preset.params, ...editsForPreset } : preset.params,
-      fx: editedFxForPreset ?? preset.fx,
+      // Absicherung gegen aeltere, in IndexedDB gespeicherte FX-Edits, die noch
+      // kein cloudSeed-Feld kennen (vor plan5) - Backfill mit dem Default statt
+      // eines Laufzeitfehlers beim naechsten FxChain.update().
+      fx: editedFxForPreset ? { ...preset.fx, ...editedFxForPreset } : preset.fx,
     };
   }, [preset, editsForPreset, editedFxForPreset]);
 
@@ -90,7 +93,7 @@ function App() {
     AudioController.setTempo(tempo);
     AudioController.setArpSettings(arpSettings);
     setAudioReady(true);
-    setStatusMessage("Audio bereit · 1.681 Presets geladen");
+    setStatusMessage("Audio bereit · 1.896 Presets geladen");
     AudioController.connectHardwareMidi().catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -145,7 +148,7 @@ function App() {
   const onFxChange = useCallback(
     (patch: Partial<FxChainSettings>) => {
       if (!preset) return;
-      const next = { ...effectivePreset.fx, ...patch };
+      const next = { ...effectivePreset.fx, ...patch } as FxChainSettings;
       setEditedFx(preset.id, next);
       AudioController.updateFx(next);
     },
@@ -231,7 +234,7 @@ function App() {
     return (
       <div className="start-overlay">
         <h1>SynthLab</h1>
-        <p>1.681 Presets über 19 Synthesizer-Engines, Mehrspur-Arrangement, Arp und Live-Tastatur.</p>
+        <p>1.896 Presets über 20 Synthesizer-Engines, Mehrspur-Arrangement, Arp und Live-Tastatur.</p>
         <button onClick={startAudio}>Audio starten</button>
       </div>
     );

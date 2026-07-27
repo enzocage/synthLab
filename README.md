@@ -2,19 +2,21 @@
 
 ![SynthLab Screenshot](./gfx/Screenshot.jpg)
 
-**SynthLab** ist eine hochmoderne, browserbasierte Synthesizer- und Performance-Plattform, entwickelt mit **React, TypeScript, Vite und Web Audio API**. Sie bietet 19 spezialisierte Synthesizer-Engines und eine kuratierte Bibliothek von **1.681 Presets** mit Mehrspur-Arrangement, interaktivem Audition-System und einem Echtzeit-FX-Rack.
+**SynthLab** ist eine hochmoderne, browserbasierte Synthesizer- und Performance-Plattform, entwickelt mit **React, TypeScript, Vite und Web Audio API**. Sie bietet 20 spezialisierte Synthesizer-Engines und eine kuratierte Bibliothek von **1.896 Presets** mit Mehrspur-Arrangement, interaktivem Audition-System und einem Echtzeit-FX-Rack.
 
 ---
 
 ## 🌟 Hauptmerkmale & Highlights
 
-- **19 Synthesizer-Engines**: Von klassischer subtraktiver Synthese bis zu 6-Op FM, C64-SID Chip-Simulation, Additiv, Wavetable, Granular und Physikalischem Modeling.
-- **1.681 Kuratierte Presets**: Sämtliche Presets sind Zod-schema-validiert und bieten umfassende Klangfarben für Bass, Lead, Pad, Arp, Pluck, Bell, Rhythm, Drone und FX.
+- **20 Synthesizer-Engines**: Von klassischer subtraktiver Synthese bis zu 6-Op FM, C64-SID Chip-Simulation, Additiv, Wavetable, Granular, Physikalischem Modeling und einer Juno-106-artigen DCO-Engine.
+- **1.896 Kuratierte Presets**: Sämtliche Presets sind Zod-schema-validiert und bieten umfassende Klangfarben für Bass, Lead, Pad, Arp, Pluck, Bell, Rhythm, Drone und FX.
+- **Juno-106 Engine (`juno106`)**: DCO-Synthese (Saw+Pulse/PWM+Sub+Noise), 24dB-Tiefpass, Onboard-Chorus I/II und **128 importierte Original-Roland-Werkspatches** (Bänke A/B), dekodiert aus echten SysEx-Parametern (Quelle: [`shorepine/amy`](https://github.com/shorepine/amy), MIT).
 - **C64 SID Lab Engine (`sid-chip`)**: Eigene Web-Audio C64-SID-Simulation mit 3-Stimmen-Kostenmodell, Hard-Sync, Ring-Modulation, PWM-Sweeps und 300 originären SID-Technik-Presets.
 - **5 Spezialisierte FM-Engines**: Nachbildung bekannter Open-Source & Hardware FM-Architekturen (Yamaha DX7 6-Op, Sega Genesis YM2612 4-Op, Ameobea Dynamic Morph, Foydel Chaos Feedback & Tone.js Linear Precision).
 - **12 Audition Test-Profile**: Vorhörphrasen für schnelles A/B-Testing (`BASS_LOCK`, `BASS_DRONE`, `ARP_HELD`, `MELODY_LEGATO`, `SYNC_RING_PAIR`, `RANGE_VELOCITY` uvm.).
 - **Live-Performance & MIDI**: Ansteuerung über Hardware-MIDI-Keyboards, Bildschirm-Tastatur oder integrierte Phrasen-Sequenzen.
-- **Ableton-Style FX-Rack**: Modular zuschaltbare Effekte (Drive, Post-Filter, Ensemble Chorus, Tape/PingPong Delay, Freeze Reverb & Stereo Width).
+- **Ableton-Style FX-Rack**: Modular zuschaltbare Effekte (Drive, Post-Filter, Ensemble Chorus, Tape/PingPong Delay, Freeze Reverb, **CloudSeed Diffusions-Reverb** & Stereo Width).
+- **CloudSeed-Reverb**: Multitap-Diffusor, modulierte Allpass-Diffusor-Kette und 12 parallele Cross-Seed-gekoppelte Verzögerungsleitungen, inkl. 9 importierter Factory-Hallprogramme (Architekturreferenz: [`ValdemarOrn/CloudSeed`](https://github.com/ValdemarOrn/CloudSeed), MIT).
 - **Dichtes, adaptives Responsive-UI**: Perfekt optimiert für den Viewport (`100vh`) mit separaten Scrollbalken für unkomplizierte Navigation.
 
 ---
@@ -23,6 +25,7 @@
 
 | Engine-ID | Name in der UI | Herkunft / Technische Referenz |
 |---|---|---|
+| `juno106` | **Juno-106 (Roland VA)** | Roland Juno-106 DCO-Architektur; Umrechnungskurven & 128 Werkspatches aus `shorepine/amy` (MIT) |
 | `sid-chip` | **SID Lab (C64 SID)** | MOS Technology 6581/8580 Commodore 64 Sound Interface Device |
 | `fm-dx7` | **FM DX7 (Yamaha DX7 6-Op Matrix)** | Yamaha DX7 Hardware & `ms3000/DX7-WebAudio` / `Tone.js` |
 | `fm-4op` | **FM 4-Op (Sega Genesis YM2612 / TX81Z)** | Sega Genesis YM2612 Arcade FM & `g200kg/webaudio-tinysynth` |

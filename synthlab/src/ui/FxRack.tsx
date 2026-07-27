@@ -2,7 +2,10 @@
 // Power-Schalter (enabled) und einem aufklappbaren Parameter-Panel. Reihenfolge
 // entspricht dem festen Signalpfad (audio/fx/FxChain.ts).
 import { useState } from "react";
-import type { FxChainSettings } from "../audio/fx/types";
+import type { CloudSeedSettings, FxChainSettings } from "../audio/fx/types";
+import cloudSeedBank from "../data/derived/cloudseed-programs.json";
+
+const CLOUDSEED_PROGRAMS = cloudSeedBank.programs as { id: string; name: string; settings: Omit<CloudSeedSettings, "enabled"> }[];
 
 interface Props {
   fx: FxChainSettings;
@@ -100,6 +103,52 @@ export function FxRack({ fx, onChange }: Props) {
           <input type="checkbox" checked={fx.reverb.freeze} onChange={(e) => onChange({ reverb: { ...fx.reverb, freeze: e.target.checked } })} />
           Freeze
         </label>
+      </Device>
+
+      <Device title="CloudSeed" enabled={fx.cloudSeed.enabled} onToggle={() => onChange({ cloudSeed: { ...fx.cloudSeed, enabled: !fx.cloudSeed.enabled } })}>
+        <label className="fx-select">
+          <span>Factory-Programm</span>
+          <select
+            defaultValue=""
+            onChange={(e) => {
+              const program = CLOUDSEED_PROGRAMS.find((p) => p.id === e.target.value);
+              if (program) onChange({ cloudSeed: { ...program.settings, enabled: true } });
+            }}
+          >
+            <option value="" disabled>
+              Programm wählen…
+            </option>
+            {CLOUDSEED_PROGRAMS.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <Slider label="Pre-Delay" value={fx.cloudSeed.preDelay} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, preDelay: v } })} />
+        <Slider label="High-Pass" value={fx.cloudSeed.highPass} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, highPass: v } })} />
+        <Slider label="Low-Pass" value={fx.cloudSeed.lowPass} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, lowPass: v } })} />
+        <Slider label="Tap Count" value={fx.cloudSeed.tapCount} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, tapCount: v } })} />
+        <Slider label="Tap Length" value={fx.cloudSeed.tapLength} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, tapLength: v } })} />
+        <Slider label="Tap Decay" value={fx.cloudSeed.tapDecay} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, tapDecay: v } })} />
+        <Slider label="Diffusion Delay" value={fx.cloudSeed.diffusionDelay} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, diffusionDelay: v } })} />
+        <Slider label="Diffusion Feedback" value={fx.cloudSeed.diffusionFeedback} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, diffusionFeedback: v } })} />
+        <Slider label="Line Count" value={fx.cloudSeed.lineCount} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, lineCount: v } })} />
+        <Slider label="Line Delay" value={fx.cloudSeed.lineDelay} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, lineDelay: v } })} />
+        <Slider label="Line Decay (T60)" value={fx.cloudSeed.lineDecay} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, lineDecay: v } })} />
+        <Slider label="Late Diffusion Delay" value={fx.cloudSeed.lateDiffusionDelay} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, lateDiffusionDelay: v } })} />
+        <Slider label="Late Diffusion Feedback" value={fx.cloudSeed.lateDiffusionFeedback} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, lateDiffusionFeedback: v } })} />
+        <Slider label="Mod Amount" value={fx.cloudSeed.lineModAmount} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, lineModAmount: v } })} />
+        <Slider label="Mod Rate" value={fx.cloudSeed.lineModRate} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, lineModRate: v } })} />
+        <Slider label="Low Shelf Gain" value={fx.cloudSeed.postLowShelfGain} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, postLowShelfGain: v } })} />
+        <Slider label="Low Shelf Freq" value={fx.cloudSeed.postLowShelfFrequency} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, postLowShelfFrequency: v } })} />
+        <Slider label="High Shelf Gain" value={fx.cloudSeed.postHighShelfGain} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, postHighShelfGain: v } })} />
+        <Slider label="High Shelf Freq" value={fx.cloudSeed.postHighShelfFrequency} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, postHighShelfFrequency: v } })} />
+        <Slider label="Cutoff" value={fx.cloudSeed.postCutoffFrequency} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, postCutoffFrequency: v } })} />
+        <Slider label="Cross-Seed" value={fx.cloudSeed.crossSeed} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, crossSeed: v } })} />
+        <Slider label="Dry Out" value={fx.cloudSeed.dryOut} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, dryOut: v } })} />
+        <Slider label="Early Out" value={fx.cloudSeed.earlyOut} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, earlyOut: v } })} />
+        <Slider label="Main Out" value={fx.cloudSeed.mainOut} min={0} max={1} step={0.01} onChange={(v) => onChange({ cloudSeed: { ...fx.cloudSeed, mainOut: v } })} />
       </Device>
 
       <Device title="Width" enabled={fx.width.enabled} onToggle={() => onChange({ width: { ...fx.width, enabled: !fx.width.enabled } })}>
