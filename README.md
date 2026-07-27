@@ -99,7 +99,8 @@ npm run build
 
 ---
 
-## 📜 Lizenz & Urheberrecht
+## 📜 Lizenz, Attributierung & Markenhinweise
 
-- **Codebase & Presets**: MIT-Lizenz (Eigenständige Entwürfe & Open-Source Adapters).
-- **Herstellernamen & Marken**: Yamaha DX7, Commodore 64, MOS 6581/8580, Sega Genesis YM2612 und Roland sind eingetragene Warenzeichen ihrer jeweiligen Eigentümer und dienen hier ausschließlich der technischen Herkunfts- und Stilbeschreibung.
+- **Codebase & Presets**: Der Quellcode und die eigenen Presets sind unter der [MIT-Lizenz](LICENSE) veröffentlicht. Vollständige Drittanbieter-Hinweise befinden sich in [ATTRIBUTION.md](ATTRIBUTION.md).
+- **Markenhinweise & Disclaimer**: Alle in diesem Projekt genannten Produktnamen, Marken, eingetragenen Warenzeichen und Firmennamen (*darunter Yamaha, DX7, Roland, Juno-106, Commodore, C64, MOS 6581/8580, Sega Genesis, YM2612, Moog, Ableton, Casio*) sind Eigentum ihrer jeweiligen Inhaber. Ihre Verwendung dient ausschließlich der historischen, technischen Identifikation und Sound-Synthese-Modellierung unter Nominative Fair Use. SynthLab / Ambient Musikmaschine ist ein unabhängiges Open-Source-Projekt und steht in keiner geschäftlichen Verbindung zu diesen Markeninhabern, wird von diesen nicht unterstützt, gesponsert oder autorisiert.
+
