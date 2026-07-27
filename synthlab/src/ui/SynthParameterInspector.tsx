@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import type { Preset } from "../presets/schema";
 import type { ParamSpec } from "../audio/core/types";
 import { getEngine } from "../audio/engines/registry";
@@ -33,6 +33,11 @@ export const SynthParameterInspector: React.FC<Props> = ({
   const [paramLfos, setParamLfos] = useState<Record<string, ParamLfoConfig>>({});
   const [openLfoDrawers, setOpenLfoDrawers] = useState<Record<string, boolean>>({});
 
+  const startTimeRef = useRef(performance.now() / 1000);
+  const baseParamsRef = useRef<Record<string, any>>({});
+  const onLiveEditRef = useRef(onLiveEdit);
+  onLiveEditRef.current = onLiveEdit;
+
   let parameters: ParamSpec[] = [];
   let engineName = preset.engine.toUpperCase();
 
@@ -44,14 +49,24 @@ export const SynthParameterInspector: React.FC<Props> = ({
     /* fallback if engine not found */
   }
 
-  // Real-Time LFO Oscillation Modulator Loop (60 FPS)
+  // Capture static base parameter values when LFO is enabled
+  useEffect(() => {
+    for (const [paramId, lfo] of Object.entries(paramLfos)) {
+      if (lfo.enabled && baseParamsRef.current[paramId] === undefined) {
+        baseParamsRef.current[paramId] = preset.params[paramId];
+      } else if (!lfo.enabled && baseParamsRef.current[paramId] !== undefined) {
+        delete baseParamsRef.current[paramId];
+      }
+    }
+  }, [paramLfos, preset.params]);
+
+  // Persistent Real-Time LFO Oscillation Modulator Loop (60 FPS - Never Halts)
   useEffect(() => {
     let animId: number;
-    const startTime = performance.now() / 1000;
 
     const tick = () => {
       const now = performance.now() / 1000;
-      const elapsed = now - startTime;
+      const elapsed = now - startTimeRef.current;
 
       for (const [paramId, lfo] of Object.entries(paramLfos)) {
         if (!lfo || !lfo.enabled) continue;
@@ -69,10 +84,15 @@ export const SynthParameterInspector: React.FC<Props> = ({
         } else if (lfo.shape === "square") {
           lfoVal = phase < 0.5 ? 1 : -1;
         } else if (lfo.shape === "random") {
-          lfoVal = Math.sin(2 * Math.PI * Math.floor(elapsed * lfo.rateHz * 5));
+          // Deterministic Sample & Hold Random Waveform based on rate step
+          const step = Math.floor(elapsed * lfo.rateHz);
+          const hash = Math.sin(step * 12.9898 + 78.233) * 43758.5453;
+          const rand01 = hash - Math.floor(hash);
+          lfoVal = rand01 * 2 - 1;
         }
 
-        const baseVal = Number(preset.params[paramId] ?? (paramSpec as any).default ?? 0);
+        // Static base value before modulation
+        const baseVal = Number(baseParamsRef.current[paramId] ?? preset.params[paramId] ?? (paramSpec as any).default ?? 0);
         const min = (paramSpec as any).min ?? 0;
         const max = (paramSpec as any).max ?? 1;
         const range = max - min;
@@ -82,7 +102,7 @@ export const SynthParameterInspector: React.FC<Props> = ({
         nextVal = Math.max(min, Math.min(max, nextVal));
         if (paramSpec.kind === "int") nextVal = Math.round(nextVal);
 
-        onLiveEdit(paramId, nextVal);
+        onLiveEditRef.current(paramId, nextVal);
       }
 
       animId = requestAnimationFrame(tick);
@@ -90,7 +110,7 @@ export const SynthParameterInspector: React.FC<Props> = ({
 
     animId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(animId);
-  }, [paramLfos, parameters, preset.params, onLiveEdit]);
+  }, [paramLfos, parameters]);
 
   // Group parameters by group field or default to "general"
   const groups: Record<string, ParamSpec[]> = {};
