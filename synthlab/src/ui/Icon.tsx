@@ -1,5 +1,5 @@
 interface IconProps {
-  name: "browser" | "play" | "stop" | "keyboard" | "detail" | "help" | "undo" | "redo" | "session" | "arrangement" | "image";
+  name: "browser" | "play" | "stop" | "keyboard" | "detail" | "help" | "undo" | "redo" | "session" | "arrangement" | "image" | "fullscreen" | "fullscreen-exit";
 }
 
 const paths: Record<IconProps["name"], string> = {
@@ -14,6 +14,8 @@ const paths: Record<IconProps["name"], string> = {
   session: "M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z",
   arrangement: "M3 5h18M3 12h18M3 19h18M7 3v4m5 3v4m6 3v4",
   image: "M4 5h16v14H4zM7 15l3-3 3 3 2-2 3 3M8 9h.01",
+  fullscreen: "M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5",
+  "fullscreen-exit": "M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5",
 };
 
 export function Icon({ name }: IconProps) {
@@ -23,4 +25,3 @@ export function Icon({ name }: IconProps) {
     </svg>
   );
 }
-

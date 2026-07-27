@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { PHRASE_ROLES } from "../midi/phrases";
 import type { Role } from "../presets/schema";
 import { MeterDisplay } from "./MeterDisplay";
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function TransportBar({ onPlayToggle, phraseRole, onPhraseRoleChange, onTempoChange, onPanic }: Props) {
+  const [isFullscreen, setIsFullscreen] = useState(() => Boolean(document.fullscreenElement));
   const toggleBrowser = useUiStore((s) => s.toggleBrowser);
   const toggleDetail = useUiStore((s) => s.toggleDetail);
   const browserOpen = useUiStore((s) => s.browserOpen);
@@ -37,6 +39,22 @@ export function TransportBar({ onPlayToggle, phraseRole, onPhraseRoleChange, onT
   const dirty = useCommandStore((s) => s.dirty);
   const isTransportActive = transportStatus === "playing" || transportStatus === "recording" || transportStatus === "starting";
   const octaveNumber = Math.floor(octaveBaseNote / 12) - 1;
+
+  useEffect(() => {
+    const syncFullscreenState = () => setIsFullscreen(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", syncFullscreenState);
+    return () => document.removeEventListener("fullscreenchange", syncFullscreenState);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) {
+      void document.exitFullscreen();
+      return;
+    }
+    void document.documentElement.requestFullscreen().catch(() => {
+      // Fullscreen can be denied by the browser or an embedded host; keep the UI usable.
+    });
+  };
 
   return (
     <header className="transport-bar" aria-label="Globale Steuerleiste">
@@ -109,6 +127,16 @@ export function TransportBar({ onPlayToggle, phraseRole, onPhraseRoleChange, onT
       </button>
       <button onClick={toggleSynthGallery} title="Bilder und Vorbilder aller Synth-Engines anzeigen">
         <Icon name="image" /> <span className="transport-label">Synth Pics</span>
+      </button>
+      <button
+        onClick={toggleFullscreen}
+        className={isFullscreen ? "is-active" : ""}
+        aria-pressed={isFullscreen}
+        aria-label={isFullscreen ? "Vollbild verlassen" : "Vollbild aktivieren"}
+        title={isFullscreen ? "Vollbild verlassen (F11)" : "Vollbild aktivieren (F11)"}
+      >
+        <Icon name={isFullscreen ? "fullscreen-exit" : "fullscreen"} />
+        <span className="transport-label">{isFullscreen ? "Fenster" : "Vollbild"}</span>
       </button>
       <button className="transport-bar__panic" onClick={onPanic}>Panic</button>
       </div>
